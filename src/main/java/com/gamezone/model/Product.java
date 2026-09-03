@@ -29,4 +29,16 @@ public abstract class Product {
     public int getStock() {
         return stock;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
 }

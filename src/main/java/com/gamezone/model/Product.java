@@ -13,4 +13,20 @@ public abstract class Product {
         this.price = price;
         this.stock = stock;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public int getStock() {
+        return stock;
+    }
 }

@@ -1,6 +1,9 @@
 package com.gamezone.model;
+import java.io.Serializable;
 
-public abstract class Product {
+public abstract class Product implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String id;
     private String title;

@@ -26,4 +26,21 @@ public class ProductService {
     public List<Product> getProducts() {
         return products;
     }
+
+    public boolean updateStock(String productId, int newStock) throws IOException {
+
+        if (newStock < 0) {
+            throw new IllegalArgumentException("Stock cannot be negative");
+        }
+
+        for (Product product : products) {
+            if (product.getId().equals(productId)) {
+                product.setStock(newStock);
+                repository.saveProducts(products);
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

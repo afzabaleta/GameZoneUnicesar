@@ -41,4 +41,5 @@ public abstract class Product {
     public void setStock(int stock) {
         this.stock = stock;
     }
+    public abstract String getDescription();
 }

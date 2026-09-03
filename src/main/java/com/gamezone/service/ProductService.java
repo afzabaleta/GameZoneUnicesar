@@ -22,4 +22,8 @@ public class ProductService {
         products.add(product);
         repository.saveProducts(products);
     }
+
+    public List<Product> getProducts() {
+        return products;
+    }
 }

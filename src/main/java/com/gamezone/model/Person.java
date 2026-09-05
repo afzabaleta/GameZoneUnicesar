@@ -1,9 +1,11 @@
 package com.gamezone.model;
 
+import java.io.Serializable;
+
 /**
  * Represents the common information of a person in GameZoneUnicesar.
  */
-public abstract class Person {
+public abstract class Person implements Serializable {
 
     private String name;
     private String identification;

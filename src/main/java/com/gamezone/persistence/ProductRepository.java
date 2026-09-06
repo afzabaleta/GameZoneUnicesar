@@ -1,25 +1,31 @@
-package gamezone.persistence;
+package com.gamezone.persistence;
 
-import gamezone.model.Product;
+import com.gamezone.model.Product;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.FileWriter;
-import java.io.IOException;
 
 /**
- * Repository responsible for managing product storage operations.
+ * Repository responsible for managing product persistence.
  *
- * <p>This class provides methods to save, retrieve and search products
- * in the GameZone system.</p>
+ * <p>This class stores and loads products using Java serialization.</p>
  */
 public class ProductRepository {
 
+    private final String filePath;
     private final List<Product> products;
 
     /**
-     * Creates an empty product repository.
+     * Creates a product repository using the default persistence file.
      */
     public ProductRepository() {
+        this.filePath = "data/products.dat";
         this.products = new ArrayList<>();
     }
 
@@ -33,7 +39,7 @@ public class ProductRepository {
     }
 
     /**
-     * Returns all products stored in the repository.
+     * Returns all products currently stored in memory.
      *
      * @return list of products
      */
@@ -53,37 +59,64 @@ public class ProductRepository {
                 return product;
             }
         }
+
         return null;
     }
 
     /**
-     * Loads products from storage.
+     * Loads products from the persistence file.
      *
-     * @return list of stored products
+     * @return loaded products
+     * @throws IOException if an input/output error occurs
+     * @throws ClassNotFoundException if a stored class cannot be found
      */
-    public List<Product> loadProducts() {
-        return products;
+    @SuppressWarnings("unchecked")
+    public List<Product> loadProducts()
+            throws IOException, ClassNotFoundException {
+
+        File file = new File(filePath);
+
+        if (!file.exists()) {
+            products.clear();
+            return products;
+        }
+
+        try (ObjectInputStream inputStream =
+                     new ObjectInputStream(new FileInputStream(file))) {
+
+            List<Product> loadedProducts =
+                    (List<Product>) inputStream.readObject();
+
+            products.clear();
+            products.addAll(loadedProducts);
+
+            return products;
+        }
     }
 
     /**
-     * Saves products to a file.
+     * Saves the product list to the persistence file.
      *
-     * @param products list of products to save
+     * @param products products to save
+     * @throws IOException if an input/output error occurs
      */
-    public void saveProducts(List<Product> products) {
-        try (FileWriter writer = new FileWriter("products.txt")) {
+    public void saveProducts(List<Product> products) throws IOException {
 
-            for (Product product : products) {
-                writer.write(
-                        product.getIdentifier() + "," +
-                                product.getTitle() + "," +
-                                product.getPrice() + "," +
-                                product.getAvailableQuantity() + "\n"
-                );
-            }
+        File file = new File(filePath);
 
-        } catch (IOException e) {
-            System.out.println("Error saving products: " + e.getMessage());
+        File parent = file.getParentFile();
+
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
         }
+
+        try (ObjectOutputStream outputStream =
+                     new ObjectOutputStream(new FileOutputStream(file))) {
+
+            outputStream.writeObject(products);
+        }
+
+        this.products.clear();
+        this.products.addAll(products);
     }
 }

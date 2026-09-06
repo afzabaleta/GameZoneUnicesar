@@ -1,9 +1,9 @@
-package gamezone.service;
+package com.gamezone.service;
 
-import gamezone.model.Product;
-import gamezone.persistence.ProductRepository;
-import gamezone.model.VideoGame;
-import gamezone.model.Console;
+import com.gamezone.model.Product;
+import com.gamezone.persistence.ProductRepository;
+import com.gamezone.model.VideoGame;
+import com.gamezone.model.Console;
 import java.util.List;
 
 /**
@@ -24,14 +24,6 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    /**
-     * Registers a product in the repository.
-     *
-     * @param product product to register
-     */
-    public void registerProduct(Product product) {
-        productRepository.save(product);
-    }
     /**
      * Registers a video game product.
      *
@@ -68,15 +60,15 @@ public class ProductService {
     /**
      * Updates the stock quantity of a product.
      *
-     * @param identifier product identifier
+     * @param productIdentifier product identifier
      * @param quantity new available quantity
      */
-    public void updateProductStock(String identifier, int quantity) {
+    public void updateStock(String productIdentifier, int quantity) {
         if (quantity < 0) {
             throw new IllegalArgumentException("Stock quantity cannot be negative");
         }
 
-        Product product = productRepository.findByIdentifier(identifier);
+        Product product = productRepository.findByIdentifier(productIdentifier);
 
         if (product != null) {
             product.setAvailableQuantity(quantity);
@@ -87,33 +79,7 @@ public class ProductService {
      *
      * @param product product to register
      */
-    public void addProduct(Product product) {
-        productRepository.save(product);
-    }
 
-    /**
-     * Searches a product by its identifier.
-     *
-     * @param identifier product identifier
-     * @return product found or null if it does not exist
-     */
-    public Product getProductByIdentifier(String identifier) {
-        return productRepository.findByIdentifier(identifier);
-    }
 
-    /**
-     * Returns the description of a product.
-     *
-     * @param identifier product identifier
-     * @return product description
-     */
-    public String getProductDescription(String identifier) {
-        Product product = productRepository.findByIdentifier(identifier);
 
-        if (product != null) {
-            return product.getDescription();
-        }
-
-        return "Product not found";
-    }
 }

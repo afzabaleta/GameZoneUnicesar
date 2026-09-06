@@ -4,6 +4,7 @@ import gamezone.model.Product;
 import gamezone.persistence.ProductRepository;
 import gamezone.model.VideoGame;
 import gamezone.model.Console;
+import java.util.List;
 
 /**
  * Service class that contains business logic related to products.
@@ -47,6 +48,15 @@ public class ProductService {
      */
     public void registerConsole(Console console) {
         productRepository.save(console);
+    }
+
+    /**
+     * Returns all registered products.
+     *
+     * @return list of products
+     */
+    public List<Product> listProducts() {
+        return productRepository.findAll();
     }
 
     /**

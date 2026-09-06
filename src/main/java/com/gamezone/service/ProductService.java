@@ -65,14 +65,23 @@ public class ProductService {
      * @param identifier product identifier
      * @param quantity new available quantity
      */
+    /**
+     * Updates the stock quantity of a product.
+     *
+     * @param identifier product identifier
+     * @param quantity new available quantity
+     */
     public void updateProductStock(String identifier, int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Stock quantity cannot be negative");
+        }
+
         Product product = productRepository.findByIdentifier(identifier);
 
         if (product != null) {
             product.setAvailableQuantity(quantity);
         }
     }
-
     /**
      * Registers a new product.
      *

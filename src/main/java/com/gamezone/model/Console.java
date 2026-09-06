@@ -1,5 +1,10 @@
 package gamezone.model;
 
+/**
+ * Represents a console product in the GameZone catalog.
+ * Extends the common attributes and behavior from Product.
+ */
+
 public class Console extends Product {
 
     private String brand;

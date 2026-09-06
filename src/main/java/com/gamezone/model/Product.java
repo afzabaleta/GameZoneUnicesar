@@ -1,4 +1,8 @@
 package gamezone.model;
+/**
+ * Abstract class that represents a product in the GameZone store.
+ * Contains the common information shared by all products.
+ */
 
 public abstract class Product {
 

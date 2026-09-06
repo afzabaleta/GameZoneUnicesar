@@ -16,8 +16,13 @@ public abstract class Person {
      * @param name the person's name
      * @param identification the person's identification
      * @param phone the person's phone number
+     * @throws IllegalArgumentException if any required field is null or blank
      */
     public Person(String name, String identification, String phone) {
+        validateField(name, "name");
+        validateField(identification, "identification");
+        validateField(phone, "phone");
+
         this.name = name;
         this.identification = identification;
         this.phone = phone;
@@ -36,8 +41,10 @@ public abstract class Person {
      * Updates the person's name.
      *
      * @param name the new name
+     * @throws IllegalArgumentException if the name is null or blank
      */
     public void setName(String name) {
+        validateField(name, "name");
         this.name = name;
     }
 
@@ -54,8 +61,10 @@ public abstract class Person {
      * Updates the person's identification.
      *
      * @param identification the new identification
+     * @throws IllegalArgumentException if the identification is null or blank
      */
     public void setIdentification(String identification) {
+        validateField(identification, "identification");
         this.identification = identification;
     }
 
@@ -72,8 +81,25 @@ public abstract class Person {
      * Updates the person's phone number.
      *
      * @param phone the new phone number
+     * @throws IllegalArgumentException if the phone is null or blank
      */
     public void setPhone(String phone) {
+        validateField(phone, "phone");
         this.phone = phone;
+    }
+
+    /**
+     * Validates a required person field.
+     *
+     * @param value the value to validate
+     * @param fieldName the name of the field being validated
+     * @throws IllegalArgumentException if the value is null or blank
+     */
+    private void validateField(String value, String fieldName) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(
+                    fieldName + " cannot be null or blank"
+            );
+        }
     }
 }

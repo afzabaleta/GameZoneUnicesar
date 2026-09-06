@@ -2,7 +2,8 @@ package com.gamezone.model;
 
 /**
  * Represents a seller in the GameZone system.
- * A seller is a person with an employee code and work shift.
+ * A seller is a person who works for the store and has an employee code
+ * and a defined work shift.
  */
 public class Seller extends Person {
 
@@ -10,7 +11,7 @@ public class Seller extends Person {
     private String workShift;
 
     /**
-     * Creates a seller with the specified information.
+     * Creates a seller with the specified personal and employment information.
      *
      * @param name the seller's name
      * @param identification the seller's identification
@@ -35,29 +36,11 @@ public class Seller extends Person {
     }
 
     /**
-     * Updates the seller's employee code.
-     *
-     * @param employeeCode the new employee code
-     */
-    public void setEmployeeCode(String employeeCode) {
-        this.employeeCode = employeeCode;
-    }
-
-    /**
      * Returns the seller's work shift.
      *
      * @return the seller's work shift
      */
     public String getWorkShift() {
         return workShift;
-    }
-
-    /**
-     * Updates the seller's work shift.
-     *
-     * @param workShift the new work shift
-     */
-    public void setWorkShift(String workShift) {
-        this.workShift = workShift;
     }
 }

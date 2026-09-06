@@ -58,17 +58,6 @@ public abstract class Person {
     }
 
     /**
-     * Updates the person's identification.
-     *
-     * @param identification the new identification
-     * @throws IllegalArgumentException if the identification is null or blank
-     */
-    public void setIdentification(String identification) {
-        validateField(identification, "identification");
-        this.identification = identification;
-    }
-
-    /**
      * Returns the person's phone number.
      *
      * @return the person's phone number

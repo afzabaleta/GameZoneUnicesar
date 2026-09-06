@@ -2,6 +2,7 @@ package com.gamezone.model;
 
 /**
  * Represents the common information shared by people in the GameZone system.
+ * This class provides the basic personal data inherited by customers and sellers.
  */
 public abstract class Person {
 

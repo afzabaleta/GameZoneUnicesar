@@ -53,4 +53,13 @@ public class ProductRepository {
         }
         return null;
     }
+
+    /**
+     * Loads products from storage.
+     *
+     * @return list of stored products
+     */
+    public List<Product> loadProducts() {
+        return products;
+    }
 }

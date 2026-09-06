@@ -60,6 +60,20 @@ public class ProductService {
     }
 
     /**
+     * Updates the stock quantity of a product.
+     *
+     * @param identifier product identifier
+     * @param quantity new available quantity
+     */
+    public void updateProductStock(String identifier, int quantity) {
+        Product product = productRepository.findByIdentifier(identifier);
+
+        if (product != null) {
+            product.setAvailableQuantity(quantity);
+        }
+    }
+
+    /**
      * Registers a new product.
      *
      * @param product product to register

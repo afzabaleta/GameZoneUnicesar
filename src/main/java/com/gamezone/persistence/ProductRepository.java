@@ -3,6 +3,8 @@ package gamezone.persistence;
 import gamezone.model.Product;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * Repository responsible for managing product storage operations.
@@ -61,5 +63,27 @@ public class ProductRepository {
      */
     public List<Product> loadProducts() {
         return products;
+    }
+
+    /**
+     * Saves products to a file.
+     *
+     * @param products list of products to save
+     */
+    public void saveProducts(List<Product> products) {
+        try (FileWriter writer = new FileWriter("products.txt")) {
+
+            for (Product product : products) {
+                writer.write(
+                        product.getIdentifier() + "," +
+                                product.getTitle() + "," +
+                                product.getPrice() + "," +
+                                product.getAvailableQuantity() + "\n"
+                );
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error saving products: " + e.getMessage());
+        }
     }
 }

@@ -43,15 +43,7 @@ public class SaleService {
      * @param sale the sale to register
      */
     public void registerSale(Sale sale) {
-        if (sale == null) {
-            throw new IllegalArgumentException("Sale cannot be null.");
-        }
-
-        if (sale.getProducts() == null || sale.getProducts().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "A sale must contain at least one product."
-            );
-        }
+        validateSale(sale);
 
         Map<String, Integer> requestedQuantities = countByIdentifier(sale.getProducts());
         List<Product> availableProducts = productService.listProducts();
@@ -105,6 +97,18 @@ public class SaleService {
             }
         }
         return result;
+    }
+
+    private void validateSale(Sale sale) {
+        if (sale == null) {
+            throw new IllegalArgumentException("Sale cannot be null.");
+        }
+
+        if (sale.getProducts() == null || sale.getProducts().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "A sale must contain at least one product."
+            );
+        }
     }
 
     private Map<String, Integer> countByIdentifier(List<Product> products) {

@@ -1,0 +1,85 @@
+package com.gamezone.service;
+
+import com.gamezone.model.Customer;
+import com.gamezone.model.Sale;
+import com.gamezone.model.Seller;
+import com.gamezone.persistence.SaleRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Provides business operations for registering and querying sales.
+ * Coordinates sale persistence with product stock validation and updates.
+ */
+public class SaleService {
+
+    private final SaleRepository saleRepository;
+    private final ProductService productService;
+
+    /**
+     * Creates a SaleService that validates stock through the given
+     * ProductService and persists sales through the given SaleRepository.
+     *
+     * @param saleRepository repository used to persist and load sales
+     * @param productService service used to check and update product stock
+     */
+    public SaleService(SaleRepository saleRepository, ProductService productService) {
+        this.saleRepository = saleRepository;
+        this.productService = productService;
+    }
+
+    /**
+     * Registers a new sale.
+     *
+     * @param sale the sale to register
+     */
+    public void registerSale(Sale sale) {
+        List<Sale> sales = saleRepository.loadSales();
+        sales.add(sale);
+        saleRepository.saveSales(sales);
+    }
+
+    /**
+     * Lists all registered sales.
+     *
+     * @return the complete list of sales
+     */
+    public List<Sale> listSales() {
+        return saleRepository.loadSales();
+    }
+
+    /**
+     * Lists all sales made by a specific customer.
+     *
+     * @param customerId the identification of the customer
+     * @return the sales associated with that customer
+     */
+    public List<Sale> listSalesByCustomer(String customerId) {
+        List<Sale> result = new ArrayList<>();
+        for (Sale sale : saleRepository.loadSales()) {
+            Customer customer = sale.getCustomer();
+            if (customer != null && customer.getIdentification().equals(customerId)) {
+                result.add(sale);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Lists all sales attended by a specific seller.
+     *
+     * @param sellerId the identification of the seller
+     * @return the sales attended by that seller
+     */
+    public List<Sale> listSalesBySeller(String sellerId) {
+        List<Sale> result = new ArrayList<>();
+        for (Sale sale : saleRepository.loadSales()) {
+            Seller seller = sale.getSeller();
+            if (seller != null && seller.getIdentification().equals(sellerId)) {
+                result.add(sale);
+            }
+        }
+        return result;
+    }
+}

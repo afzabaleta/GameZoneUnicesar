@@ -162,9 +162,10 @@ public class PersonRepository {
      */
     public List<Seller> loadSellers() {
         if (!Files.exists(sellersPath)) {
-            return createDefaultSellers();
+            List<Seller> defaultSellers = createDefaultSellers();
+            saveSellers(defaultSellers);
+            return defaultSellers;
         }
-
         List<Seller> sellers = new ArrayList<>();
 
         try {

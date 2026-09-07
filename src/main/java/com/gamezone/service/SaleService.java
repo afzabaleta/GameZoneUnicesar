@@ -13,7 +13,9 @@ import java.util.Map;
 
 /**
  * Provides business operations for registering and querying sales.
- * Coordinates sale persistence with product stock validation and updates.
+ *
+ * <p>This service coordinates sale persistence with product stock
+ * validation and inventory updates.</p>
  */
 public class SaleService {
 

@@ -1,4 +1,4 @@
-package gamezone.model;
+package com.gamezone.model;
 
 /**
  * Represents a console product in the GameZone catalog.

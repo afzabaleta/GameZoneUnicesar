@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,23 +54,130 @@ public class PersonRepository {
     }
 
     /**
-     * Loads all persisted customers.
+     * Loads all persisted customers from the customers file.
      *
-     * @return the persisted customers
+     * @return the persisted customers, or an empty list when the file does not exist
      */
     public List<Customer> loadCustomers() {
-        // Implemented in commit 8.
-        return Collections.emptyList();
+        if (!Files.exists(customersPath)) {
+            return new ArrayList<>();
+        }
+
+        List<Customer> customers = new ArrayList<>();
+
+        try {
+            List<String> lines = Files.readAllLines(customersPath);
+
+            for (String line : lines) {
+                if (line.isBlank()) {
+                    continue;
+                }
+
+                String[] data = line.split("\\|", -1);
+
+                if (data.length == 4) {
+                    Customer customer = new Customer(
+                            data[0],
+                            data[1],
+                            data[2],
+                            data[3]
+                    );
+
+                    customers.add(customer);
+                }
+            }
+
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Unable to load customers from file.",
+                    e
+            );
+        }
+
+        return customers;
     }
 
     /**
-     * Loads all persisted sellers.
+     * Loads all persisted sellers from the sellers file.
      *
-     * @return the persisted sellers
+     * <p>If the sellers file does not exist, the repository provides three
+     * default sellers for the first execution.</p>
+     *
+     * @return the persisted sellers or the default sellers
      */
     public List<Seller> loadSellers() {
-        // Implemented in commit 8.
-        return Collections.emptyList();
+        if (!Files.exists(sellersPath)) {
+            return createDefaultSellers();
+        }
+
+        List<Seller> sellers = new ArrayList<>();
+
+        try {
+            List<String> lines = Files.readAllLines(sellersPath);
+
+            for (String line : lines) {
+                if (line.isBlank()) {
+                    continue;
+                }
+
+                String[] data = line.split("\\|", -1);
+
+                if (data.length == 5) {
+                    Seller seller = new Seller(
+                            data[0],
+                            data[1],
+                            data[2],
+                            data[3],
+                            data[4]
+                    );
+
+                    sellers.add(seller);
+                }
+            }
+
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Unable to load sellers from file.",
+                    e
+            );
+        }
+
+        return sellers;
+    }
+
+    /**
+     * Creates the default sellers required for the first execution.
+     *
+     * @return a list containing three default sellers
+     */
+    private List<Seller> createDefaultSellers() {
+        List<Seller> sellers = new ArrayList<>();
+
+        sellers.add(new Seller(
+                "Carlos Rodriguez",
+                "1001",
+                "3001111111",
+                "EMP001",
+                "Morning"
+        ));
+
+        sellers.add(new Seller(
+                "Laura Martinez",
+                "1002",
+                "3002222222",
+                "EMP002",
+                "Afternoon"
+        ));
+
+        sellers.add(new Seller(
+                "Andres Gomez",
+                "1003",
+                "3003333333",
+                "EMP003",
+                "Evening"
+        ));
+
+        return sellers;
     }
 
     /**

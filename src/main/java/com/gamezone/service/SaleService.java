@@ -35,7 +35,8 @@ public class SaleService {
     /**
      * Registers a new sale after validating that it is not null, that it
      * contains at least one product, and that enough stock is available
-     * for every product sold.
+     * for every product sold. On success, updates the stock of each
+     * product and persists the sale together with the existing sales.
      *
      * @param sale the sale to register
      */
@@ -54,6 +55,7 @@ public class SaleService {
         List<Product> availableProducts = productService.listProducts();
 
         validateStock(requestedQuantities, availableProducts);
+        updateStock(requestedQuantities, availableProducts);
 
         List<Sale> sales = saleRepository.loadSales();
         sales.add(sale);
@@ -133,6 +135,26 @@ public class SaleService {
                                 + product.getAvailableQuantity()
                 );
             }
+        }
+    }
+
+    private void updateStock(
+            Map<String, Integer> requestedQuantities,
+            List<Product> availableProducts) {
+
+        for (Map.Entry<String, Integer> entry : requestedQuantities.entrySet()) {
+            Product product = findProductById(
+                    availableProducts,
+                    entry.getKey()
+            );
+
+            int remainingStock =
+                    product.getAvailableQuantity() - entry.getValue();
+
+            productService.updateStock(
+                    entry.getKey(),
+                    remainingStock
+            );
         }
     }
 

@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,21 +35,64 @@ public class PersonRepository {
     }
 
     /**
-     * Saves the provided customers.
+     * Saves the provided customers to the customers file.
      *
      * @param customers customers to save
      */
     public void saveCustomers(List<Customer> customers) {
-        // Implemented in commit 9.
+        try {
+            Files.createDirectories(customersPath.getParent());
+
+            List<String> lines = new ArrayList<>();
+
+            for (Customer customer : customers) {
+                lines.add(
+                        customer.getName() + "|" +
+                                customer.getIdentification() + "|" +
+                                customer.getPhone() + "|" +
+                                customer.getEmail()
+                );
+            }
+
+            Files.write(customersPath, lines);
+
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Unable to save customers to file.",
+                    e
+            );
+        }
     }
 
     /**
-     * Saves the provided sellers.
+     * Saves the provided sellers to the sellers file.
      *
      * @param sellers sellers to save
      */
     public void saveSellers(List<Seller> sellers) {
-        // Implemented in commit 9.
+        try {
+            Files.createDirectories(sellersPath.getParent());
+
+            List<String> lines = new ArrayList<>();
+
+            for (Seller seller : sellers) {
+                lines.add(
+                        seller.getName() + "|" +
+                                seller.getIdentification() + "|" +
+                                seller.getPhone() + "|" +
+                                seller.getEmployeeCode() + "|" +
+                                seller.getWorkShift()
+                );
+            }
+
+            Files.write(sellersPath, lines);
+
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Unable to save sellers to file.",
+                    e
+            );
+        }
     }
 
     /**

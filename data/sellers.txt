@@ -1,0 +1,3 @@
+Carlos Rodriguez|1001|3001111111|EMP001|Morning
+Laura Martinez|1002|3002222222|EMP002|Afternoon
+Andres Gomez|1003|3003333333|EMP003|Evening

@@ -1,7 +1,16 @@
 package com.gamezone.persistence;
 
+import com.gamezone.model.Customer;
+import com.gamezone.model.Product;
 import com.gamezone.model.Sale;
+import com.gamezone.model.Seller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,7 +58,89 @@ public class SaleRepository {
      * @return the list of sales stored in the file
      */
     public List<Sale> loadSales() {
-        // TODO: implement in commit #4
-        return null;
+        List<Sale> sales = new ArrayList<>();
+        File file = new File(FILE_PATH);
+
+        if (!file.exists()) {
+            return sales;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.isBlank()) {
+                    continue;
+                }
+
+                sales.add(parseLine(line));
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "Error loading sales from file: " + e.getMessage(), e
+            );
+        }
+
+        return sales;
+    }
+
+    private Sale parseLine(String line) {
+        String[] fields = line.split(FIELD_SEPARATOR, -1);
+
+        if (fields.length != 4) {
+            throw new IllegalStateException(
+                    "Expected 4 fields, found " + fields.length
+            );
+        }
+
+        LocalDate date = LocalDate.parse(fields[0]);
+        Customer customer = findCustomerById(fields[1]);
+        Seller seller = findSellerById(fields[2]);
+
+        List<Product> products = new ArrayList<>();
+
+        for (String productId : fields[3].split(PRODUCT_SEPARATOR)) {
+            products.add(findProductById(productId));
+        }
+
+        return new Sale(date, customer, seller, products);
+    }
+
+    private Customer findCustomerById(String id) {
+        for (Customer customer : personRepository.loadCustomers()) {
+            if (customer.getIdentification().equals(id)) {
+                return customer;
+            }
+        }
+
+        throw new IllegalStateException("Customer not found for id: " + id);
+    }
+
+    private Seller findSellerById(String id) {
+        for (Seller seller : personRepository.loadSellers()) {
+            if (seller.getIdentification().equals(id)) {
+                return seller;
+            }
+        }
+
+        throw new IllegalStateException("Seller not found for id: " + id);
+    }
+
+    private Product findProductById(String id) {
+        try {
+            for (Product product : productRepository.loadProducts()) {
+                if (product.getIdentifier().equals(id)) {
+                    return product;
+                }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new IllegalStateException(
+                    "Unable to load products from file",
+                    e
+            );
+        }
+
+        throw new IllegalStateException("Product not found for id: " + id);
     }
 }

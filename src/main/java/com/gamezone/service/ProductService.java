@@ -5,6 +5,7 @@ import com.gamezone.persistence.ProductRepository;
 import com.gamezone.model.VideoGame;
 import com.gamezone.model.Console;
 import java.util.List;
+import java.io.IOException;
 
 /**
  * Service class that contains business logic related to products.
@@ -72,6 +73,12 @@ public class ProductService {
 
         if (product != null) {
             product.setAvailableQuantity(quantity);
+
+            try {
+                productRepository.saveProducts(productRepository.findAll());
+            } catch (IOException e) {
+                throw new IllegalStateException("Could not update product stock.", e);
+            }
         }
     }
     /**

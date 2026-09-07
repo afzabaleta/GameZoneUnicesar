@@ -30,11 +30,22 @@ public class SaleService {
     }
 
     /**
-     * Registers a new sale.
+     * Registers a new sale after validating that it is not null and that
+     * it contains at least one product.
      *
      * @param sale the sale to register
      */
     public void registerSale(Sale sale) {
+        if (sale == null) {
+            throw new IllegalArgumentException("Sale cannot be null.");
+        }
+
+        if (sale.getProducts() == null || sale.getProducts().isEmpty()) {
+            throw new IllegalArgumentException(
+                    "A sale must contain at least one product."
+            );
+        }
+
         List<Sale> sales = saleRepository.loadSales();
         sales.add(sale);
         saleRepository.saveSales(sales);

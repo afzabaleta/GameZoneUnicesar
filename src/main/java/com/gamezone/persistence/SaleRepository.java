@@ -6,9 +6,13 @@ import com.gamezone.model.Sale;
 import com.gamezone.model.Seller;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +52,20 @@ public class SaleRepository {
      * @param sales the list of sales to persist
      */
     public void saveSales(List<Sale> sales) {
-        // TODO: implement in commit #5
+        try {
+            Files.createDirectories(Paths.get(DATA_DIRECTORY));
+
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+                for (Sale sale : sales) {
+                    writer.write(buildLine(sale));
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(
+                    "Error saving sales to file: " + e.getMessage(), e
+            );
+        }
     }
 
     /**
@@ -83,6 +100,24 @@ public class SaleRepository {
         }
 
         return sales;
+    }
+
+    private String buildLine(Sale sale) {
+        StringBuilder productIds = new StringBuilder();
+        List<Product> products = sale.getProducts();
+
+        for (int i = 0; i < products.size(); i++) {
+            productIds.append(products.get(i).getIdentifier());
+
+            if (i < products.size() - 1) {
+                productIds.append(PRODUCT_SEPARATOR);
+            }
+        }
+
+        return sale.getDate() + FIELD_SEPARATOR
+                + sale.getCustomer().getIdentification() + FIELD_SEPARATOR
+                + sale.getSeller().getIdentification() + FIELD_SEPARATOR
+                + productIds;
     }
 
     private Sale parseLine(String line) {

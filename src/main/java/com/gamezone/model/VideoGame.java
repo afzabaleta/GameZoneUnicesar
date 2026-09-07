@@ -1,4 +1,4 @@
-package gamezone.model;
+package com.gamezone.model;
 /**
  * Represents a video game product in the GameZone catalog.
  * Extends the common attributes and behavior from Product.

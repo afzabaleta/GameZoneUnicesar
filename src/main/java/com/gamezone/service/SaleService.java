@@ -1,12 +1,15 @@
 package com.gamezone.service;
 
 import com.gamezone.model.Customer;
+import com.gamezone.model.Product;
 import com.gamezone.model.Sale;
 import com.gamezone.model.Seller;
 import com.gamezone.persistence.SaleRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Provides business operations for registering and querying sales.
@@ -30,8 +33,9 @@ public class SaleService {
     }
 
     /**
-     * Registers a new sale after validating that it is not null and that
-     * it contains at least one product.
+     * Registers a new sale after validating that it is not null, that it
+     * contains at least one product, and that enough stock is available
+     * for every product sold.
      *
      * @param sale the sale to register
      */
@@ -45,6 +49,11 @@ public class SaleService {
                     "A sale must contain at least one product."
             );
         }
+
+        Map<String, Integer> requestedQuantities = countByIdentifier(sale.getProducts());
+        List<Product> availableProducts = productService.listProducts();
+
+        validateStock(requestedQuantities, availableProducts);
 
         List<Sale> sales = saleRepository.loadSales();
         sales.add(sale);
@@ -92,5 +101,53 @@ public class SaleService {
             }
         }
         return result;
+    }
+
+    private Map<String, Integer> countByIdentifier(List<Product> products) {
+        Map<String, Integer> counts = new HashMap<>();
+
+        for (Product product : products) {
+            counts.merge(product.getIdentifier(), 1, Integer::sum);
+        }
+
+        return counts;
+    }
+
+    private void validateStock(
+            Map<String, Integer> requestedQuantities,
+            List<Product> availableProducts) {
+
+        for (Map.Entry<String, Integer> entry : requestedQuantities.entrySet()) {
+            Product product = findProductById(
+                    availableProducts,
+                    entry.getKey()
+            );
+
+            if (entry.getValue() > product.getAvailableQuantity()) {
+                throw new IllegalStateException(
+                        "Insufficient stock for product "
+                                + product.getIdentifier()
+                                + ": requested "
+                                + entry.getValue()
+                                + ", available "
+                                + product.getAvailableQuantity()
+                );
+            }
+        }
+    }
+
+    private Product findProductById(
+            List<Product> products,
+            String identifier) {
+
+        for (Product product : products) {
+            if (product.getIdentifier().equals(identifier)) {
+                return product;
+            }
+        }
+
+        throw new IllegalStateException(
+                "Product not found for id: " + identifier
+        );
     }
 }

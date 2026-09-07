@@ -15,6 +15,9 @@ import java.util.List;
  *
  * <p>The repository uses plain text files to preserve person information
  * between application executions.</p>
+ *
+ * <p>Customers and sellers are stored in separate files inside the
+ * application's data directory.</p>
  */
 public class PersonRepository {
 
@@ -27,6 +30,10 @@ public class PersonRepository {
 
     /**
      * Creates a person repository using the default data directory.
+     *
+     * <p>The repository stores customer information in
+     * {@code data/customers.txt} and seller information in
+     * {@code data/sellers.txt}.</p>
      */
     public PersonRepository() {
         Path dataPath = Paths.get(DATA_DIRECTORY);
@@ -37,7 +44,8 @@ public class PersonRepository {
     /**
      * Saves the provided customers to the customers file.
      *
-     * @param customers customers to save
+     * @param customers list of customers to persist
+     * @throws IllegalStateException if the customers cannot be saved
      */
     public void saveCustomers(List<Customer> customers) {
         try {
@@ -67,7 +75,8 @@ public class PersonRepository {
     /**
      * Saves the provided sellers to the sellers file.
      *
-     * @param sellers sellers to save
+     * @param sellers list of sellers to persist
+     * @throws IllegalStateException if the sellers cannot be saved
      */
     public void saveSellers(List<Seller> sellers) {
         try {
@@ -98,7 +107,10 @@ public class PersonRepository {
     /**
      * Loads all persisted customers from the customers file.
      *
+     * <p>If the customers file does not exist, an empty list is returned.</p>
+     *
      * @return the persisted customers, or an empty list when the file does not exist
+     * @throws IllegalStateException if the customers file cannot be read
      */
     public List<Customer> loadCustomers() {
         if (!Files.exists(customersPath)) {
@@ -142,10 +154,11 @@ public class PersonRepository {
     /**
      * Loads all persisted sellers from the sellers file.
      *
-     * <p>If the sellers file does not exist, the repository provides three
-     * default sellers for the first execution.</p>
+     * <p>If the sellers file does not exist, the repository provides
+     * three default sellers for the first execution.</p>
      *
      * @return the persisted sellers or the default sellers
+     * @throws IllegalStateException if the sellers file cannot be read
      */
     public List<Seller> loadSellers() {
         if (!Files.exists(sellersPath)) {

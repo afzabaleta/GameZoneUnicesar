@@ -32,7 +32,20 @@ public class Sale {
         this.seller = seller;
         this.products = products;
     }
-    
+
+    /**
+     * Calculates the total price of the sale by summing the price of every product.
+     *
+     * @return the total amount of the sale
+     */
+    public double calculateTotal() {
+        double total = 0.0;
+        for (Product product : products) {
+            total += product.getPrice();
+        }
+        return total;
+    }
+
     /**
      * Returns the sale date.
      *

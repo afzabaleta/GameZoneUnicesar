@@ -27,15 +27,27 @@ public class ProductRepository {
     public ProductRepository() {
         this.filePath = "data/products.dat";
         this.products = new ArrayList<>();
+
+        try {
+            loadProducts();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new IllegalStateException("Could not load products.", e);
+        }
     }
 
     /**
-     * Saves a product in the repository.
+     * Saves a product in memory and persists the updated list.
      *
      * @param product product to save
      */
     public void save(Product product) {
         products.add(product);
+
+        try {
+            saveProducts(products);
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not save product.", e);
+        }
     }
 
     /**

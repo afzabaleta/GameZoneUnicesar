@@ -127,6 +127,12 @@ public class SaleService {
                     entry.getKey()
             );
 
+            if (product.getAvailableQuantity() < 0) {
+                throw new IllegalStateException(
+                        "Invalid stock for product " + product.getIdentifier()
+                );
+            }
+
             if (entry.getValue() > product.getAvailableQuantity()) {
                 throw new IllegalStateException(
                         "Insufficient stock for product "

@@ -1,7 +1,7 @@
 package com.gamezone.model;
 
 import java.util.List;
-
+import java.util.ArrayList;
 /**
  * Represents a generic accessory sold by the store.
  */
@@ -25,7 +25,9 @@ public abstract class Accessory extends Product {
                      List<Console> compatibleConsoles) {
 
         super(identifier, title, price, availableQuantity);
-        this.compatibleConsoles = compatibleConsoles;
+        this.compatibleConsoles = compatibleConsoles != null
+                ? compatibleConsoles
+                : new ArrayList<>();
     }
 
 

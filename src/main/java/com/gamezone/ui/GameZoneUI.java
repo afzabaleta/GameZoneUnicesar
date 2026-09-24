@@ -8,6 +8,7 @@ import com.gamezone.model.Seller;
 import com.gamezone.model.VideoGame;
 import com.gamezone.service.PersonService;
 import com.gamezone.service.ProductService;
+import com.gamezone.service.AccessoryService;
 import com.gamezone.service.SaleService;
 
 import java.time.LocalDate;
@@ -27,19 +28,27 @@ public class GameZoneUI {
 
     private final PersonService personService;
     private final ProductService productService;
+    private final AccessoryService accessoryService;
     private final SaleService saleService;
     private final Scanner scanner;
 
     /**
-     * Creates the console UI wired to the three services it depends on.
+     * Creates the console UI wired to the services it depends on.
      *
-     * @param personService  service used for customer and seller operations
+     * @param personService service used for customer and seller operations
      * @param productService service used for product operations
-     * @param saleService    service used for sale operations
+     * @param accessoryService service used for accessory operations
+     * @param saleService service used for sale operations
      */
-    public GameZoneUI(PersonService personService, ProductService productService, SaleService saleService) {
+    public GameZoneUI(
+            PersonService personService,
+            ProductService productService,
+            AccessoryService accessoryService,
+            SaleService saleService) {
+
         this.personService = personService;
         this.productService = productService;
+        this.accessoryService = accessoryService;
         this.saleService = saleService;
         this.scanner = new Scanner(System.in);
     }

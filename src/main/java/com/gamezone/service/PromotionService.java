@@ -34,15 +34,6 @@ public class PromotionService {
         this.promotionRepository = promotionRepository;
     }
 
-    /**
-     * Registers a percentage discount promotion.
-     *
-     * @param identifier promotion identifier
-     * @param name promotion name
-     * @param startDate start date
-     * @param endDate end date
-     * @param percentage discount percentage
-     */
     public void registerPercentageDiscount(
             String identifier,
             String name,
@@ -61,16 +52,6 @@ public class PromotionService {
         );
     }
 
-    /**
-     * Registers a category discount promotion.
-     *
-     * @param identifier promotion identifier
-     * @param name promotion name
-     * @param startDate start date
-     * @param endDate end date
-     * @param percentage discount percentage
-     * @param targetCategory target category
-     */
     public void registerCategoryDiscount(
             String identifier,
             String name,
@@ -91,16 +72,6 @@ public class PromotionService {
         );
     }
 
-    /**
-     * Registers a bulk purchase discount promotion.
-     *
-     * @param identifier promotion identifier
-     * @param name promotion name
-     * @param startDate start date
-     * @param endDate end date
-     * @param minimumQuantity minimum quantity
-     * @param percentage discount percentage
-     */
     public void registerBulkPurchaseDiscount(
             String identifier,
             String name,
@@ -131,10 +102,28 @@ public class PromotionService {
     }
 
     /**
-     * Saves a new promotion.
+     * Returns promotions active on the current date.
      *
-     * @param promotion promotion to save
+     * @return active promotions
      */
+    public List<Promotion> listActivePromotions() {
+
+        LocalDate today = LocalDate.now();
+
+        List<Promotion> activePromotions =
+                new ArrayList<>();
+
+        for (Promotion promotion :
+                promotionRepository.loadAll()) {
+
+            if (promotion.isActive(today)) {
+                activePromotions.add(promotion);
+            }
+        }
+
+        return activePromotions;
+    }
+
     private void savePromotion(Promotion promotion) {
 
         List<Promotion> promotions =

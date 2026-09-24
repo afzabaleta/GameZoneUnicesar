@@ -27,7 +27,7 @@ public class Main {
         PersonRepository personRepository = new PersonRepository();
         ProductRepository productRepository = new ProductRepository();
         AccessoryRepository accessoryRepository = new AccessoryRepository(productRepository);
-        SaleRepository saleRepository = new SaleRepository(personRepository, productRepository);
+        SaleRepository saleRepository = new SaleRepository(personRepository, productRepository, accessoryRepository);
 
         PersonService personService = new PersonService(personRepository);
         ProductService productService = new ProductService(productRepository);

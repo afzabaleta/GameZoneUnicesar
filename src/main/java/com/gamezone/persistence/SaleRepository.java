@@ -21,8 +21,8 @@ import java.util.List;
  * Handles saving and loading sales to and from a text file.
  * Since a Sale references Customer, Seller and Product objects,
  * this repository stores only their identifiers and relies on
- * PersonRepository and ProductRepository to reconstruct the real
- * objects when loading sales back into memory.
+ * PersonRepository, ProductRepository and AccessoryRepository
+ * to reconstruct the real objects when loading sales.
  */
 public class SaleRepository {
 
@@ -33,6 +33,7 @@ public class SaleRepository {
 
     private final PersonRepository personRepository;
     private final ProductRepository productRepository;
+    private final AccessoryRepository accessoryRepository;
 
     /**
      * Creates a SaleRepository able to resolve customers, sellers and
@@ -41,9 +42,11 @@ public class SaleRepository {
      * @param personRepository  repository used to look up customers and sellers
      * @param productRepository repository used to look up products
      */
-    public SaleRepository(PersonRepository personRepository, ProductRepository productRepository) {
+    public SaleRepository(PersonRepository personRepository, ProductRepository productRepository, AccessoryRepository accessoryRepository) {
+
         this.personRepository = personRepository;
         this.productRepository = productRepository;
+        this.accessoryRepository = accessoryRepository;
     }
 
     /**
@@ -136,7 +139,7 @@ public class SaleRepository {
         List<Product> products = new ArrayList<>();
 
         for (String productId : fields[3].split(PRODUCT_SEPARATOR)) {
-            products.add(findProductById(productId));
+            products.add(findItemById(productId));
         }
 
         return new Sale(date, customer, seller, products);
@@ -162,7 +165,14 @@ public class SaleRepository {
         throw new IllegalStateException("Seller not found for id: " + id);
     }
 
-    private Product findProductById(String id) {
+    /**
+     * Finds a product or accessory by identifier.
+     *
+     * @param id item identifier
+     * @return matching product or accessory
+     */
+    private Product findItemById(String id) {
+
         try {
             for (Product product : productRepository.loadProducts()) {
                 if (product.getIdentifier().equals(id)) {
@@ -176,6 +186,14 @@ public class SaleRepository {
             );
         }
 
-        throw new IllegalStateException("Product not found for id: " + id);
+        Product accessory = accessoryRepository.findByIdentifier(id);
+
+        if (accessory != null) {
+            return accessory;
+        }
+
+        throw new IllegalStateException(
+                "Product or accessory not found for id: " + id
+        );
     }
 }

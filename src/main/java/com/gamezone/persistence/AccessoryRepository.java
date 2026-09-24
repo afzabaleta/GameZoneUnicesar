@@ -29,10 +29,14 @@ public class AccessoryRepository {
     /**
      * Creates an accessory repository using the default CSV file.
      */
-    public AccessoryRepository() {
+    public AccessoryRepository(ProductRepository productRepository) {
+        if (productRepository == null) {
+            throw new IllegalArgumentException("Product repository cannot be null");
+        }
+
         this.accessoriesPath = Paths.get(FILE_PATH);
         this.accessories = new ArrayList<>();
-        this.productRepository = new ProductRepository();
+        this.productRepository = productRepository;
 
         try {
             loadAccessories();

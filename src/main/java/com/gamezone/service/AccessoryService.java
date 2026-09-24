@@ -6,6 +6,7 @@ import com.gamezone.model.Controller;
 import com.gamezone.model.Memory;
 import com.gamezone.persistence.AccessoryRepository;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -66,6 +67,73 @@ public class AccessoryService {
      */
     public List<Accessory> listAccessories() {
         return accessoryRepository.findAll();
+    }
+
+    /**
+     * Returns accessories filtered by their type.
+     *
+     * @param type accessory type to search
+     * @return list of accessories with the specified type
+     */
+    public List<Accessory> listByType(String type) {
+        if (type == null || type.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Accessory type cannot be blank");
+        }
+
+        return accessoryRepository.findByType(type);
+    }
+
+    /**
+     * Returns accessories compatible with a console.
+     *
+     * @param consoleId identifier of the console
+     * @return list of compatible accessories
+     */
+    public List<Accessory> listCompatibleWithConsole(String consoleId) {
+        if (consoleId == null || consoleId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Console identifier cannot be blank");
+        }
+
+        return accessoryRepository.findCompatibleWithConsole(consoleId);
+    }
+
+    /**
+     * Updates the stock of an accessory.
+     *
+     * @param identifier accessory identifier
+     * @param newStock new available quantity
+     */
+    public void updateStock(String identifier, int newStock) {
+
+        if (identifier == null || identifier.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Accessory identifier cannot be blank");
+        }
+
+        if (newStock < 0) {
+            throw new IllegalArgumentException(
+                    "Accessory stock cannot be negative");
+        }
+
+        Accessory accessory =
+                accessoryRepository.findByIdentifier(identifier);
+
+        if (accessory == null) {
+            throw new IllegalArgumentException(
+                    "Accessory not found: " + identifier);
+        }
+
+        accessory.setAvailableQuantity(newStock);
+
+        try {
+            accessoryRepository.saveAll(
+                    accessoryRepository.findAll());
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Could not update accessory stock.", e);
+        }
     }
 
     /**

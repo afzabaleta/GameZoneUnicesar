@@ -101,6 +101,19 @@ public class AccessoryRepository {
     public List<Accessory> findCompatibleWithConsole(
             String consoleIdentifier) {
 
+        if (consoleIdentifier == null || consoleIdentifier.isBlank()) {
+            return new ArrayList<>();
+        }
+
+        try {
+            loadAccessories();
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Unable to refresh accessories before compatibility query.",
+                    e
+            );
+        }
+
         List<Accessory> result = new ArrayList<>();
 
         for (Accessory accessory : accessories) {

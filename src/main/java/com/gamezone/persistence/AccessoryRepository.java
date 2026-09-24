@@ -1,22 +1,44 @@
 package com.gamezone.persistence;
 
 import com.gamezone.model.Accessory;
+import com.gamezone.model.Cable;
+import com.gamezone.model.Console;
+import com.gamezone.model.Controller;
+import com.gamezone.model.Memory;
+import com.gamezone.model.Product;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Repository responsible for persisting and loading accessories.
  */
 public class AccessoryRepository {
 
+    private static final String FILE_PATH = "data/accessories.csv";
+
+    private final Path accessoriesPath;
     private final List<Accessory> accessories;
+    private final ProductRepository productRepository;
 
     /**
-     * Creates an accessory repository.
+     * Creates an accessory repository using the default CSV file.
      */
     public AccessoryRepository() {
+        this.accessoriesPath = Paths.get(FILE_PATH);
         this.accessories = new ArrayList<>();
+        this.productRepository = new ProductRepository();
+
+        try {
+            loadAccessories();
+        } catch (IOException e) {
+            throw new IllegalStateException("Unable to load accessories.", e);
+        }
     }
 
     /**
@@ -42,5 +64,182 @@ public class AccessoryRepository {
         }
 
         return null;
+    }
+
+    /**
+     * Returns accessories of the requested type.
+     *
+     * @param type accessory type: controller, cable or memory
+     * @return matching accessories
+     */
+    public List<Accessory> findByType(String type) {
+        String normalizedType = type == null
+                ? ""
+                : type.trim().toLowerCase();
+
+        return accessories.stream()
+                .filter(accessory ->
+                        (normalizedType.equals("controller")
+                                && accessory instanceof Controller)
+                                || (normalizedType.equals("cable")
+                                && accessory instanceof Cable)
+                                || (normalizedType.equals("memory")
+                                && accessory instanceof Memory))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns accessories compatible with a console identifier.
+     *
+     * @param consoleIdentifier console identifier
+     * @return compatible accessories
+     */
+    public List<Accessory> findCompatibleWithConsole(
+            String consoleIdentifier) {
+
+        List<Accessory> result = new ArrayList<>();
+
+        for (Accessory accessory : accessories) {
+            for (Console console : accessory.getCompatibleConsoles()) {
+
+                if (console.getIdentifier().equals(consoleIdentifier)) {
+                    result.add(accessory);
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Loads accessories from the CSV file.
+     *
+     * @return loaded accessories
+     * @throws IOException if the file cannot be read
+     */
+    public List<Accessory> loadAccessories() throws IOException {
+
+        accessories.clear();
+
+        if (!Files.exists(accessoriesPath)) {
+            return accessories;
+        }
+
+        List<String> lines = Files.readAllLines(accessoriesPath);
+
+        for (String line : lines) {
+
+            if (line.isBlank()) {
+                continue;
+            }
+
+            Accessory accessory = parseAccessory(line);
+
+            if (accessory != null) {
+                accessories.add(accessory);
+            }
+        }
+
+        return new ArrayList<>(accessories);
+    }
+
+    /**
+     * Parses one CSV row into an accessory object.
+     *
+     * @param line CSV row
+     * @return parsed accessory or null for invalid rows
+     */
+    private Accessory parseAccessory(String line) {
+
+        String[] data = line.split("\\|", -1);
+
+        if (data.length < 8) {
+            return null;
+        }
+
+        String type = data[0].trim().toLowerCase();
+        String identifier = data[1].trim();
+        String title = data[2].trim();
+        double price = Double.parseDouble(data[3].trim());
+        int quantity = Integer.parseInt(data[4].trim());
+
+        List<Console> compatibleConsoles =
+                resolveCompatibleConsoles(data[7]);
+
+        return switch (type) {
+
+            case "controller" -> new Controller(
+                    identifier,
+                    title,
+                    price,
+                    quantity,
+                    data[5].trim(),
+                    compatibleConsoles
+            );
+
+            case "cable" -> {
+
+                Cable cable = new Cable(
+                        identifier,
+                        title,
+                        price,
+                        quantity,
+                        Double.parseDouble(data[5].trim()),
+                        data[6].trim()
+                );
+
+                cable.setCompatibleConsoles(compatibleConsoles);
+
+                yield cable;
+            }
+
+            case "memory" -> new Memory(
+                    identifier,
+                    title,
+                    price,
+                    quantity,
+                    Double.parseDouble(data[5].trim()),
+                    data[6].trim(),
+                    compatibleConsoles
+            );
+
+            default -> null;
+        };
+    }
+
+    /**
+     * Resolves console identifiers to existing Console objects.
+     *
+     * @param rawIdentifiers comma-separated console identifiers
+     * @return matching consoles
+     */
+    private List<Console> resolveCompatibleConsoles(
+            String rawIdentifiers) {
+
+        List<Console> consoles = new ArrayList<>();
+
+        if (rawIdentifiers == null || rawIdentifiers.isBlank()) {
+            return consoles;
+        }
+
+        List<Product> products = productRepository.findAll();
+
+        for (String rawIdentifier : rawIdentifiers.split(",")) {
+
+            String identifier = rawIdentifier.trim();
+
+            for (Product product : products) {
+
+                if (product instanceof Console
+                        && product.getIdentifier().equals(identifier)) {
+
+                    consoles.add((Console) product);
+                    break;
+                }
+            }
+        }
+
+        return consoles;
     }
 }

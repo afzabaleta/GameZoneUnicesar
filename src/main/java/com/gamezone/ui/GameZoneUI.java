@@ -758,7 +758,8 @@ public class GameZoneUI {
      * @return list of consoles
      */
     private List<Console> getAvailableConsoles() {
-        List<Console> consoles = new ArrayList<>();
+        List<Console> consoles =
+                new ArrayList<>();
 
         List<Product> products =
                 productService.listProducts();
@@ -930,13 +931,13 @@ public class GameZoneUI {
             return;
         }
 
-        List<Product> selectedProducts =
-                selectProductsForSale();
+        List<Product> selectedItems =
+                selectItemsForSale();
 
-        if (selectedProducts.isEmpty()) {
+        if (selectedItems.isEmpty()) {
             System.out.println(
-                    "La venta debe tener al menos un producto. "
-                            + "Venta cancelada."
+                    "La venta debe tener al menos un producto "
+                            + "o accesorio. Venta cancelada."
             );
             return;
         }
@@ -946,7 +947,7 @@ public class GameZoneUI {
                     LocalDate.now(),
                     customer,
                     seller,
-                    selectedProducts
+                    selectedItems
             );
 
             saleService.registerSale(sale);
@@ -964,50 +965,63 @@ public class GameZoneUI {
     }
 
     /**
-     * Selects products for a sale.
+     * Selects products and accessories for a sale.
      *
-     * @return selected products
+     * @return selected products and accessories
      */
-    private List<Product> selectProductsForSale() {
-        List<Product> selectedProducts =
+    private List<Product> selectItemsForSale() {
+        List<Product> selectedItems =
                 new ArrayList<>();
 
+        System.out.println();
+        System.out.println(
+                "===== Productos disponibles ====="
+        );
         listProducts();
 
-        boolean addingProducts = true;
+        System.out.println();
+        System.out.println(
+                "===== Accesorios disponibles ====="
+        );
+        listAccessories();
 
-        while (addingProducts) {
+        boolean addingItems = true;
+
+        while (addingItems) {
             System.out.print(
-                    "Identificador del producto a agregar "
+                    "Identificador del producto o accesorio "
                             + "(vacío para terminar): "
             );
 
-            String productId = scanner.nextLine();
+            String itemId = scanner.nextLine().trim();
 
-            if (productId.isBlank()) {
-                addingProducts = false;
+            if (itemId.isBlank()) {
+                addingItems = false;
                 continue;
             }
 
-            Product product =
-                    findProductById(productId);
+            Product item =
+                    findItemById(itemId);
 
-            if (product == null) {
+            if (item == null) {
                 System.out.println(
-                        "Producto no encontrado. Intenta de nuevo."
+                        "Producto o accesorio no encontrado. "
+                                + "Intenta de nuevo."
                 );
                 continue;
             }
 
-            selectedProducts.add(product);
+            selectedItems.add(item);
 
             System.out.println(
                     "Agregado: "
-                            + product.getTitle()
+                            + item.getTitle()
+                            + " | $"
+                            + item.getPrice()
             );
         }
 
-        return selectedProducts;
+        return selectedItems;
     }
 
     /**
@@ -1139,12 +1153,12 @@ public class GameZoneUI {
     }
 
     /**
-     * Finds a product by identifier.
+     * Finds a product or accessory by identifier.
      *
-     * @param id product identifier
-     * @return matching product or null
+     * @param id item identifier
+     * @return matching product or accessory, or null
      */
-    private Product findProductById(String id) {
+    private Product findItemById(String id) {
         for (Product product :
                 productService.listProducts()) {
 
@@ -1152,6 +1166,16 @@ public class GameZoneUI {
                     .equals(id)) {
 
                 return product;
+            }
+        }
+
+        for (Accessory accessory :
+                accessoryService.listAccessories()) {
+
+            if (accessory.getIdentifier()
+                    .equals(id)) {
+
+                return accessory;
             }
         }
 

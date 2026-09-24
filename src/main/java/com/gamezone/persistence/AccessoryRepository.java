@@ -242,4 +242,103 @@ public class AccessoryRepository {
 
         return consoles;
     }
+
+    /**
+     * Saves a new accessory and persists the full accessory list.
+     *
+     * @param accessory accessory to save
+     */
+    public void save(Accessory accessory) {
+        accessories.add(accessory);
+
+        try {
+            saveAll(accessories);
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Unable to save accessory.", e);
+        }
+    }
+
+    /**
+     * Persists all accessories in CSV format.
+     *
+     * @param accessoriesToSave accessories to persist
+     * @throws IOException if the file cannot be written
+     */
+    public void saveAll(List<Accessory> accessoriesToSave)
+            throws IOException {
+
+        Path parent = accessoriesPath.getParent();
+
+        if (parent != null) {
+            Files.createDirectories(parent);
+        }
+
+        List<Accessory> snapshot =
+                new ArrayList<>(accessoriesToSave);
+
+        List<String> lines = new ArrayList<>();
+
+        for (Accessory accessory : snapshot) {
+            lines.add(toCsv(accessory));
+        }
+
+        Files.write(accessoriesPath, lines);
+
+        accessories.clear();
+        accessories.addAll(snapshot);
+    }
+
+    /**
+     * Converts an accessory to the repository CSV representation.
+     *
+     * @param accessory accessory to convert
+     * @return CSV row
+     */
+    private String toCsv(Accessory accessory) {
+
+        String type;
+        String specific1;
+        String specific2;
+
+        if (accessory instanceof Controller controller) {
+
+            type = "CONTROLLER";
+            specific1 = controller.getConnectionType();
+            specific2 = "-";
+
+        } else if (accessory instanceof Cable cable) {
+
+            type = "CABLE";
+            specific1 = String.valueOf(cable.getLength());
+            specific2 = cable.getConnectorType();
+
+        } else if (accessory instanceof Memory memory) {
+
+            type = "MEMORY";
+            specific1 = String.valueOf(memory.getCapacityGB());
+            specific2 = memory.getMemoryType();
+
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported accessory type.");
+        }
+
+        String compatibleIds = accessory.getCompatibleConsoles()
+                .stream()
+                .map(Console::getIdentifier)
+                .collect(Collectors.joining(","));
+
+        return String.join(
+                "|",
+                type,
+                accessory.getIdentifier(),
+                accessory.getTitle(),
+                String.valueOf(accessory.getPrice()),
+                String.valueOf(accessory.getAvailableQuantity()),
+                specific1,
+                specific2,
+                compatibleIds
+        );
+    }
 }

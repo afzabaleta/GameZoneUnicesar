@@ -17,11 +17,6 @@ public class PromotionService {
 
     private final PromotionRepository promotionRepository;
 
-    /**
-     * Creates a promotion service.
-     *
-     * @param promotionRepository repository used to persist promotions
-     */
     public PromotionService(
             PromotionRepository promotionRepository) {
 
@@ -92,20 +87,10 @@ public class PromotionService {
         );
     }
 
-    /**
-     * Returns all registered promotions.
-     *
-     * @return all promotions
-     */
     public List<Promotion> listAllPromotions() {
         return promotionRepository.loadAll();
     }
 
-    /**
-     * Returns promotions active on the current date.
-     *
-     * @return active promotions
-     */
     public List<Promotion> listActivePromotions() {
 
         LocalDate today = LocalDate.now();
@@ -122,6 +107,29 @@ public class PromotionService {
         }
 
         return activePromotions;
+    }
+
+    /**
+     * Finds a promotion by identifier.
+     *
+     * @param id promotion identifier
+     * @return matching promotion or null
+     */
+    public Promotion findById(String id) {
+
+        if (id == null || id.isBlank()) {
+            return null;
+        }
+
+        for (Promotion promotion :
+                promotionRepository.loadAll()) {
+
+            if (promotion.getIdentifier().equals(id)) {
+                return promotion;
+            }
+        }
+
+        return null;
     }
 
     private void savePromotion(Promotion promotion) {

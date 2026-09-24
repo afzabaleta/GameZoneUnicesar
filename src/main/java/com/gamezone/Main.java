@@ -32,7 +32,7 @@ public class Main {
         PersonService personService = new PersonService(personRepository);
         ProductService productService = new ProductService(productRepository);
         AccessoryService accessoryService = new AccessoryService(accessoryRepository);
-        SaleService saleService = new SaleService(saleRepository, productService);
+        SaleService saleService = new SaleService(saleRepository, productService, accessoryService);
 
         GameZoneUI gameZoneUI = new GameZoneUI(personService, productService, accessoryService, saleService);
         gameZoneUI.showMainMenu();

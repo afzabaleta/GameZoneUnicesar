@@ -18,6 +18,9 @@ public abstract class Promotion {
      * @param active promotion status
      */
     public Promotion(String id, String description, boolean active) {
+        validateId(id);
+        validateDescription(description);
+
         this.id = id;
         this.description = description;
         this.active = active;
@@ -38,6 +41,7 @@ public abstract class Promotion {
      * @param id new promotion identifier
      */
     public void setId(String id) {
+        validateId(id);
         this.id = id;
     }
 
@@ -56,6 +60,7 @@ public abstract class Promotion {
      * @param description new promotion description
      */
     public void setDescription(String description) {
+        validateDescription(description);
         this.description = description;
     }
 
@@ -75,6 +80,28 @@ public abstract class Promotion {
      */
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    /**
+     * Validates promotion identifier.
+     *
+     * @param id promotion identifier
+     */
+    private void validateId(String id) {
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("Promotion id cannot be empty");
+        }
+    }
+
+    /**
+     * Validates promotion description.
+     *
+     * @param description promotion description
+     */
+    private void validateDescription(String description) {
+        if (description == null || description.trim().isEmpty()) {
+            throw new IllegalArgumentException("Promotion description cannot be empty");
+        }
     }
 
     /**

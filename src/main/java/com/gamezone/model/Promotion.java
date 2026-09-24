@@ -1,121 +1,171 @@
 package com.gamezone.model;
 
+import java.time.LocalDate;
+
 /**
- * Abstract base class representing a promotion in the GameZone system.
- * Defines common attributes and operations shared by all promotion types.
+ * Represents a promotion that can be applied to a sale.
  */
 public abstract class Promotion {
 
-    private String id;
-    private String description;
-    private boolean active;
+    private String identifier;
+    private String name;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     /**
-     * Creates a promotion with basic information.
+     * Creates a promotion.
      *
-     * @param id promotion identifier
-     * @param description promotion description
-     * @param active promotion status
+     * @param identifier unique promotion identifier
+     * @param name promotion name
+     * @param startDate promotion start date
+     * @param endDate promotion end date
      */
-    public Promotion(String id, String description, boolean active) {
-        validateId(id);
-        validateDescription(description);
+    public Promotion(
+            String identifier,
+            String name,
+            LocalDate startDate,
+            LocalDate endDate) {
 
-        this.id = id;
-        this.description = description;
-        this.active = active;
+        if (identifier == null || identifier.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Promotion identifier cannot be blank.");
+        }
+
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Promotion name cannot be blank.");
+        }
+
+        validateDateRange(startDate, endDate);
+
+        this.identifier = identifier;
+        this.name = name;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     /**
      * Returns the promotion identifier.
      *
-     * @return promotion id
+     * @return promotion identifier
      */
-    public String getId() {
-        return id;
+    public String getIdentifier() {
+        return identifier;
     }
 
     /**
      * Updates the promotion identifier.
      *
-     * @param id new promotion identifier
+     * @param identifier new promotion identifier
      */
-    public void setId(String id) {
-        validateId(id);
-        this.id = id;
+    public void setIdentifier(String identifier) {
+        if (identifier == null || identifier.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Promotion identifier cannot be blank.");
+        }
+
+        this.identifier = identifier;
     }
 
     /**
-     * Returns the promotion description.
+     * Returns the promotion name.
      *
-     * @return promotion description
+     * @return promotion name
      */
-    public String getDescription() {
-        return description;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Updates the promotion description.
+     * Updates the promotion name.
      *
-     * @param description new promotion description
+     * @param name new promotion name
      */
-    public void setDescription(String description) {
-        validateDescription(description);
-        this.description = description;
+    public void setName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Promotion name cannot be blank.");
+        }
+
+        this.name = name;
     }
 
     /**
-     * Returns whether the promotion is active.
+     * Returns the promotion start date.
      *
-     * @return true if active, false otherwise
+     * @return promotion start date
      */
-    public boolean isActive() {
-        return active;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
     /**
-     * Updates the promotion status.
+     * Updates the promotion start date.
      *
-     * @param active new promotion status
+     * @param startDate new promotion start date
      */
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStartDate(LocalDate startDate) {
+        validateDateRange(startDate, endDate);
+        this.startDate = startDate;
     }
 
     /**
-     * Validates promotion identifier.
+     * Returns the promotion end date.
      *
-     * @param id promotion identifier
+     * @return promotion end date
      */
-    private void validateId(String id) {
-        if (id == null || id.trim().isEmpty()) {
-            throw new IllegalArgumentException("Promotion id cannot be empty");
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Updates the promotion end date.
+     *
+     * @param endDate new promotion end date
+     */
+    public void setEndDate(LocalDate endDate) {
+        validateDateRange(startDate, endDate);
+        this.endDate = endDate;
+    }
+
+    /**
+     * Checks whether the promotion is active on the given date.
+     *
+     * @param date date to evaluate
+     * @return true if the date is within the promotion validity range
+     */
+    public boolean isActive(LocalDate date) {
+        return date != null
+                && !date.isBefore(startDate)
+                && !date.isAfter(endDate);
+    }
+
+    /**
+     * Validates the promotion date range.
+     *
+     * @param startDate promotion start date
+     * @param endDate promotion end date
+     */
+    private void validateDateRange(
+            LocalDate startDate,
+            LocalDate endDate) {
+
+        if (startDate == null || endDate == null) {
+            throw new IllegalArgumentException(
+                    "Promotion dates cannot be null.");
+        }
+
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException(
+                    "Promotion start date cannot be after end date.");
         }
     }
 
     /**
-     * Validates promotion description.
+     * Calculates the discount amount for a sale.
      *
-     * @param description promotion description
+     * @param sale sale to evaluate
+     * @return discount amount
      */
-    private void validateDescription(String description) {
-        if (description == null || description.trim().isEmpty()) {
-            throw new IllegalArgumentException("Promotion description cannot be empty");
-        }
-    }
-
-    /**
-     * Applies the promotion discount.
-     *
-     * @param price original product price
-     * @return discounted price
-     */
-    public abstract double applyDiscount(double price);
-
-    /**
-     * Returns the promotion description.
-     *
-     * @return promotion description
-     */
-    public abstract String getPromotionDescription();
+    public abstract double calculateDiscount(Sale sale);
 }

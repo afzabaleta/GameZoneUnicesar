@@ -1,5 +1,7 @@
 package com.gamezone.model;
 
+import java.time.LocalDate;
+
 /**
  * Represents a percentage-based discount promotion.
  */
@@ -7,25 +9,30 @@ public class PercentageDiscount extends Promotion {
 
     private double discountPercentage;
 
+
     /**
      * Creates a percentage discount promotion.
      *
-     * @param id promotion identifier
-     * @param description promotion description
-     * @param active promotion status
+     * @param identifier promotion identifier
+     * @param name promotion name
+     * @param startDate promotion start date
+     * @param endDate promotion end date
      * @param discountPercentage discount percentage value
      */
-    public PercentageDiscount(String id,
-                              String description,
-                              boolean active,
+    public PercentageDiscount(String identifier,
+                              String name,
+                              LocalDate startDate,
+                              LocalDate endDate,
                               double discountPercentage) {
 
-        super(id, description, active);
-        this.discountPercentage = discountPercentage;
+        super(identifier, name, startDate, endDate);
+
+        setDiscountPercentage(discountPercentage);
     }
 
+
     /**
-     * Returns the discount percentage.
+     * Returns discount percentage.
      *
      * @return discount percentage
      */
@@ -33,34 +40,37 @@ public class PercentageDiscount extends Promotion {
         return discountPercentage;
     }
 
+
     /**
-     * Updates the discount percentage.
+     * Updates discount percentage.
      *
-     * @param discountPercentage new discount percentage
+     * @param discountPercentage new percentage
      */
     public void setDiscountPercentage(double discountPercentage) {
+
+        if (discountPercentage < 0 || discountPercentage > 100) {
+            throw new IllegalArgumentException(
+                    "Discount percentage must be between 0 and 100.");
+        }
+
         this.discountPercentage = discountPercentage;
     }
 
-    /**
-     * Applies the percentage discount to a price.
-     *
-     * @param price original price
-     * @return discounted price
-     */
-    @Override
-    public double applyDiscount(double price) {
-        return price - (price * discountPercentage / 100);
-    }
 
     /**
-     * Returns the promotion description.
+     * Calculates discount amount for a sale.
      *
-     * @return percentage discount description
+     * @param sale sale to evaluate
+     * @return discount amount
      */
     @Override
-    public String getPromotionDescription() {
-        return getDescription() + " - Discount: "
-                + discountPercentage + "%";
+    public double calculateDiscount(Sale sale) {
+
+        if (sale == null) {
+            throw new IllegalArgumentException(
+                    "Sale cannot be null.");
+        }
+
+        return sale.calculateTotal() * discountPercentage / 100;
     }
 }

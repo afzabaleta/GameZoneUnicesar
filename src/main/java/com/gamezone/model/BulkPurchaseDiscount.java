@@ -1,5 +1,7 @@
 package com.gamezone.model;
 
+import java.time.LocalDate;
+
 /**
  * Represents a bulk purchase discount promotion.
  */
@@ -11,62 +13,99 @@ public class BulkPurchaseDiscount extends Promotion {
     /**
      * Creates a bulk purchase discount.
      *
-     * @param id promotion identifier
-     * @param description promotion description
-     * @param active promotion status
+     * @param identifier promotion identifier
+     * @param name promotion name
+     * @param startDate promotion start date
+     * @param endDate promotion end date
      * @param minimumQuantity minimum quantity required
      * @param discountPercentage discount percentage
      */
-    public BulkPurchaseDiscount(String id,
-                                String description,
-                                boolean active,
+    public BulkPurchaseDiscount(String identifier,
+                                String name,
+                                LocalDate startDate,
+                                LocalDate endDate,
                                 int minimumQuantity,
                                 double discountPercentage) {
 
-        super(id, description, active);
-        this.minimumQuantity = minimumQuantity;
-        this.discountPercentage = discountPercentage;
+        super(identifier, name, startDate, endDate);
+
+        setMinimumQuantity(minimumQuantity);
+        setDiscountPercentage(discountPercentage);
     }
 
+
+    /**
+     * Returns minimum quantity required.
+     *
+     * @return minimum quantity
+     */
     public int getMinimumQuantity() {
         return minimumQuantity;
     }
 
+
+    /**
+     * Updates minimum quantity.
+     *
+     * @param minimumQuantity new minimum quantity
+     */
     public void setMinimumQuantity(int minimumQuantity) {
+
+        if (minimumQuantity <= 0) {
+            throw new IllegalArgumentException(
+                    "Minimum quantity must be greater than zero.");
+        }
+
         this.minimumQuantity = minimumQuantity;
     }
 
+
+    /**
+     * Returns discount percentage.
+     *
+     * @return discount percentage
+     */
     public double getDiscountPercentage() {
         return discountPercentage;
     }
 
+
+    /**
+     * Updates discount percentage.
+     *
+     * @param discountPercentage new discount percentage
+     */
     public void setDiscountPercentage(double discountPercentage) {
+
+        if (discountPercentage < 0 || discountPercentage > 100) {
+            throw new IllegalArgumentException(
+                    "Discount percentage must be between 0 and 100.");
+        }
+
         this.discountPercentage = discountPercentage;
     }
 
-    /**
-     * Applies the bulk discount.
-     *
-     * @param price original price
-     * @return discounted price
-     */
-    @Override
-    public double applyDiscount(double price) {
-        return price - (price * discountPercentage / 100);
-    }
 
     /**
-     * Returns promotion description.
+     * Calculates discount amount for a sale.
      *
-     * @return bulk discount description
+     * @param sale sale to evaluate
+     * @return discount amount
      */
     @Override
-    public String getPromotionDescription() {
-        return getDescription()
-                + " - Minimum quantity: "
-                + minimumQuantity
-                + " - Discount: "
-                + discountPercentage
-                + "%";
+    public double calculateDiscount(Sale sale) {
+
+        if (sale == null) {
+            throw new IllegalArgumentException(
+                    "Sale cannot be null.");
+        }
+
+        int quantity = sale.getProducts().size();
+
+        if (quantity >= minimumQuantity) {
+            return sale.calculateTotal() * discountPercentage / 100;
+        }
+
+        return 0;
     }
 }

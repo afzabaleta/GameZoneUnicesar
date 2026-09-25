@@ -86,8 +86,8 @@ public class PromotionService {
                         name,
                         startDate,
                         endDate,
-                        targetCategory,
-                        percentage
+                        percentage,
+                        targetCategory
                 )
         );
     }

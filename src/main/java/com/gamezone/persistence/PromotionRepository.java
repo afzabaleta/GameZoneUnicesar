@@ -141,8 +141,8 @@ public class PromotionRepository {
                     name,
                     startDate,
                     endDate,
-                    data[6].trim(),
-                    percentage
+                    percentage,
+                    data[6].trim()
             );
 
             case "BULK" -> new BulkPurchaseDiscount(
@@ -193,9 +193,9 @@ public class PromotionRepository {
                     category.getStartDate().toString(),
                     category.getEndDate().toString(),
                     String.valueOf(
-                            category.getDiscountPercentage()
+                            category.getPercentage()
                     ),
-                    category.getCategory(),
+                    category.getTargetCategory(),
                     "-"
             );
         }

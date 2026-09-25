@@ -3,13 +3,12 @@ package com.gamezone.model;
 import java.time.LocalDate;
 
 /**
- * Represents a category-based discount promotion.
+ * Represents a promotion that applies a discount to a specific product category.
  */
 public class CategoryDiscount extends Promotion {
 
-    private String category;
-    private double discountPercentage;
-
+    private double percentage;
+    private String targetCategory;
 
     /**
      * Creates a category discount promotion.
@@ -18,77 +17,73 @@ public class CategoryDiscount extends Promotion {
      * @param name promotion name
      * @param startDate promotion start date
      * @param endDate promotion end date
-     * @param category product category affected
-     * @param discountPercentage discount percentage
+     * @param percentage discount percentage
+     * @param targetCategory target category, VIDEOGAME or CONSOLE
      */
-    public CategoryDiscount(String identifier,
-                            String name,
-                            LocalDate startDate,
-                            LocalDate endDate,
-                            String category,
-                            double discountPercentage) {
+    public CategoryDiscount(
+            String identifier,
+            String name,
+            LocalDate startDate,
+            LocalDate endDate,
+            double percentage,
+            String targetCategory) {
 
         super(identifier, name, startDate, endDate);
-
-        this.category = category;
-        setDiscountPercentage(discountPercentage);
+        setPercentage(percentage);
+        setTargetCategory(targetCategory);
     }
-
-
-    /**
-     * Returns the product category.
-     *
-     * @return category name
-     */
-    public String getCategory() {
-        return category;
-    }
-
-
-    /**
-     * Updates the product category.
-     *
-     * @param category new category
-     */
-    public void setCategory(String category) {
-
-        if (category == null || category.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Category cannot be blank.");
-        }
-
-        this.category = category;
-    }
-
 
     /**
      * Returns the discount percentage.
      *
      * @return discount percentage
      */
-    public double getDiscountPercentage() {
-        return discountPercentage;
+    public double getPercentage() {
+        return percentage;
     }
 
-
     /**
-     * Updates discount percentage.
+     * Updates the discount percentage.
      *
-     * @param discountPercentage new discount percentage
+     * @param percentage new discount percentage
      */
-    public void setDiscountPercentage(double discountPercentage) {
-
-        if (discountPercentage < 0 || discountPercentage > 100) {
+    public void setPercentage(double percentage) {
+        if (percentage < 0 || percentage > 100) {
             throw new IllegalArgumentException(
                     "Discount percentage must be between 0 and 100.");
         }
 
-        this.discountPercentage = discountPercentage;
+        this.percentage = percentage;
     }
 
+    /**
+     * Returns the target category.
+     *
+     * @return target category
+     */
+    public String getTargetCategory() {
+        return targetCategory;
+    }
 
     /**
-     * Calculates discount amount for products of the selected category.
+     * Updates the target category.
+     *
+     * @param targetCategory new target category
+     */
+    public void setTargetCategory(String targetCategory) {
+        if (targetCategory == null
+                || (!targetCategory.equalsIgnoreCase("VIDEOGAME")
+                && !targetCategory.equalsIgnoreCase("CONSOLE"))) {
+
+            throw new IllegalArgumentException(
+                    "Target category must be VIDEOGAME or CONSOLE.");
+        }
+
+        this.targetCategory = targetCategory.toUpperCase();
+    }
+
+    /**
+     * Calculates the discount over products in the target category.
      *
      * @param sale sale to evaluate
      * @return discount amount
@@ -101,24 +96,27 @@ public class CategoryDiscount extends Promotion {
                     "Sale cannot be null.");
         }
 
-        double categoryTotal = 0;
+        double categoryTotal = 0.0;
 
         for (Product product : sale.getProducts()) {
 
-            /*
-             * The category is identified by the concrete product class.
-             * Example:
-             * VideoGame -> VIDEOGAME
-             * Console -> CONSOLE
-             */
-            if (product.getClass()
-                    .getSimpleName()
-                    .equalsIgnoreCase(category)) {
+            boolean matches = false;
 
+            if ("VIDEOGAME".equals(targetCategory)
+                    && product instanceof VideoGame) {
+                matches = true;
+            }
+
+            if ("CONSOLE".equals(targetCategory)
+                    && product instanceof Console) {
+                matches = true;
+            }
+
+            if (matches) {
                 categoryTotal += product.getPrice();
             }
         }
 
-        return categoryTotal * discountPercentage / 100;
+        return categoryTotal * percentage / 100.0;
     }
 }

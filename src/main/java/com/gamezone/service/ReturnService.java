@@ -47,6 +47,8 @@ public class ReturnService {
                     "At least one product must be returned.");
         }
 
+        validateProductIds(productIds);
+
         if (reason == null || reason.isBlank()) {
             throw new IllegalArgumentException(
                     "Return reason cannot be blank.");
@@ -95,6 +97,15 @@ public class ReturnService {
         returnRepository.saveAll(returns);
 
         return returnItem;
+    }
+
+    private void validateProductIds(List<String> productIds) {
+        for (String productId : productIds) {
+            if (productId == null || productId.isBlank()) {
+                throw new IllegalArgumentException(
+                        "Product identifier cannot be blank.");
+            }
+        }
     }
 
     private Sale findSale(String saleId) {

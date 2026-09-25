@@ -23,14 +23,20 @@ public class Return {
      * @param identifier return identifier
      * @param returnDate return date
      * @param originalSale original sale
-     * @param returnedProducts products returned
-     * @param reason reason for return
+     * @param returnedProducts returned products
+     * @param reason return reason
      */
     public Return(String identifier,
                   LocalDate returnDate,
                   Sale originalSale,
                   List<Product> returnedProducts,
                   String reason) {
+
+        validateIdentifier(identifier);
+        validateReturnDate(returnDate);
+        validateSale(originalSale);
+        validateProducts(returnedProducts);
+        validateReason(reason);
 
         this.identifier = identifier;
         this.returnDate = returnDate;
@@ -42,9 +48,69 @@ public class Return {
 
 
     /**
-     * Returns the return identifier.
+     * Validates identifier.
+     */
+    private void validateIdentifier(String identifier) {
+
+        if (identifier == null || identifier.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Return identifier cannot be blank.");
+        }
+    }
+
+
+    /**
+     * Validates return date.
+     */
+    private void validateReturnDate(LocalDate returnDate) {
+
+        if (returnDate == null) {
+            throw new IllegalArgumentException(
+                    "Return date cannot be null.");
+        }
+    }
+
+
+    /**
+     * Validates original sale.
+     */
+    private void validateSale(Sale originalSale) {
+
+        if (originalSale == null) {
+            throw new IllegalArgumentException(
+                    "Original sale cannot be null.");
+        }
+    }
+
+
+    /**
+     * Validates returned products.
+     */
+    private void validateProducts(List<Product> returnedProducts) {
+
+        if (returnedProducts == null || returnedProducts.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Returned products cannot be empty.");
+        }
+    }
+
+
+    /**
+     * Validates reason.
+     */
+    private void validateReason(String reason) {
+
+        if (reason == null || reason.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Return reason cannot be blank.");
+        }
+    }
+
+
+    /**
+     * Returns identifier.
      *
-     * @return identifier
+     * @return return identifier
      */
     public String getIdentifier() {
         return identifier;
@@ -74,7 +140,7 @@ public class Return {
     /**
      * Returns returned products.
      *
-     * @return copy of returned products
+     * @return products list
      */
     public List<Product> getReturnedProducts() {
         return new ArrayList<>(returnedProducts);
@@ -82,9 +148,9 @@ public class Return {
 
 
     /**
-     * Returns return reason.
+     * Returns reason.
      *
-     * @return reason
+     * @return return reason
      */
     public String getReason() {
         return reason;
@@ -102,7 +168,7 @@ public class Return {
 
 
     /**
-     * Calculates the refund amount based on returned products.
+     * Calculates refund amount.
      *
      * @return total refund amount
      */
@@ -119,10 +185,11 @@ public class Return {
         return refundAmount;
     }
 
+
     /**
-     * Generates a receipt with return information.
+     * Generates return receipt.
      *
-     * @return formatted return receipt
+     * @return receipt information
      */
     public String generateReceipt() {
 

@@ -16,7 +16,6 @@ public class Return {
     private String reason;
     private double refundAmount;
 
-
     /**
      * Creates a return.
      *
@@ -26,11 +25,12 @@ public class Return {
      * @param returnedProducts returned products
      * @param reason return reason
      */
-    public Return(String identifier,
-                  LocalDate returnDate,
-                  Sale originalSale,
-                  List<Product> returnedProducts,
-                  String reason) {
+    public Return(
+            String identifier,
+            LocalDate returnDate,
+            Sale originalSale,
+            List<Product> returnedProducts,
+            String reason) {
 
         validateIdentifier(identifier);
         validateReturnDate(returnDate);
@@ -46,59 +46,43 @@ public class Return {
         this.refundAmount = calculateRefundAmount();
     }
 
-
     private void validateIdentifier(String identifier) {
-
         if (identifier == null || identifier.isBlank()) {
             throw new IllegalArgumentException(
                     "Return identifier cannot be blank.");
         }
     }
 
-
     private void validateReturnDate(LocalDate returnDate) {
-
         if (returnDate == null) {
             throw new IllegalArgumentException(
                     "Return date cannot be null.");
         }
     }
 
-
     private void validateSale(Sale originalSale) {
-
         if (originalSale == null) {
             throw new IllegalArgumentException(
                     "Original sale cannot be null.");
         }
-
-        if (!originalSale.canBeReturned()) {
-            throw new IllegalArgumentException(
-                    "Sale cannot be returned.");
-        }
     }
 
-
     private void validateProducts(List<Product> returnedProducts) {
-
         if (returnedProducts == null || returnedProducts.isEmpty()) {
             throw new IllegalArgumentException(
                     "Returned products cannot be empty.");
         }
     }
 
-
     private void validateReason(String reason) {
-
         if (reason == null || reason.isBlank()) {
             throw new IllegalArgumentException(
                     "Return reason cannot be blank.");
         }
     }
 
-
     /**
-     * Returns identifier.
+     * Returns the identifier of this return.
      *
      * @return return identifier
      */
@@ -106,9 +90,8 @@ public class Return {
         return identifier;
     }
 
-
     /**
-     * Returns return date.
+     * Returns the date of this return.
      *
      * @return return date
      */
@@ -116,9 +99,8 @@ public class Return {
         return returnDate;
     }
 
-
     /**
-     * Returns original sale.
+     * Returns the original sale associated with this return.
      *
      * @return original sale
      */
@@ -126,29 +108,26 @@ public class Return {
         return originalSale;
     }
 
-
     /**
-     * Returns returned products.
+     * Returns the products included in this return.
      *
-     * @return products list
+     * @return returned products
      */
     public List<Product> getReturnedProducts() {
         return new ArrayList<>(returnedProducts);
     }
 
-
     /**
-     * Returns return reason.
+     * Returns the reason for this return.
      *
-     * @return reason
+     * @return return reason
      */
     public String getReason() {
         return reason;
     }
 
-
     /**
-     * Returns refund amount.
+     * Returns the refund amount.
      *
      * @return refund amount
      */
@@ -156,14 +135,12 @@ public class Return {
         return refundAmount;
     }
 
-
     /**
-     * Calculates refund amount based on returned products.
+     * Calculates the refund amount based on the returned products.
      *
      * @return refund amount
      */
     public double calculateRefundAmount() {
-
         double total = 0;
 
         for (Product product : returnedProducts) {
@@ -175,9 +152,8 @@ public class Return {
         return refundAmount;
     }
 
-
     /**
-     * Generates return receipt.
+     * Generates a receipt containing the return information.
      *
      * @return return receipt information
      */
@@ -204,11 +180,9 @@ public class Return {
                 .append(originalSale)
                 .append("\n\n");
 
-
         receipt.append("Productos devueltos:\n");
 
         for (Product product : returnedProducts) {
-
             receipt.append("- ")
                     .append(product.getTitle())
                     .append(" - $")
@@ -216,13 +190,11 @@ public class Return {
                     .append("\n");
         }
 
-
         receipt.append("\nValor devolución: $")
                 .append(refundAmount)
                 .append("\n");
 
         receipt.append("==============================");
-
 
         return receipt.toString();
     }

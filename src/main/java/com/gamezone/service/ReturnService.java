@@ -162,4 +162,36 @@ public class ReturnService {
 
         return result;
     }
+
+    public double generateMonthlyBalance(int month, int year) {
+        if (month < 1 || month > 12) {
+            throw new IllegalArgumentException(
+                    "Month must be between 1 and 12.");
+        }
+
+        if (year < 1) {
+            throw new IllegalArgumentException(
+                    "Year must be positive.");
+        }
+
+        double salesTotal = 0.0;
+
+        for (Sale sale : saleService.listSales()) {
+            if (sale.getDate().getMonthValue() == month
+                    && sale.getDate().getYear() == year) {
+                salesTotal += sale.calculateTotal();
+            }
+        }
+
+        double returnsTotal = 0.0;
+
+        for (Return returnItem : returnRepository.loadAll()) {
+            if (returnItem.getReturnDate().getMonthValue() == month
+                    && returnItem.getReturnDate().getYear() == year) {
+                returnsTotal += returnItem.getRefundAmount();
+            }
+        }
+
+        return salesTotal - returnsTotal;
+    }
 }

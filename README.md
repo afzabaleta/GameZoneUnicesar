@@ -25,6 +25,22 @@ consultar el historial completo de ventas, así como el historial de
 compras de un cliente específico y el de ventas atendidas por un
 vendedor específico.
 
+El sistema también permite gestionar promociones, incluyendo el
+registro, consulta y aplicación automática de la promoción activa que
+representa el mayor descuento monetario para una venta.
+
+Adicionalmente, el sistema permite gestionar devoluciones de productos.
+Una devolución se asocia a una venta original y puede incluir solamente
+algunos de los productos de esa venta. El sistema valida el plazo máximo
+de 30 días, verifica que los productos pertenezcan a la venta original,
+calcula automáticamente el monto reembolsado y restaura el stock de los
+productos devueltos.
+
+El módulo de devoluciones también permite consultar todas las
+devoluciones registradas, consultar las devoluciones de un cliente o de
+una venta específica y generar un balance mensual que representa la
+diferencia entre las ventas y las devoluciones del período.
+
 ## Arquitectura
 
 El sistema está organizado en cuatro capas con dependencias en un único

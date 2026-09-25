@@ -118,4 +118,38 @@ public class Return {
 
         return refundAmount;
     }
+
+    /**
+     * Generates a receipt with return information.
+     *
+     * @return formatted return receipt
+     */
+    public String generateReceipt() {
+
+        StringBuilder receipt = new StringBuilder();
+
+        receipt.append("RETURN RECEIPT\n");
+        receipt.append("-------------------------\n");
+        receipt.append("Identifier: ")
+                .append(identifier)
+                .append("\n");
+
+        receipt.append("Date: ")
+                .append(returnDate)
+                .append("\n");
+
+        receipt.append("Reason: ")
+                .append(reason)
+                .append("\n");
+
+        receipt.append("Products returned: ")
+                .append(returnedProducts.size())
+                .append("\n");
+
+        receipt.append("Refund amount: $")
+                .append(refundAmount)
+                .append("\n");
+
+        return receipt.toString();
+    }
 }

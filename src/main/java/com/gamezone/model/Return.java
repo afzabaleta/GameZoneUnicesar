@@ -94,38 +94,68 @@ public class Return {
     }
 
 
+    /**
+     * Returns identifier.
+     *
+     * @return return identifier
+     */
     public String getIdentifier() {
         return identifier;
     }
 
 
+    /**
+     * Returns return date.
+     *
+     * @return return date
+     */
     public LocalDate getReturnDate() {
         return returnDate;
     }
 
 
+    /**
+     * Returns original sale.
+     *
+     * @return original sale
+     */
     public Sale getOriginalSale() {
         return originalSale;
     }
 
 
+    /**
+     * Returns returned products.
+     *
+     * @return products list
+     */
     public List<Product> getReturnedProducts() {
         return new ArrayList<>(returnedProducts);
     }
 
 
+    /**
+     * Returns reason.
+     *
+     * @return return reason
+     */
     public String getReason() {
         return reason;
     }
 
 
+    /**
+     * Returns refund amount.
+     *
+     * @return refund amount
+     */
     public double getRefundAmount() {
         return refundAmount;
     }
 
 
     /**
-     * Returns current status.
+     * Returns current return status.
      *
      * @return return status
      */
@@ -137,7 +167,7 @@ public class Return {
     /**
      * Updates return status.
      *
-     * @param status new status
+     * @param status new return status
      */
     public void setStatus(String status) {
 
@@ -146,12 +176,24 @@ public class Return {
                     "Return status cannot be blank.");
         }
 
-        this.status = status;
+        switch (status.toUpperCase()) {
+
+            case "PENDING":
+            case "APPROVED":
+            case "REJECTED":
+            case "COMPLETED":
+                this.status = status.toUpperCase();
+                break;
+
+            default:
+                throw new IllegalArgumentException(
+                        "Invalid return status.");
+        }
     }
 
 
     /**
-     * Calculates refund amount.
+     * Calculates refund amount based on returned products.
      *
      * @return refund amount
      */

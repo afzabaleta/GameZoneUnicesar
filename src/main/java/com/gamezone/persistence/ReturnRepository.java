@@ -14,6 +14,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides CSV persistence operations for product returns.
+ */
 public class ReturnRepository {
 
     private static final String FILE_PATH = "data/returns.csv";
@@ -22,6 +25,13 @@ public class ReturnRepository {
     private final SaleService saleService;
     private final ProductService productService;
 
+    /**
+     * Creates a return repository using the required services.
+     *
+     * @param saleService service used to resolve sales
+     * @param productService service used to resolve products
+     * @throws IllegalArgumentException if any dependency is null
+     */
     public ReturnRepository(
             SaleService saleService,
             ProductService productService) {
@@ -41,6 +51,12 @@ public class ReturnRepository {
         this.productService = productService;
     }
 
+    /**
+     * Saves all returns to the CSV persistence file.
+     *
+     * @param returns returns to persist
+     * @throws IllegalStateException if the file cannot be written
+     */
     public void saveAll(List<Return> returns) {
         try {
             Path parent = returnsPath.getParent();
@@ -63,6 +79,12 @@ public class ReturnRepository {
         }
     }
 
+    /**
+     * Loads all persisted returns from the CSV file.
+     *
+     * @return list of persisted returns
+     * @throws IllegalStateException if the file cannot be read
+     */
     public List<Return> loadAll() {
         List<Return> returns = new ArrayList<>();
 

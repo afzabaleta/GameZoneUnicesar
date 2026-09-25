@@ -15,7 +15,6 @@ public class Return {
     private List<Product> returnedProducts;
     private String reason;
     private double refundAmount;
-    private String status;
 
 
     /**
@@ -44,7 +43,6 @@ public class Return {
         this.originalSale = originalSale;
         this.returnedProducts = new ArrayList<>(returnedProducts);
         this.reason = reason;
-        this.status = "PENDING";
         this.refundAmount = calculateRefundAmount();
     }
 
@@ -72,6 +70,11 @@ public class Return {
         if (originalSale == null) {
             throw new IllegalArgumentException(
                     "Original sale cannot be null.");
+        }
+
+        if (!originalSale.canBeReturned()) {
+            throw new IllegalArgumentException(
+                    "Sale cannot be returned.");
         }
     }
 
@@ -135,9 +138,9 @@ public class Return {
 
 
     /**
-     * Returns reason.
+     * Returns return reason.
      *
-     * @return return reason
+     * @return reason
      */
     public String getReason() {
         return reason;
@@ -151,44 +154,6 @@ public class Return {
      */
     public double getRefundAmount() {
         return refundAmount;
-    }
-
-
-    /**
-     * Returns current return status.
-     *
-     * @return return status
-     */
-    public String getStatus() {
-        return status;
-    }
-
-
-    /**
-     * Updates return status.
-     *
-     * @param status new return status
-     */
-    public void setStatus(String status) {
-
-        if (status == null || status.isBlank()) {
-            throw new IllegalArgumentException(
-                    "Return status cannot be blank.");
-        }
-
-        switch (status.toUpperCase()) {
-
-            case "PENDING":
-            case "APPROVED":
-            case "REJECTED":
-            case "COMPLETED":
-                this.status = status.toUpperCase();
-                break;
-
-            default:
-                throw new IllegalArgumentException(
-                        "Invalid return status.");
-        }
     }
 
 
@@ -214,37 +179,50 @@ public class Return {
     /**
      * Generates return receipt.
      *
-     * @return receipt information
+     * @return return receipt information
      */
-    public String generateReceipt() {
+    public String generateReturnReceipt() {
 
         StringBuilder receipt = new StringBuilder();
 
-        receipt.append("RETURN RECEIPT\n");
-        receipt.append("-------------------------\n");
-        receipt.append("Identifier: ")
+        receipt.append("===== RECIBO DE DEVOLUCIÓN =====\n");
+        receipt.append("-------------------------------\n");
+
+        receipt.append("Identificador: ")
                 .append(identifier)
                 .append("\n");
 
-        receipt.append("Date: ")
+        receipt.append("Fecha devolución: ")
                 .append(returnDate)
                 .append("\n");
 
-        receipt.append("Reason: ")
+        receipt.append("Motivo: ")
                 .append(reason)
                 .append("\n");
 
-        receipt.append("Status: ")
-                .append(status)
-                .append("\n");
+        receipt.append("Venta original: ")
+                .append(originalSale)
+                .append("\n\n");
 
-        receipt.append("Products returned: ")
-                .append(returnedProducts.size())
-                .append("\n");
 
-        receipt.append("Refund amount: $")
+        receipt.append("Productos devueltos:\n");
+
+        for (Product product : returnedProducts) {
+
+            receipt.append("- ")
+                    .append(product.getTitle())
+                    .append(" - $")
+                    .append(product.getPrice())
+                    .append("\n");
+        }
+
+
+        receipt.append("\nValor devolución: $")
                 .append(refundAmount)
                 .append("\n");
+
+        receipt.append("==============================");
+
 
         return receipt.toString();
     }

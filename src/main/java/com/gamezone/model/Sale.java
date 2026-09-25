@@ -199,4 +199,13 @@ public class Sale {
 
         this.discountAmount = discountAmount;
     }
+
+    /**
+     * Checks whether this sale can be returned.
+     *
+     * @return true if the sale contains products that can be returned
+     */
+    public boolean canBeReturned() {
+        return products != null && !products.isEmpty();
+    }
 }

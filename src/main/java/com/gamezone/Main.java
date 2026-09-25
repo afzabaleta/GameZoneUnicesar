@@ -71,9 +71,9 @@ public class Main {
                         personService,
                         productService,
                         accessoryService,
-                        saleService
+                        saleService,
+                        promotionService
                 );
-
         gameZoneUI.showMainMenu();
     }
 }

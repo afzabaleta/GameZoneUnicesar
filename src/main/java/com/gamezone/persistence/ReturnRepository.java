@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,8 +103,61 @@ public class ReturnRepository {
     }
 
     private Return fromCsv(String line) {
-        throw new UnsupportedOperationException(
-                "CSV reconstruction is completed in the next commit.");
+        String[] fields = line.split(";", -1);
+
+        if (fields.length != 6) {
+            throw new IllegalStateException(
+                    "Invalid return record. Expected 6 fields.");
+        }
+
+        String identifier = fields[0].trim();
+
+        LocalDate returnDate = LocalDate.parse(fields[1].trim());
+
+        String saleReference = fields[2].trim();
+
+        String[] productIds = fields[3].split(",");
+
+        String reason = fields[4].trim();
+
+        Sale sale = findSaleByReference(saleReference);
+
+        List<Product> products = new ArrayList<>();
+
+        for (String productId : productIds) {
+            Product product = findProductById(productId.trim());
+            products.add(product);
+        }
+
+        return new Return(
+                identifier,
+                returnDate,
+                sale,
+                products,
+                reason
+        );
+    }
+
+    private Sale findSaleByReference(String saleReference) {
+        for (Sale sale : saleService.listSales()) {
+            if (sale.getDate().toString().equals(saleReference)) {
+                return sale;
+            }
+        }
+
+        throw new IllegalStateException(
+                "Sale not found for reference: " + saleReference);
+    }
+
+    private Product findProductById(String productId) {
+        for (Product product : productService.listProducts()) {
+            if (product.getIdentifier().equals(productId)) {
+                return product;
+            }
+        }
+
+        throw new IllegalStateException(
+                "Product not found for id: " + productId);
     }
 
     private String buildSaleReference(Sale sale) {

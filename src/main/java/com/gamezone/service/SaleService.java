@@ -3,6 +3,7 @@ package com.gamezone.service;
 import com.gamezone.model.Accessory;
 import com.gamezone.model.Customer;
 import com.gamezone.model.Product;
+import com.gamezone.model.Promotion;
 import com.gamezone.model.Sale;
 import com.gamezone.model.Seller;
 import com.gamezone.persistence.SaleRepository;
@@ -16,26 +17,29 @@ import java.util.Map;
  * Provides business operations for registering and querying sales.
  *
  * <p>This service coordinates sale persistence with product and accessory
- * stock validation and inventory updates.</p>
+ * stock validation, inventory updates and promotion application.</p>
  */
 public class SaleService {
 
     private final SaleRepository saleRepository;
     private final ProductService productService;
     private final AccessoryService accessoryService;
+    private final PromotionService promotionService;
 
     /**
-     * Creates a SaleService that validates stock through the product
-     * and accessory services and persists sales through the given repository.
+     * Creates a SaleService that validates stock, applies promotions
+     * and persists sales through the corresponding services and repository.
      *
      * @param saleRepository repository used to persist and load sales
      * @param productService service used to check and update product stock
      * @param accessoryService service used to check and update accessory stock
+     * @param promotionService service used to find applicable promotions
      */
     public SaleService(
             SaleRepository saleRepository,
             ProductService productService,
-            AccessoryService accessoryService) {
+            AccessoryService accessoryService,
+            PromotionService promotionService) {
 
         if (saleRepository == null) {
             throw new IllegalArgumentException(
@@ -52,19 +56,20 @@ public class SaleService {
                     "Accessory service cannot be null.");
         }
 
+        if (promotionService == null) {
+            throw new IllegalArgumentException(
+                    "Promotion service cannot be null.");
+        }
+
         this.saleRepository = saleRepository;
         this.productService = productService;
         this.accessoryService = accessoryService;
+        this.promotionService = promotionService;
     }
 
     /**
-     * Registers a new sale after validating that it is not null,
-     * that it contains at least one item, and that enough stock
-     * is available for every product and accessory sold.
-     *
-     * <p>On success, the inventory of products and accessories is
-     * updated through their corresponding services and the sale
-     * is persisted.</p>
+     * Registers a new sale after validating stock and applying
+     * the best active promotion.
      *
      * @param sale the sale to register
      */
@@ -93,6 +98,8 @@ public class SaleService {
                 availableAccessories
         );
 
+        applyBestPromotion(sale);
+
         updateProductStock(
                 productQuantities,
                 availableProducts
@@ -106,6 +113,33 @@ public class SaleService {
         List<Sale> sales = saleRepository.loadSales();
         sales.add(sale);
         saleRepository.saveSales(sales);
+    }
+
+    /**
+     * Applies the active promotion that provides the highest
+     * monetary discount to the sale.
+     *
+     * @param sale sale to evaluate
+     */
+    private void applyBestPromotion(Sale sale) {
+
+        Promotion promotion =
+                promotionService.findBestPromotionFor(sale);
+
+        if (promotion == null) {
+            sale.setAppliedPromotionName(null);
+            sale.setDiscountAmount(0.0);
+            return;
+        }
+
+        double discount =
+                promotion.calculateDiscount(sale);
+
+        sale.setAppliedPromotionName(
+                promotion.getName()
+        );
+
+        sale.setDiscountAmount(discount);
     }
 
     /**

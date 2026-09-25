@@ -128,4 +128,38 @@ public class ReturnService {
                 .anyMatch(product ->
                         product.getIdentifier().equals(productId));
     }
+
+    public List<Return> viewAllReturns() {
+        return returnRepository.loadAll();
+    }
+
+    public List<Return> viewReturnsByCustomer(String customerId) {
+        List<Return> result = new ArrayList<>();
+
+        for (Return returnItem : returnRepository.loadAll()) {
+            if (returnItem.getOriginalSale()
+                    .getCustomer()
+                    .getIdentification()
+                    .equals(customerId)) {
+                result.add(returnItem);
+            }
+        }
+
+        return result;
+    }
+
+    public List<Return> viewReturnsBySale(String saleId) {
+        List<Return> result = new ArrayList<>();
+
+        for (Return returnItem : returnRepository.loadAll()) {
+            if (returnItem.getOriginalSale()
+                    .getDate()
+                    .toString()
+                    .equals(saleId)) {
+                result.add(returnItem);
+            }
+        }
+
+        return result;
+    }
 }

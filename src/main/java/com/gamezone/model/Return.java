@@ -16,13 +16,14 @@ public class Return {
     private String reason;
     private double refundAmount;
 
+
     /**
      * Creates a return.
      *
      * @param identifier return identifier
      * @param returnDate return date
      * @param originalSale original sale
-     * @param returnedProducts products being returned
+     * @param returnedProducts products returned
      * @param reason reason for return
      */
     public Return(String identifier,
@@ -51,7 +52,7 @@ public class Return {
 
 
     /**
-     * Returns the return date.
+     * Returns return date.
      *
      * @return return date
      */
@@ -61,7 +62,7 @@ public class Return {
 
 
     /**
-     * Returns the original sale.
+     * Returns original sale.
      *
      * @return original sale
      */
@@ -81,7 +82,7 @@ public class Return {
 
 
     /**
-     * Returns the reason of the return.
+     * Returns return reason.
      *
      * @return reason
      */
@@ -101,11 +102,11 @@ public class Return {
 
 
     /**
-     * Calculates the refund amount from returned products.
+     * Calculates the refund amount based on returned products.
      *
      * @return total refund amount
      */
-    private double calculateRefundAmount() {
+    public double calculateRefundAmount() {
 
         double total = 0;
 
@@ -113,6 +114,8 @@ public class Return {
             total += product.getPrice();
         }
 
-        return total;
+        this.refundAmount = total;
+
+        return refundAmount;
     }
 }

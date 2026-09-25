@@ -1302,9 +1302,15 @@ public class GameZoneUI {
 
             saleService.registerSale(sale);
 
+            saleService.registerSale(sale);
+
             System.out.println(
-                    "Venta registrada correctamente. Total: $"
-                            + sale.calculateTotal()
+                    "Venta registrada correctamente."
+            );
+
+            System.out.println();
+            System.out.println(
+                    sale.generateReceipt()
             );
         } catch (RuntimeException e) {
             System.out.println(

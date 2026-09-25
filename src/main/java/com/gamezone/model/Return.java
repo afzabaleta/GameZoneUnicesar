@@ -15,6 +15,7 @@ public class Return {
     private List<Product> returnedProducts;
     private String reason;
     private double refundAmount;
+    private String status;
 
 
     /**
@@ -43,13 +44,11 @@ public class Return {
         this.originalSale = originalSale;
         this.returnedProducts = new ArrayList<>(returnedProducts);
         this.reason = reason;
+        this.status = "PENDING";
         this.refundAmount = calculateRefundAmount();
     }
 
 
-    /**
-     * Validates identifier.
-     */
     private void validateIdentifier(String identifier) {
 
         if (identifier == null || identifier.isBlank()) {
@@ -59,9 +58,6 @@ public class Return {
     }
 
 
-    /**
-     * Validates return date.
-     */
     private void validateReturnDate(LocalDate returnDate) {
 
         if (returnDate == null) {
@@ -71,9 +67,6 @@ public class Return {
     }
 
 
-    /**
-     * Validates original sale.
-     */
     private void validateSale(Sale originalSale) {
 
         if (originalSale == null) {
@@ -83,9 +76,6 @@ public class Return {
     }
 
 
-    /**
-     * Validates returned products.
-     */
     private void validateProducts(List<Product> returnedProducts) {
 
         if (returnedProducts == null || returnedProducts.isEmpty()) {
@@ -95,9 +85,6 @@ public class Return {
     }
 
 
-    /**
-     * Validates reason.
-     */
     private void validateReason(String reason) {
 
         if (reason == null || reason.isBlank()) {
@@ -107,70 +94,66 @@ public class Return {
     }
 
 
-    /**
-     * Returns identifier.
-     *
-     * @return return identifier
-     */
     public String getIdentifier() {
         return identifier;
     }
 
 
-    /**
-     * Returns return date.
-     *
-     * @return return date
-     */
     public LocalDate getReturnDate() {
         return returnDate;
     }
 
 
-    /**
-     * Returns original sale.
-     *
-     * @return original sale
-     */
     public Sale getOriginalSale() {
         return originalSale;
     }
 
 
-    /**
-     * Returns returned products.
-     *
-     * @return products list
-     */
     public List<Product> getReturnedProducts() {
         return new ArrayList<>(returnedProducts);
     }
 
 
-    /**
-     * Returns reason.
-     *
-     * @return return reason
-     */
     public String getReason() {
         return reason;
     }
 
 
-    /**
-     * Returns refund amount.
-     *
-     * @return refund amount
-     */
     public double getRefundAmount() {
         return refundAmount;
     }
 
 
     /**
+     * Returns current status.
+     *
+     * @return return status
+     */
+    public String getStatus() {
+        return status;
+    }
+
+
+    /**
+     * Updates return status.
+     *
+     * @param status new status
+     */
+    public void setStatus(String status) {
+
+        if (status == null || status.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Return status cannot be blank.");
+        }
+
+        this.status = status;
+    }
+
+
+    /**
      * Calculates refund amount.
      *
-     * @return total refund amount
+     * @return refund amount
      */
     public double calculateRefundAmount() {
 
@@ -207,6 +190,10 @@ public class Return {
 
         receipt.append("Reason: ")
                 .append(reason)
+                .append("\n");
+
+        receipt.append("Status: ")
+                .append(status)
                 .append("\n");
 
         receipt.append("Products returned: ")

@@ -4,30 +4,30 @@ import java.time.LocalDate;
 
 public class BasicWarranty extends Warranty {
 
-    private int durationMonths;
-
 
     public BasicWarranty(String id,
                          Product product,
                          Sale sale,
-                         LocalDate startDate,
-                         int durationMonths) {
+                         LocalDate startDate) {
 
         super(id, product, sale, startDate);
-
-        this.durationMonths = durationMonths;
-    }
-
-
-    public int getDurationMonths() {
-        return durationMonths;
     }
 
 
     @Override
-    public LocalDate getEndDate() {
+    public int getDurationInMonths() {
+        return 6;
+    }
 
-        return getStartDate()
-                .plusMonths(durationMonths);
+
+    @Override
+    public String getWarrantyType() {
+        return "Garantía Básica";
+    }
+
+
+    @Override
+    public double getAdditionalCost() {
+        return 0.0;
     }
 }

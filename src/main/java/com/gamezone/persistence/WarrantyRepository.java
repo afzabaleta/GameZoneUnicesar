@@ -2,15 +2,20 @@ package com.gamezone.persistence;
 
 import com.gamezone.model.BasicWarranty;
 import com.gamezone.model.ExtendedWarranty;
+import com.gamezone.model.Product;
+import com.gamezone.model.Sale;
 import com.gamezone.model.Warranty;
 import com.gamezone.service.ProductService;
 import com.gamezone.service.SaleService;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -93,6 +98,48 @@ public class WarrantyRepository {
     }
 
     /**
+     * Loads all warranties from the CSV file.
+     *
+     * @return list of loaded warranties
+     */
+    public List<Warranty> loadAll() {
+
+        List<Warranty> warranties = new ArrayList<>();
+
+        if (Files.notExists(filePath)) {
+            return warranties;
+        }
+
+        try (BufferedReader reader =
+                     Files.newBufferedReader(filePath)) {
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+
+                if (line.isBlank()) {
+                    continue;
+                }
+
+                Warranty warranty = fromCsvLine(line);
+
+                if (warranty != null) {
+                    warranties.add(warranty);
+                }
+            }
+
+        } catch (IOException e) {
+
+            throw new IllegalStateException(
+                    "Could not load warranties.",
+                    e
+            );
+        }
+
+        return warranties;
+    }
+
+    /**
      * Converts a warranty into a CSV record.
      *
      * @param warranty warranty to convert
@@ -103,12 +150,15 @@ public class WarrantyRepository {
         String type;
 
         if (warranty instanceof BasicWarranty) {
+
             type = "BASIC";
 
         } else if (warranty instanceof ExtendedWarranty) {
+
             type = "EXTENDED";
 
         } else {
+
             throw new IllegalArgumentException(
                     "Unsupported warranty type."
             );
@@ -122,5 +172,108 @@ public class WarrantyRepository {
                 warranty.getSale().getDate().toString(),
                 warranty.getStartDate().toString()
         );
+    }
+
+    /**
+     * Converts a CSV record into a concrete warranty object.
+     *
+     * @param line CSV record
+     * @return reconstructed warranty or null if references cannot be resolved
+     */
+    private Warranty fromCsvLine(String line) {
+
+        String[] fields =
+                line.split(SEPARATOR, -1);
+
+        if (fields.length != 5) {
+
+            throw new IllegalArgumentException(
+                    "Invalid warranty record."
+            );
+        }
+
+        String type = fields[0];
+        String id = fields[1];
+        String productId = fields[2];
+        String saleDateText = fields[3];
+        LocalDate startDate =
+                LocalDate.parse(fields[4]);
+
+        Product product =
+                findProduct(productId);
+
+        Sale sale =
+                findSale(saleDateText);
+
+        if (product == null || sale == null) {
+            return null;
+        }
+
+        if ("BASIC".equalsIgnoreCase(type)) {
+
+            return new BasicWarranty(
+                    id,
+                    product,
+                    sale,
+                    startDate
+            );
+        }
+
+        if ("EXTENDED".equalsIgnoreCase(type)) {
+
+            return new ExtendedWarranty(
+                    id,
+                    product,
+                    sale,
+                    startDate
+            );
+        }
+
+        throw new IllegalArgumentException(
+                "Unsupported warranty type: " + type
+        );
+    }
+
+    /**
+     * Finds a product by identifier.
+     *
+     * @param productId product identifier
+     * @return matching product or null
+     */
+    private Product findProduct(String productId) {
+
+        for (Product product :
+                productService.listProducts()) {
+
+            if (product.getIdentifier()
+                    .equalsIgnoreCase(productId)) {
+
+                return product;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Finds a sale using its stored date reference.
+     *
+     * @param saleDateText sale date reference
+     * @return matching sale or null
+     */
+    private Sale findSale(String saleDateText) {
+
+        for (Sale sale :
+                saleService.listSales()) {
+
+            if (sale.getDate()
+                    .toString()
+                    .equals(saleDateText)) {
+
+                return sale;
+            }
+        }
+
+        return null;
     }
 }

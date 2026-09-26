@@ -1,6 +1,7 @@
 package com.gamezone.service;
 
 import com.gamezone.model.Accessory;
+import com.gamezone.model.Console;
 import com.gamezone.model.Customer;
 import com.gamezone.model.Product;
 import com.gamezone.model.Promotion;
@@ -10,14 +11,17 @@ import com.gamezone.persistence.SaleRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Provides business operations for registering and querying sales.
  *
  * <p>This service coordinates sale persistence with product and accessory
- * stock validation, inventory updates and promotion application.</p>
+ * stock validation, inventory updates, promotion application and warranty
+ * assignment.</p>
  */
 public class SaleService {
 
@@ -25,56 +29,90 @@ public class SaleService {
     private final ProductService productService;
     private final AccessoryService accessoryService;
     private final PromotionService promotionService;
+    private final WarrantyService warrantyService;
 
     /**
-     * Creates a SaleService that validates stock, applies promotions
-     * and persists sales through the corresponding services and repository.
+     * Creates a SaleService that validates stock, applies promotions,
+     * manages warranties and persists sales through the corresponding
+     * services and repository.
      *
      * @param saleRepository repository used to persist and load sales
      * @param productService service used to check and update product stock
      * @param accessoryService service used to check and update accessory stock
      * @param promotionService service used to find applicable promotions
+     * @param warrantyService service used to manage product warranties
      */
     public SaleService(
             SaleRepository saleRepository,
             ProductService productService,
             AccessoryService accessoryService,
-            PromotionService promotionService) {
+            PromotionService promotionService,
+            WarrantyService warrantyService) {
 
         if (saleRepository == null) {
             throw new IllegalArgumentException(
-                    "Sale repository cannot be null.");
+                    "Sale repository cannot be null."
+            );
         }
 
         if (productService == null) {
             throw new IllegalArgumentException(
-                    "Product service cannot be null.");
+                    "Product service cannot be null."
+            );
         }
 
         if (accessoryService == null) {
             throw new IllegalArgumentException(
-                    "Accessory service cannot be null.");
+                    "Accessory service cannot be null."
+            );
         }
 
         if (promotionService == null) {
             throw new IllegalArgumentException(
-                    "Promotion service cannot be null.");
+                    "Promotion service cannot be null."
+            );
+        }
+
+        if (warrantyService == null) {
+            throw new IllegalArgumentException(
+                    "Warranty service cannot be null."
+            );
         }
 
         this.saleRepository = saleRepository;
         this.productService = productService;
         this.accessoryService = accessoryService;
         this.promotionService = promotionService;
+        this.warrantyService = warrantyService;
     }
 
     /**
-     * Registers a new sale after validating stock and applying
-     * the best active promotion.
+     * Registers a new sale without extended warranties.
      *
      * @param sale the sale to register
      */
     public void registerSale(Sale sale) {
+        registerSale(sale, new ArrayList<>());
+    }
+
+    /**
+     * Registers a new sale after validating stock, applying warranties
+     * and applying the best active promotion.
+     *
+     * @param sale the sale to register
+     * @param productIdsWithExtendedWarranty identifiers of products
+     *        requesting extended warranty
+     */
+    public void registerSale(
+            Sale sale,
+            List<String> productIdsWithExtendedWarranty) {
+
         validateSale(sale);
+
+        Set<String> extendedWarrantyIds =
+                normalizeWarrantyProductIds(
+                        productIdsWithExtendedWarranty
+                );
 
         Map<String, Integer> productQuantities =
                 countProductQuantities(sale.getProducts());
@@ -98,6 +136,11 @@ public class SaleService {
                 availableAccessories
         );
 
+        assignWarranties(
+                sale,
+                extendedWarrantyIds
+        );
+
         applyBestPromotion(sale);
 
         updateProductStock(
@@ -113,6 +156,87 @@ public class SaleService {
         List<Sale> sales = saleRepository.loadSales();
         sales.add(sale);
         saleRepository.saveSales(sales);
+    }
+
+    /**
+     * Assigns the appropriate warranty to each console in the sale.
+     *
+     * <p>Every console receives a basic warranty automatically.
+     * A console whose identifier appears in the extended warranty list
+     * receives an extended warranty instead, and the additional cost
+     * is added to the sale.</p>
+     *
+     * @param sale sale associated with the warranties
+     * @param extendedWarrantyIds identifiers requesting extended warranty
+     */
+    private void assignWarranties(
+            Sale sale,
+            Set<String> extendedWarrantyIds) {
+
+        double warrantyAdditionalCost = 0.0;
+
+        for (Product product : sale.getProducts()) {
+
+            if (!(product instanceof Console)) {
+                continue;
+            }
+
+            if (extendedWarrantyIds.contains(
+                    product.getIdentifier().toLowerCase())) {
+
+                double additionalCost =
+                        warrantyService
+                                .assignExtendedWarranty(
+                                        product,
+                                        sale,
+                                        sale.getDate()
+                                )
+                                .getAdditionalCost();
+
+                warrantyAdditionalCost += additionalCost;
+
+            } else {
+
+                warrantyService.assignBasicWarranty(
+                        product,
+                        sale,
+                        sale.getDate()
+                );
+            }
+        }
+
+        sale.setWarrantyAdditionalCost(
+                warrantyAdditionalCost
+        );
+    }
+
+    /**
+     * Normalizes product identifiers used for extended warranties.
+     *
+     * @param productIds product identifiers
+     * @return normalized identifier set
+     */
+    private Set<String> normalizeWarrantyProductIds(
+            List<String> productIds) {
+
+        Set<String> normalizedIds = new HashSet<>();
+
+        if (productIds == null) {
+            return normalizedIds;
+        }
+
+        for (String productId : productIds) {
+
+            if (productId != null
+                    && !productId.isBlank()) {
+
+                normalizedIds.add(
+                        productId.trim().toLowerCase()
+                );
+            }
+        }
+
+        return normalizedIds;
     }
 
     /**
@@ -164,7 +288,9 @@ public class SaleService {
             Customer customer = sale.getCustomer();
 
             if (customer != null
-                    && customer.getIdentification().equals(customerId)) {
+                    && customer.getIdentification()
+                    .equals(customerId)) {
+
                 result.add(sale);
             }
         }
@@ -185,7 +311,9 @@ public class SaleService {
             Seller seller = sale.getSeller();
 
             if (seller != null
-                    && seller.getIdentification().equals(sellerId)) {
+                    && seller.getIdentification()
+                    .equals(sellerId)) {
+
                 result.add(sale);
             }
         }
@@ -199,15 +327,19 @@ public class SaleService {
      * @param sale sale to validate
      */
     private void validateSale(Sale sale) {
+
         if (sale == null) {
             throw new IllegalArgumentException(
-                    "Sale cannot be null.");
+                    "Sale cannot be null."
+            );
         }
 
         if (sale.getProducts() == null
                 || sale.getProducts().isEmpty()) {
+
             throw new IllegalArgumentException(
-                    "A sale must contain at least one product.");
+                    "A sale must contain at least one product."
+            );
         }
     }
 
@@ -223,7 +355,9 @@ public class SaleService {
         Map<String, Integer> counts = new HashMap<>();
 
         for (Product product : products) {
+
             if (!(product instanceof Accessory)) {
+
                 counts.merge(
                         product.getIdentifier(),
                         1,
@@ -247,7 +381,9 @@ public class SaleService {
         Map<String, Integer> counts = new HashMap<>();
 
         for (Product product : products) {
+
             if (product instanceof Accessory) {
+
                 counts.merge(
                         product.getIdentifier(),
                         1,
@@ -272,12 +408,14 @@ public class SaleService {
         for (Map.Entry<String, Integer> entry
                 : requestedQuantities.entrySet()) {
 
-            Product product = findProductById(
-                    availableProducts,
-                    entry.getKey()
-            );
+            Product product =
+                    findProductById(
+                            availableProducts,
+                            entry.getKey()
+                    );
 
             if (product.getAvailableQuantity() < 0) {
+
                 throw new IllegalStateException(
                         "Invalid stock for product "
                                 + product.getIdentifier()
@@ -312,12 +450,14 @@ public class SaleService {
         for (Map.Entry<String, Integer> entry
                 : requestedQuantities.entrySet()) {
 
-            Accessory accessory = findAccessoryById(
-                    availableAccessories,
-                    entry.getKey()
-            );
+            Accessory accessory =
+                    findAccessoryById(
+                            availableAccessories,
+                            entry.getKey()
+                    );
 
             if (accessory.getAvailableQuantity() < 0) {
+
                 throw new IllegalStateException(
                         "Invalid stock for accessory "
                                 + accessory.getIdentifier()
@@ -352,10 +492,11 @@ public class SaleService {
         for (Map.Entry<String, Integer> entry
                 : requestedQuantities.entrySet()) {
 
-            Product product = findProductById(
-                    availableProducts,
-                    entry.getKey()
-            );
+            Product product =
+                    findProductById(
+                            availableProducts,
+                            entry.getKey()
+                    );
 
             int remainingStock =
                     product.getAvailableQuantity()
@@ -381,10 +522,11 @@ public class SaleService {
         for (Map.Entry<String, Integer> entry
                 : requestedQuantities.entrySet()) {
 
-            Accessory accessory = findAccessoryById(
-                    availableAccessories,
-                    entry.getKey()
-            );
+            Accessory accessory =
+                    findAccessoryById(
+                            availableAccessories,
+                            entry.getKey()
+                    );
 
             int remainingStock =
                     accessory.getAvailableQuantity()
@@ -409,7 +551,10 @@ public class SaleService {
             String identifier) {
 
         for (Product product : products) {
-            if (product.getIdentifier().equals(identifier)) {
+
+            if (product.getIdentifier()
+                    .equals(identifier)) {
+
                 return product;
             }
         }
@@ -431,7 +576,10 @@ public class SaleService {
             String identifier) {
 
         for (Accessory accessory : accessories) {
-            if (accessory.getIdentifier().equals(identifier)) {
+
+            if (accessory.getIdentifier()
+                    .equals(identifier)) {
+
                 return accessory;
             }
         }

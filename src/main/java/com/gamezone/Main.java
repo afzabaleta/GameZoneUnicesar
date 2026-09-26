@@ -5,15 +5,18 @@ import com.gamezone.persistence.PersonRepository;
 import com.gamezone.persistence.ProductRepository;
 import com.gamezone.persistence.PromotionRepository;
 import com.gamezone.persistence.SaleRepository;
+import com.gamezone.persistence.WarrantyRepository;
+import com.gamezone.persistence.ReturnRepository;
+
 import com.gamezone.service.AccessoryService;
 import com.gamezone.service.PersonService;
 import com.gamezone.service.ProductService;
 import com.gamezone.service.PromotionService;
 import com.gamezone.service.SaleService;
-import com.gamezone.persistence.ReturnRepository;
+import com.gamezone.service.WarrantyService;
 import com.gamezone.service.ReturnService;
-import com.gamezone.ui.GameZoneUI;
 
+import com.gamezone.ui.GameZoneUI;
 
 /**
  * Entry point of the GameZoneUnicesar application.
@@ -37,7 +40,9 @@ public class Main {
                 new ProductRepository();
 
         AccessoryRepository accessoryRepository =
-                new AccessoryRepository(productRepository);
+                new AccessoryRepository(
+                        productRepository
+                );
 
         PromotionRepository promotionRepository =
                 new PromotionRepository();
@@ -50,24 +55,45 @@ public class Main {
                 );
 
         PersonService personService =
-                new PersonService(personRepository);
+                new PersonService(
+                        personRepository
+                );
 
         ProductService productService =
-                new ProductService(productRepository);
+                new ProductService(
+                        productRepository
+                );
 
         AccessoryService accessoryService =
-                new AccessoryService(accessoryRepository);
+                new AccessoryService(
+                        accessoryRepository
+                );
 
         PromotionService promotionService =
-                new PromotionService(promotionRepository);
+                new PromotionService(
+                        promotionRepository
+                );
+
+        WarrantyRepository warrantyRepository =
+                new WarrantyRepository(
+                        saleRepository,
+                        productService
+                );
+
+        WarrantyService warrantyService =
+                new WarrantyService(
+                        warrantyRepository
+                );
 
         SaleService saleService =
                 new SaleService(
                         saleRepository,
                         productService,
                         accessoryService,
-                        promotionService
+                        promotionService,
+                        warrantyService
                 );
+
         ReturnRepository returnRepository =
                 new ReturnRepository(
                         saleService,
@@ -88,8 +114,10 @@ public class Main {
                         accessoryService,
                         saleService,
                         promotionService,
-                        returnService
+                        returnService,
+                        warrantyService
                 );
+
         gameZoneUI.showMainMenu();
     }
 }

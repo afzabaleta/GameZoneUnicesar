@@ -6,7 +6,6 @@ import com.gamezone.model.Product;
 import com.gamezone.model.Sale;
 import com.gamezone.model.Warranty;
 import com.gamezone.service.ProductService;
-import com.gamezone.service.SaleService;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,22 +28,22 @@ public class WarrantyRepository {
     private static final String SEPARATOR = ";";
 
     private final Path filePath;
-    private final SaleService saleService;
+    private final SaleRepository saleRepository;
     private final ProductService productService;
 
     /**
      * Creates a warranty repository.
      *
-     * @param saleService service used to resolve sales
+     * @param saleRepository repository used to resolve sales
      * @param productService service used to resolve products
      */
     public WarrantyRepository(
-            SaleService saleService,
+            SaleRepository saleRepository,
             ProductService productService) {
 
-        if (saleService == null) {
+        if (saleRepository == null) {
             throw new IllegalArgumentException(
-                    "Sale service cannot be null."
+                    "Sale repository cannot be null."
             );
         }
 
@@ -55,7 +54,7 @@ public class WarrantyRepository {
         }
 
         this.filePath = Paths.get(FILE_PATH);
-        this.saleService = saleService;
+        this.saleRepository = saleRepository;
         this.productService = productService;
     }
 
@@ -196,6 +195,7 @@ public class WarrantyRepository {
         String id = fields[1];
         String productId = fields[2];
         String saleDateText = fields[3];
+
         LocalDate startDate =
                 LocalDate.parse(fields[4]);
 
@@ -264,7 +264,7 @@ public class WarrantyRepository {
     private Sale findSale(String saleDateText) {
 
         for (Sale sale :
-                saleService.listSales()) {
+                saleRepository.loadSales()) {
 
             if (sale.getDate()
                     .toString()

@@ -111,4 +111,48 @@ public class WarrantyService {
 
         return warranty;
     }
+
+    /**
+     * Finds a warranty by product and sale reference.
+     *
+     * @param productId product identifier
+     * @param saleId sale reference
+     * @return matching warranty or null when none exists
+     */
+    public Warranty findWarrantyByProduct(
+            String productId,
+            String saleId) {
+
+        if (productId == null || productId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Product identifier cannot be blank."
+            );
+        }
+
+        if (saleId == null || saleId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Sale identifier cannot be blank."
+            );
+        }
+
+        for (Warranty warranty : warranties) {
+
+            boolean sameProduct =
+                    warranty.getProduct()
+                            .getIdentifier()
+                            .equalsIgnoreCase(productId);
+
+            boolean sameSale =
+                    warranty.getSale()
+                            .getDate()
+                            .toString()
+                            .equals(saleId);
+
+            if (sameProduct && sameSale) {
+                return warranty;
+            }
+        }
+
+        return null;
+    }
 }

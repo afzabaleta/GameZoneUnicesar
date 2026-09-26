@@ -17,7 +17,8 @@ import java.util.Map;
  * Provides business operations for registering and querying sales.
  *
  * <p>This service coordinates sale persistence with product and accessory
- * stock validation, inventory updates and promotion application.</p>
+ * stock validation, inventory updates, promotion application and warranty
+ * assignment.</p>
  */
 public class SaleService {
 
@@ -25,46 +26,61 @@ public class SaleService {
     private final ProductService productService;
     private final AccessoryService accessoryService;
     private final PromotionService promotionService;
+    private final WarrantyService warrantyService;
 
     /**
-     * Creates a SaleService that validates stock, applies promotions
-     * and persists sales through the corresponding services and repository.
+     * Creates a SaleService that validates stock, applies promotions,
+     * manages warranties and persists sales through the corresponding
+     * services and repository.
      *
      * @param saleRepository repository used to persist and load sales
      * @param productService service used to check and update product stock
      * @param accessoryService service used to check and update accessory stock
      * @param promotionService service used to find applicable promotions
+     * @param warrantyService service used to manage product warranties
      */
     public SaleService(
             SaleRepository saleRepository,
             ProductService productService,
             AccessoryService accessoryService,
-            PromotionService promotionService) {
+            PromotionService promotionService,
+            WarrantyService warrantyService) {
 
         if (saleRepository == null) {
             throw new IllegalArgumentException(
-                    "Sale repository cannot be null.");
+                    "Sale repository cannot be null."
+            );
         }
 
         if (productService == null) {
             throw new IllegalArgumentException(
-                    "Product service cannot be null.");
+                    "Product service cannot be null."
+            );
         }
 
         if (accessoryService == null) {
             throw new IllegalArgumentException(
-                    "Accessory service cannot be null.");
+                    "Accessory service cannot be null."
+            );
         }
 
         if (promotionService == null) {
             throw new IllegalArgumentException(
-                    "Promotion service cannot be null.");
+                    "Promotion service cannot be null."
+            );
+        }
+
+        if (warrantyService == null) {
+            throw new IllegalArgumentException(
+                    "Warranty service cannot be null."
+            );
         }
 
         this.saleRepository = saleRepository;
         this.productService = productService;
         this.accessoryService = accessoryService;
         this.promotionService = promotionService;
+        this.warrantyService = warrantyService;
     }
 
     /**
@@ -201,13 +217,15 @@ public class SaleService {
     private void validateSale(Sale sale) {
         if (sale == null) {
             throw new IllegalArgumentException(
-                    "Sale cannot be null.");
+                    "Sale cannot be null."
+            );
         }
 
         if (sale.getProducts() == null
                 || sale.getProducts().isEmpty()) {
             throw new IllegalArgumentException(
-                    "A sale must contain at least one product.");
+                    "A sale must contain at least one product."
+            );
         }
     }
 

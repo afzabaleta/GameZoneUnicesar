@@ -155,4 +155,59 @@ public class WarrantyService {
 
         return null;
     }
+
+    /**
+     * Returns warranties that are active on the current date.
+     *
+     * @return list of active warranties
+     */
+    public List<Warranty> listActiveWarranties() {
+
+        LocalDate today = LocalDate.now();
+        List<Warranty> activeWarranties = new ArrayList<>();
+
+        for (Warranty warranty : warranties) {
+            if (warranty.isActive(today)) {
+                activeWarranties.add(warranty);
+            }
+        }
+
+        return activeWarranties;
+    }
+
+    /**
+     * Returns warranties whose expiration date is within the next
+     * specified number of days.
+     *
+     * @param daysAhead number of days to look ahead
+     * @return list of warranties expiring soon
+     */
+    public List<Warranty> listWarrantiesExpiringSoon(int daysAhead) {
+
+        if (daysAhead < 0) {
+            throw new IllegalArgumentException(
+                    "Days ahead cannot be negative."
+            );
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalDate limitDate = today.plusDays(daysAhead);
+
+        List<Warranty> expiringWarranties = new ArrayList<>();
+
+        for (Warranty warranty : warranties) {
+
+            LocalDate endDate = warranty.getEndDate();
+
+            boolean expiresSoon =
+                    !endDate.isBefore(today)
+                            && !endDate.isAfter(limitDate);
+
+            if (expiresSoon) {
+                expiringWarranties.add(warranty);
+            }
+        }
+
+        return expiringWarranties;
+    }
 }

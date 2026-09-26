@@ -10,7 +10,10 @@ import com.gamezone.service.PersonService;
 import com.gamezone.service.ProductService;
 import com.gamezone.service.PromotionService;
 import com.gamezone.service.SaleService;
+import com.gamezone.persistence.ReturnRepository;
+import com.gamezone.service.ReturnService;
 import com.gamezone.ui.GameZoneUI;
+
 
 /**
  * Entry point of the GameZoneUnicesar application.
@@ -65,6 +68,18 @@ public class Main {
                         accessoryService,
                         promotionService
                 );
+        ReturnRepository returnRepository =
+                new ReturnRepository(
+                        saleService,
+                        productService
+                );
+
+        ReturnService returnService =
+                new ReturnService(
+                        returnRepository,
+                        saleService,
+                        productService
+                );
 
         GameZoneUI gameZoneUI =
                 new GameZoneUI(
@@ -72,7 +87,8 @@ public class Main {
                         productService,
                         accessoryService,
                         saleService,
-                        promotionService
+                        promotionService,
+                        returnService
                 );
         gameZoneUI.showMainMenu();
     }

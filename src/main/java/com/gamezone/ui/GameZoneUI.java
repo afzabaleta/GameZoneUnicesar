@@ -18,6 +18,11 @@ import com.gamezone.service.PromotionService;
 import com.gamezone.model.Return;
 import com.gamezone.service.ReturnService;
 import com.gamezone.model.Promotion;
+import com.gamezone.model.Warranty;
+import com.gamezone.model.BasicWarranty;
+import com.gamezone.model.ExtendedWarranty;
+
+import com.gamezone.service.WarrantyService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,6 +44,7 @@ public class GameZoneUI {
     private final SaleService saleService;
     private final PromotionService promotionService;
     private final ReturnService returnService;
+    private final WarrantyService warrantyService;
     private final Scanner scanner;
 
     /**
@@ -55,7 +61,8 @@ public class GameZoneUI {
             AccessoryService accessoryService,
             SaleService saleService,
             PromotionService promotionService,
-            ReturnService returnService) {
+            ReturnService returnService,
+            WarrantyService warrantyService) {
 
         this.personService = personService;
         this.productService = productService;
@@ -63,6 +70,7 @@ public class GameZoneUI {
         this.saleService = saleService;
         this.promotionService = promotionService;
         this.returnService = returnService;
+        this.warrantyService = warrantyService;
         this.scanner = new Scanner(System.in);
     }
 

@@ -20,8 +20,8 @@ import java.util.List;
 /**
  * Handles saving and loading sales to and from a text file.
  *
- * <p>A sale stores references to a customer, seller, products and the
- * promotion information applied to the transaction.</p>
+ * <p>A sale stores references to a customer, seller, products,
+ * promotion information and warranty additional cost.</p>
  */
 public class SaleRepository {
 
@@ -49,17 +49,20 @@ public class SaleRepository {
 
         if (personRepository == null) {
             throw new IllegalArgumentException(
-                    "Person repository cannot be null.");
+                    "Person repository cannot be null."
+            );
         }
 
         if (productRepository == null) {
             throw new IllegalArgumentException(
-                    "Product repository cannot be null.");
+                    "Product repository cannot be null."
+            );
         }
 
         if (accessoryRepository == null) {
             throw new IllegalArgumentException(
-                    "Accessory repository cannot be null.");
+                    "Accessory repository cannot be null."
+            );
         }
 
         this.personRepository = personRepository;
@@ -101,9 +104,6 @@ public class SaleRepository {
     /**
      * Loads all sales from the sales file.
      *
-     * <p>Four-field legacy records are also accepted. In that case,
-     * the promotion name remains null and the discount amount is zero.</p>
-     *
      * @return list of persisted sales
      */
     public List<Sale> loadSales() {
@@ -144,10 +144,10 @@ public class SaleRepository {
     /**
      * Builds the CSV-like representation of a sale.
      *
-     * <p>Format:</p>
+     * <p>Current format:</p>
      *
      * <pre>
-     * date;customerId;sellerId;productIds;promotionName;discountAmount
+     * date;customerId;sellerId;productIds;promotionName;discountAmount;warrantyAdditionalCost
      * </pre>
      *
      * @param sale sale to serialize
@@ -191,14 +191,16 @@ public class SaleRepository {
                 + FIELD_SEPARATOR
                 + promotionName
                 + FIELD_SEPARATOR
-                + sale.getDiscountAmount();
+                + sale.getDiscountAmount()
+                + FIELD_SEPARATOR
+                + sale.getWarrantyAdditionalCost();
     }
 
     /**
      * Parses a persisted sale.
      *
-     * <p>Both the legacy four-field format and the new six-field
-     * format are supported.</p>
+     * <p>Legacy four-field records and previous six-field records
+     * are also supported.</p>
      *
      * @param line persisted sale line
      * @return reconstructed sale
@@ -208,9 +210,12 @@ public class SaleRepository {
         String[] fields =
                 line.split(FIELD_SEPARATOR, -1);
 
-        if (fields.length != 4 && fields.length != 6) {
+        if (fields.length != 4
+                && fields.length != 6
+                && fields.length != 7) {
+
             throw new IllegalStateException(
-                    "Expected 4 or 6 fields, found "
+                    "Expected 4, 6 or 7 fields, found "
                             + fields.length
             );
         }
@@ -243,7 +248,8 @@ public class SaleRepository {
                         products
                 );
 
-        if (fields.length == 6) {
+        if (fields.length == 6
+                || fields.length == 7) {
 
             String promotionName =
                     fields[4].trim();
@@ -261,6 +267,18 @@ public class SaleRepository {
 
             sale.setDiscountAmount(
                     discountAmount
+            );
+        }
+
+        if (fields.length == 7) {
+
+            double warrantyAdditionalCost =
+                    Double.parseDouble(
+                            fields[6].trim()
+                    );
+
+            sale.setWarrantyAdditionalCost(
+                    warrantyAdditionalCost
             );
         }
 
@@ -316,7 +334,7 @@ public class SaleRepository {
     /**
      * Finds a product or accessory by identifier.
      *
-     * @param id item identifier
+     * @param id product or accessory identifier
      * @return matching product or accessory
      */
     private Product findItemById(String id) {

@@ -20,6 +20,7 @@ public abstract class Warranty {
         this.product = product;
         this.sale = sale;
         this.startDate = startDate;
+        this.endDate = startDate.plusMonths(getDurationInMonths());
     }
 
 
@@ -45,5 +46,39 @@ public abstract class Warranty {
 
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+
+    public abstract int getDurationInMonths();
+
+
+    public abstract String getWarrantyType();
+
+
+    public abstract double getAdditionalCost();
+
+
+    public boolean isActive(LocalDate date) {
+
+        if (date == null) {
+            return false;
+        }
+
+        return !date.isBefore(startDate)
+                && !date.isAfter(endDate);
+    }
+
+
+    public String generateWarrantyCertificate() {
+
+        return String.format(
+                "Certificado de %s | ID: %s | Producto: %s | Fecha inicio: %s | Fecha vencimiento: %s | Costo adicional: $%.2f",
+                getWarrantyType(),
+                id,
+                product != null ? product.getDescription() : "N/A",
+                startDate,
+                endDate,
+                getAdditionalCost()
+        );
     }
 }

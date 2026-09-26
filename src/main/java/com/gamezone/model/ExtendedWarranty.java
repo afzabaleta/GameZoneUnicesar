@@ -4,30 +4,31 @@ import java.time.LocalDate;
 
 public class ExtendedWarranty extends Warranty {
 
-    private int extraMonths;
-
 
     public ExtendedWarranty(String id,
                             Product product,
                             Sale sale,
-                            LocalDate startDate,
-                            int extraMonths) {
+                            LocalDate startDate) {
 
         super(id, product, sale, startDate);
-
-        this.extraMonths = extraMonths;
-    }
-
-
-    public int getExtraMonths() {
-        return extraMonths;
     }
 
 
     @Override
-    public LocalDate getEndDate() {
+    public int getDurationInMonths() {
+        return 12;
+    }
 
-        return getStartDate()
-                .plusMonths(extraMonths);
+
+    @Override
+    public String getWarrantyType() {
+        return "Garantía Extendida";
+    }
+
+
+    @Override
+    public double getAdditionalCost() {
+
+        return getProduct().getPrice() * 0.10;
     }
 }

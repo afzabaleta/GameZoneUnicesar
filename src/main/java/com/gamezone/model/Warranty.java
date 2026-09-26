@@ -60,30 +60,70 @@ public abstract class Warranty {
         );
     }
 
+    /**
+     * Returns the warranty identifier.
+     *
+     * @return warranty identifier
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the product associated with the warranty.
+     *
+     * @return associated product
+     */
     public Product getProduct() {
         return product;
     }
 
+    /**
+     * Returns the sale associated with the warranty.
+     *
+     * @return associated sale
+     */
     public Sale getSale() {
         return sale;
     }
 
+    /**
+     * Returns the warranty start date.
+     *
+     * @return warranty start date
+     */
     public LocalDate getStartDate() {
         return startDate;
     }
 
+    /**
+     * Returns the warranty end date.
+     *
+     * @return warranty end date
+     */
     public LocalDate getEndDate() {
         return endDate;
     }
 
+    /**
+     * Returns the duration of the warranty in months.
+     *
+     * @return warranty duration in months
+     */
     public abstract int getDurationInMonths();
 
+    /**
+     * Returns the name of the warranty type.
+     *
+     * @return warranty type
+     */
     public abstract String getWarrantyType();
 
+    /**
+     * Returns the additional cost of the warranty.
+     *
+     * @return additional warranty cost
+     */
     public abstract double getAdditionalCost();
 
     /**

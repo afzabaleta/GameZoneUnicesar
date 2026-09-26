@@ -15,6 +15,8 @@ import com.gamezone.service.PersonService;
 import com.gamezone.service.ProductService;
 import com.gamezone.service.SaleService;
 import com.gamezone.service.PromotionService;
+import com.gamezone.model.Return;
+import com.gamezone.service.ReturnService;
 import com.gamezone.model.Promotion;
 
 import java.time.LocalDate;
@@ -36,6 +38,7 @@ public class GameZoneUI {
     private final AccessoryService accessoryService;
     private final SaleService saleService;
     private final PromotionService promotionService;
+    private final ReturnService returnService;
     private final Scanner scanner;
 
     /**
@@ -51,13 +54,15 @@ public class GameZoneUI {
             ProductService productService,
             AccessoryService accessoryService,
             SaleService saleService,
-            PromotionService promotionService) {
+            PromotionService promotionService,
+            ReturnService returnService) {
 
         this.personService = personService;
         this.productService = productService;
         this.accessoryService = accessoryService;
         this.saleService = saleService;
         this.promotionService = promotionService;
+        this.returnService = returnService;
         this.scanner = new Scanner(System.in);
     }
 

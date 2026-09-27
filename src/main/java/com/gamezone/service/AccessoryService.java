@@ -22,9 +22,11 @@ public class AccessoryService {
      * @param accessoryRepository repository used to manage accessories
      */
     public AccessoryService(AccessoryRepository accessoryRepository) {
+
         if (accessoryRepository == null) {
             throw new IllegalArgumentException(
-                    "Accessory repository cannot be null");
+                    "Accessory repository cannot be null"
+            );
         }
 
         this.accessoryRepository = accessoryRepository;
@@ -36,6 +38,7 @@ public class AccessoryService {
      * @param controller controller to register
      */
     public void registerController(Controller controller) {
+
         validateAccessory(controller);
         accessoryRepository.save(controller);
     }
@@ -46,6 +49,7 @@ public class AccessoryService {
      * @param cable cable to register
      */
     public void registerCable(Cable cable) {
+
         validateAccessory(cable);
         accessoryRepository.save(cable);
     }
@@ -56,6 +60,7 @@ public class AccessoryService {
      * @param memory memory to register
      */
     public void registerMemory(Memory memory) {
+
         validateAccessory(memory);
         accessoryRepository.save(memory);
     }
@@ -66,6 +71,7 @@ public class AccessoryService {
      * @return list of accessories
      */
     public List<Accessory> listAccessories() {
+
         return accessoryRepository.findAll();
     }
 
@@ -76,9 +82,11 @@ public class AccessoryService {
      * @return list of accessories with the specified type
      */
     public List<Accessory> listByType(String type) {
+
         if (type == null || type.isBlank()) {
             throw new IllegalArgumentException(
-                    "Accessory type cannot be blank");
+                    "Accessory type cannot be blank"
+            );
         }
 
         return accessoryRepository.findByType(type);
@@ -90,13 +98,18 @@ public class AccessoryService {
      * @param consoleId identifier of the console
      * @return list of compatible accessories
      */
-    public List<Accessory> listCompatibleWithConsole(String consoleId) {
+    public List<Accessory> listCompatibleWithConsole(
+            String consoleId) {
+
         if (consoleId == null || consoleId.isBlank()) {
             throw new IllegalArgumentException(
-                    "Console identifier cannot be blank");
+                    "Console identifier cannot be blank"
+            );
         }
 
-        return accessoryRepository.findCompatibleWithConsole(consoleId);
+        return accessoryRepository.findCompatibleWithConsole(
+                consoleId
+        );
     }
 
     /**
@@ -105,34 +118,100 @@ public class AccessoryService {
      * @param identifier accessory identifier
      * @param newStock new available quantity
      */
-    public void updateStock(String identifier, int newStock) {
+    public void updateStock(
+            String identifier,
+            int newStock) {
 
         if (identifier == null || identifier.isBlank()) {
             throw new IllegalArgumentException(
-                    "Accessory identifier cannot be blank");
+                    "Accessory identifier cannot be blank"
+            );
         }
 
         if (newStock < 0) {
             throw new IllegalArgumentException(
-                    "Accessory stock cannot be negative");
+                    "Accessory stock cannot be negative"
+            );
         }
 
         Accessory accessory =
-                accessoryRepository.findByIdentifier(identifier);
+                accessoryRepository.findByIdentifier(
+                        identifier
+                );
 
         if (accessory == null) {
             throw new IllegalArgumentException(
-                    "Accessory not found: " + identifier);
+                    "Accessory not found: " + identifier
+            );
         }
 
         accessory.setAvailableQuantity(newStock);
 
         try {
+
             accessoryRepository.saveAll(
-                    accessoryRepository.findAll());
+                    accessoryRepository.findAll()
+            );
+
         } catch (IOException e) {
+
             throw new IllegalStateException(
-                    "Could not update accessory stock.", e);
+                    "Could not update accessory stock.",
+                    e
+            );
+        }
+    }
+
+    /**
+     * Restores accessory stock after a successful return.
+     *
+     * @param accessoryId identifier of the accessory
+     * @param quantity quantity to restore
+     */
+    public void restoreStock(
+            String accessoryId,
+            int quantity) {
+
+        if (accessoryId == null || accessoryId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Accessory identifier cannot be blank"
+            );
+        }
+
+        if (quantity <= 0) {
+            throw new IllegalArgumentException(
+                    "Restored quantity must be greater than zero"
+            );
+        }
+
+        Accessory accessory =
+                accessoryRepository.findByIdentifier(
+                        accessoryId
+                );
+
+        if (accessory == null) {
+            throw new IllegalArgumentException(
+                    "Accessory not found: " + accessoryId
+            );
+        }
+
+        int restoredStock =
+                accessory.getAvailableQuantity() + quantity;
+
+        accessory.setAvailableQuantity(restoredStock);
+
+        try {
+
+            accessoryRepository.saveAll(
+                    accessoryRepository.findAll()
+            );
+
+        } catch (IOException e) {
+
+            throw new IllegalStateException(
+                    "Could not restore accessory stock.",
+                    e
+            );
         }
     }
 
@@ -145,36 +224,48 @@ public class AccessoryService {
 
         if (accessory == null) {
             throw new IllegalArgumentException(
-                    "Accessory cannot be null");
+                    "Accessory cannot be null"
+            );
         }
 
         if (accessory.getIdentifier() == null
                 || accessory.getIdentifier().isBlank()) {
+
             throw new IllegalArgumentException(
-                    "Accessory identifier cannot be blank");
+                    "Accessory identifier cannot be blank"
+            );
         }
 
         if (accessory.getTitle() == null
                 || accessory.getTitle().isBlank()) {
+
             throw new IllegalArgumentException(
-                    "Accessory title cannot be blank");
+                    "Accessory title cannot be blank"
+            );
         }
 
         if (accessory.getPrice() < 0) {
+
             throw new IllegalArgumentException(
-                    "Accessory price cannot be negative");
+                    "Accessory price cannot be negative"
+            );
         }
 
         if (accessory.getAvailableQuantity() < 0) {
+
             throw new IllegalArgumentException(
-                    "Accessory stock cannot be negative");
+                    "Accessory stock cannot be negative"
+            );
         }
 
         if (accessoryRepository.findByIdentifier(
-                accessory.getIdentifier()) != null) {
+                accessory.getIdentifier()
+        ) != null) {
+
             throw new IllegalArgumentException(
                     "Accessory already exists: "
-                            + accessory.getIdentifier());
+                            + accessory.getIdentifier()
+            );
         }
     }
 }

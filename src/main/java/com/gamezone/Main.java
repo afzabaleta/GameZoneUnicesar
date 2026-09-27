@@ -96,14 +96,16 @@ public class Main {
         ReturnRepository returnRepository =
                 new ReturnRepository(
                         saleService,
-                        productService
+                        productService,
+                        accessoryService
                 );
 
         ReturnService returnService =
                 new ReturnService(
                         returnRepository,
                         saleService,
-                        productService
+                        productService,
+                        accessoryService
                 );
 
         GameZoneUI gameZoneUI =

@@ -23,7 +23,7 @@ public class Return {
      * @param returnDate return date
      * @param originalSale original sale
      * @param returnedProducts returned products
-     * @param reason return reason
+     * @param reason reason for the return
      */
     public Return(
             String identifier,
@@ -136,18 +136,35 @@ public class Return {
     }
 
     /**
-     * Calculates the refund amount based on the returned products.
+     * Calculates the refund amount applying the proportional
+     * share of the original sale discount.
      *
-     * @return refund amount
+     * @return refund amount after the proportional discount
      */
     public double calculateRefundAmount() {
-        double total = 0;
+
+        double returnedSubtotal = 0.0;
 
         for (Product product : returnedProducts) {
-            total += product.getPrice();
+            returnedSubtotal += product.getPrice();
         }
 
-        this.refundAmount = total;
+        double saleSubtotal = originalSale.calculateSubtotal();
+        double saleDiscount = originalSale.getDiscountAmount();
+
+        if (saleSubtotal <= 0 || saleDiscount <= 0) {
+            this.refundAmount = returnedSubtotal;
+            return refundAmount;
+        }
+
+        double proportionalDiscount =
+                saleDiscount
+                        * (returnedSubtotal / saleSubtotal);
+
+        this.refundAmount =
+                Math.max(
+                        0.0,
+                        returnedSubtotal - proportionalDiscount);
 
         return refundAmount;
     }
@@ -182,11 +199,39 @@ public class Return {
 
         receipt.append("Productos devueltos:\n");
 
+        double saleSubtotal = originalSale.calculateSubtotal();
+        double saleDiscount = originalSale.getDiscountAmount();
+
+        double discountRate = 0.0;
+
+        if (saleSubtotal > 0) {
+            discountRate = saleDiscount / saleSubtotal;
+        }
+
         for (Product product : returnedProducts) {
+
+            double listPrice = product.getPrice();
+
+            double proportionalDiscount =
+                    listPrice * discountRate;
+
+            double itemRefund =
+                    listPrice - proportionalDiscount;
+
             receipt.append("- ")
                     .append(product.getTitle())
-                    .append(" - $")
-                    .append(product.getPrice())
+                    .append("\n");
+
+            receipt.append("  Precio de lista: $")
+                    .append(listPrice)
+                    .append("\n");
+
+            receipt.append("  Descuento proporcional: $")
+                    .append(proportionalDiscount)
+                    .append("\n");
+
+            receipt.append("  Monto reembolsado: $")
+                    .append(itemRefund)
                     .append("\n");
         }
 

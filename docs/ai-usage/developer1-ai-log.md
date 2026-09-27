@@ -52,8 +52,6 @@
 
 ---
 
----
-
 ### 6. R5 - Accessory category discount integration
 
 **Date:** 2026-09-27  
@@ -69,6 +67,25 @@
 **Student decision:** The proposed changes were reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
 
 **Related commit:** `feat: support accessory category discounts`
+
+---
+
+### 7. R5 - Discounted return refund integration
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `feature/discounted-return-refund`
+
+**Purpose:** Implement A5, calculating return refunds proportionally to the discount applied to the original sale.
+
+**AI query:** Reviewed the A5 integration requirement and requested step-by-step guidance to modify `Return.calculateRefundAmount()` and `Return.generateReturnReceipt()`.
+
+**AI response summary:** The assistant explained that the refund must apply the original sale discount proportionally to the returned items and guided the modification of the refund calculation and return receipt to display the list price, proportional discount, and refunded amount for each item.
+
+**Student decision:** The proposed changes were reviewed and implemented in `Return.java`. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commit:** `fix: calculate discounted return refunds`
+
 ## Final Reflection
 
 AI was used as a support tool to review the product model, persistence, service logic, and validation rules. The final implementation decisions were made by the student and verified through project testing.

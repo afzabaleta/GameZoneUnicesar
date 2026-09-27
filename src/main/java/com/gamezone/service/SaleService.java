@@ -347,6 +347,18 @@ public class SaleService {
                     "A sale must contain at least one product."
             );
         }
+
+        for (Product product : sale.getProducts()) {
+
+            if (product == null
+                    || product.getIdentifier() == null
+                    || product.getIdentifier().isBlank()) {
+
+                throw new IllegalArgumentException(
+                        "Every sale item must have a valid identifier."
+                );
+            }
+        }
     }
 
     /**

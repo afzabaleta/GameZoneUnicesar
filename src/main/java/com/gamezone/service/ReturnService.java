@@ -125,7 +125,28 @@ public class ReturnService {
                         reason
                 );
 
-        for (Product product : returnedProducts) {
+        restoreReturnedStock(returnedProducts);
+
+        List<Return> returns =
+                returnRepository.loadAll();
+
+        returns.add(returnItem);
+
+        returnRepository.saveAll(returns);
+
+        return returnItem;
+    }
+
+    /**
+     * Restores stock for each returned item according to its type.
+     *
+     * @param returnedProducts products and accessories being returned
+     */
+    private void restoreReturnedStock(
+            List<Product> returnedProducts) {
+
+        for (Product product :
+                returnedProducts) {
 
             if (product instanceof Accessory) {
 
@@ -142,15 +163,6 @@ public class ReturnService {
                 );
             }
         }
-
-        List<Return> returns =
-                returnRepository.loadAll();
-
-        returns.add(returnItem);
-
-        returnRepository.saveAll(returns);
-
-        return returnItem;
     }
 
     /**

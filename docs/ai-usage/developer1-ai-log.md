@@ -52,6 +52,23 @@
 
 ---
 
+---
+
+### 6. R5 - Accessory category discount integration
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `feature/accessory-category-discount`
+
+**Purpose:** Implement A1, adding support for `ACCESSORY` in category promotions.
+
+**AI query:** Reviewed the R5 integration requirements and requested step-by-step guidance to modify `CategoryDiscount`, `PromotionService`, `GameZoneUI`, and `data/promotions.csv`.
+
+**AI response summary:** The assistant guided the implementation of accessory category support, validation of the `ACCESSORY` category, the promotion menu update, and the addition of an accessory category promotion.
+
+**Student decision:** The proposed changes were reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commit:** `feat: support accessory category discounts`
 ## Final Reflection
 
 AI was used as a support tool to review the product model, persistence, service logic, and validation rules. The final implementation decisions were made by the student and verified through project testing.

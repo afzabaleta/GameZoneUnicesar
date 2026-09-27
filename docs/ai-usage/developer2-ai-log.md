@@ -91,6 +91,7 @@
 - `refactor: inject accessory service into returns`
 - `refactor: centralize return stock restoration`
 - `docs: update developer 2 AI usage log`
+
 ---
 
 ### 8. R5 - Monthly balance report
@@ -110,6 +111,31 @@
 **Related commits:**
 - `feat: add monthly sales calculation`
 - `feat: display monthly balance breakdown`
+- `docs: update developer 2 AI usage log`
+
+---
+
+### 9. R5 - Warranty cancellation on returns
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `feature/return-warranty-cancellation`
+
+**Purpose:** Implement A7 so warranties associated with returned consoles are cancelled and the refundable extended warranty cost is included in the return amount.
+
+**AI query:** Reviewed the R5 A7 requirements and requested step-by-step guidance to add warranty cancellation, integrate it into `ReturnService`, include the warranty refund in `Return`, update persistence, and verify the dependency injection.
+
+**AI response summary:** The assistant guided the implementation of `WarrantyService.cancelWarranties(String productId, String saleId)`, the integration of warranty cancellation into `ReturnService`, the addition of the refundable warranty amount to `Return`, the persistence of that amount in `ReturnRepository`, and the corresponding `Main` dependency injection.
+
+**Student decision:** The proposed changes were reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commits:**
+- `feat: cancel warranties on returned products`
+- `feat: include warranty refund in returns`
+- `feat: integrate warranty cancellation into returns`
+- `refactor: inject warranty service into returns`
+- `feat: persist warranty refunds in returns`
+- `docs: update developer 2 AI usage log`
 
 ## Final Reflection
 

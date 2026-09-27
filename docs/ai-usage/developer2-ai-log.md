@@ -91,6 +91,25 @@
 - `refactor: inject accessory service into returns`
 - `refactor: centralize return stock restoration`
 - `docs: update developer 2 AI usage log`
+---
+
+### 8. R5 - Monthly balance report
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `fix/monthly-balance-report`
+
+**Purpose:** Implement A6 so the monthly balance report displays total sales, total refunds, and the net balance.
+
+**AI query:** Reviewed the R5 A6 requirements and requested step-by-step guidance to add monthly sales and refund calculations to `ReturnService` and display the three report values in `GameZoneUI`.
+
+**AI response summary:** The assistant guided the implementation of `calculateMonthlySales(int month, int year)`, `calculateMonthlyReturns(int month, int year)`, the refactoring of `generateMonthlyBalance(int month, int year)`, and the update of the monthly balance menu to display sales, refunds, and net balance.
+
+**Student decision:** The proposed changes were reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commits:**
+- `feat: add monthly sales calculation`
+- `feat: display monthly balance breakdown`
 
 ## Final Reflection
 

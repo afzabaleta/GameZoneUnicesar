@@ -208,7 +208,7 @@ public class GameZoneUI {
                 Double.parseDouble(scanner.nextLine());
 
         System.out.print(
-                "Categoría (VIDEOGAME/CONSOLE): "
+                "Categoría (VIDEOGAME/CONSOLE/ACCESSORY): "
         );
 
         String targetCategory =

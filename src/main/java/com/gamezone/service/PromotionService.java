@@ -80,6 +80,16 @@ public class PromotionService {
             double percentage,
             String targetCategory) {
 
+        if (targetCategory == null
+                || (!targetCategory.equalsIgnoreCase("VIDEOGAME")
+                && !targetCategory.equalsIgnoreCase("CONSOLE")
+                && !targetCategory.equalsIgnoreCase("ACCESSORY"))) {
+
+            throw new IllegalArgumentException(
+                    "Target category must be VIDEOGAME, CONSOLE or ACCESSORY."
+            );
+        }
+
         savePromotion(
                 new CategoryDiscount(
                         identifier,

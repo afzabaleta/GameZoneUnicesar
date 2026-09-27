@@ -18,7 +18,7 @@ public class CategoryDiscount extends Promotion {
      * @param startDate promotion start date
      * @param endDate promotion end date
      * @param percentage discount percentage
-     * @param targetCategory target category, VIDEOGAME or CONSOLE
+     * @param targetCategory target category, VIDEOGAME, CONSOLE or ACCESSORY
      */
     public CategoryDiscount(
             String identifier,
@@ -50,7 +50,8 @@ public class CategoryDiscount extends Promotion {
     public void setPercentage(double percentage) {
         if (percentage < 0 || percentage > 100) {
             throw new IllegalArgumentException(
-                    "Discount percentage must be between 0 and 100.");
+                    "Discount percentage must be between 0 and 100."
+            );
         }
 
         this.percentage = percentage;
@@ -71,15 +72,19 @@ public class CategoryDiscount extends Promotion {
      * @param targetCategory new target category
      */
     public void setTargetCategory(String targetCategory) {
+
         if (targetCategory == null
                 || (!targetCategory.equalsIgnoreCase("VIDEOGAME")
-                && !targetCategory.equalsIgnoreCase("CONSOLE"))) {
+                && !targetCategory.equalsIgnoreCase("CONSOLE")
+                && !targetCategory.equalsIgnoreCase("ACCESSORY"))) {
 
             throw new IllegalArgumentException(
-                    "Target category must be VIDEOGAME or CONSOLE.");
+                    "Target category must be VIDEOGAME, CONSOLE or ACCESSORY."
+            );
         }
 
-        this.targetCategory = targetCategory.toUpperCase();
+        this.targetCategory =
+                targetCategory.toUpperCase();
     }
 
     /**
@@ -93,7 +98,8 @@ public class CategoryDiscount extends Promotion {
 
         if (sale == null) {
             throw new IllegalArgumentException(
-                    "Sale cannot be null.");
+                    "Sale cannot be null."
+            );
         }
 
         double categoryTotal = 0.0;
@@ -104,11 +110,19 @@ public class CategoryDiscount extends Promotion {
 
             if ("VIDEOGAME".equals(targetCategory)
                     && product instanceof VideoGame) {
+
                 matches = true;
             }
 
             if ("CONSOLE".equals(targetCategory)
                     && product instanceof Console) {
+
+                matches = true;
+            }
+
+            if ("ACCESSORY".equals(targetCategory)
+                    && product instanceof Accessory) {
+
                 matches = true;
             }
 

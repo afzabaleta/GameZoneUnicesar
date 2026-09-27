@@ -230,29 +230,17 @@ public class ReturnService {
     }
 
     /**
-     * Calculates the monthly balance by subtracting return refunds
-     * from the total sales for the specified month and year.
+     * Calculates the total final sales for a specific month and year.
      *
      * @param month month to calculate, from 1 to 12
      * @param year year to calculate
-     * @return monthly sales total minus return refunds
-     * @throws IllegalArgumentException if the month or year is invalid
+     * @return total final sales for the month
      */
-    public double generateMonthlyBalance(
+    public double calculateMonthlySales(
             int month,
             int year) {
 
-        if (month < 1 || month > 12) {
-            throw new IllegalArgumentException(
-                    "Month must be between 1 and 12."
-            );
-        }
-
-        if (year < 1) {
-            throw new IllegalArgumentException(
-                    "Year must be positive."
-            );
-        }
+        validateMonthAndYear(month, year);
 
         double salesTotal = 0.0;
 
@@ -265,6 +253,22 @@ public class ReturnService {
                 salesTotal += sale.calculateTotal();
             }
         }
+
+        return salesTotal;
+    }
+
+    /**
+     * Calculates the total refunded amount for a specific month and year.
+     *
+     * @param month month to calculate, from 1 to 12
+     * @param year year to calculate
+     * @return total returned amount for the month
+     */
+    public double calculateMonthlyReturns(
+            int month,
+            int year) {
+
+        validateMonthAndYear(month, year);
 
         double returnsTotal = 0.0;
 
@@ -280,7 +284,56 @@ public class ReturnService {
             }
         }
 
+        return returnsTotal;
+    }
+
+    /**
+     * Calculates the monthly net balance.
+     *
+     * @param month month to calculate, from 1 to 12
+     * @param year year to calculate
+     * @return total sales minus total refunds
+     */
+    public double generateMonthlyBalance(
+            int month,
+            int year) {
+
+        double salesTotal =
+                calculateMonthlySales(
+                        month,
+                        year
+                );
+
+        double returnsTotal =
+                calculateMonthlyReturns(
+                        month,
+                        year
+                );
+
         return salesTotal - returnsTotal;
+    }
+
+    /**
+     * Validates the month and year used by monthly reports.
+     *
+     * @param month month to validate
+     * @param year year to validate
+     */
+    private void validateMonthAndYear(
+            int month,
+            int year) {
+
+        if (month < 1 || month > 12) {
+            throw new IllegalArgumentException(
+                    "Month must be between 1 and 12."
+            );
+        }
+
+        if (year < 1) {
+            throw new IllegalArgumentException(
+                    "Year must be positive."
+            );
+        }
     }
 
     /**

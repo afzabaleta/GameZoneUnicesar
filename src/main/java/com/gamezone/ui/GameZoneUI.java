@@ -2003,23 +2003,43 @@ public class GameZoneUI {
     }
 
 
+    /**
+     * Displays the monthly sales, returns and net balance.
+     */
     private void showMonthlyBalance() {
 
         System.out.println();
         System.out.println("===== BALANCE MENSUAL =====");
 
         System.out.print("Mes (1-12): ");
-        String monthInput = scanner.nextLine().trim();
+        String monthInput =
+                scanner.nextLine().trim();
 
         System.out.print("Año: ");
-        String yearInput = scanner.nextLine().trim();
+        String yearInput =
+                scanner.nextLine().trim();
 
         try {
 
-            int month = Integer.parseInt(monthInput);
-            int year = Integer.parseInt(yearInput);
+            int month =
+                    Integer.parseInt(monthInput);
 
-            double balance =
+            int year =
+                    Integer.parseInt(yearInput);
+
+            double totalSales =
+                    returnService.calculateMonthlySales(
+                            month,
+                            year
+                    );
+
+            double totalReturns =
+                    returnService.calculateMonthlyReturns(
+                            month,
+                            year
+                    );
+
+            double netBalance =
                     returnService.generateMonthlyBalance(
                             month,
                             year
@@ -2027,12 +2047,22 @@ public class GameZoneUI {
 
             System.out.println();
             System.out.println(
-                    "Balance mensual de "
-                            + month
-                            + "/"
-                            + year
-                            + ": $"
-                            + balance
+                    "===== RESULTADO DEL BALANCE ====="
+            );
+
+            System.out.println(
+                    "Total de ventas: $"
+                            + totalSales
+            );
+
+            System.out.println(
+                    "Total de devoluciones: $"
+                            + totalReturns
+            );
+
+            System.out.println(
+                    "Balance neto: $"
+                            + netBalance
             );
 
         } catch (NumberFormatException e) {
@@ -2049,7 +2079,6 @@ public class GameZoneUI {
             );
         }
     }
-
 
     private void printReturns(java.util.List<Return> returns) {
 

@@ -1,6 +1,7 @@
 package com.gamezone.service;
 
 import com.gamezone.model.Accessory;
+import com.gamezone.model.Console;
 import com.gamezone.model.Product;
 import com.gamezone.model.Return;
 import com.gamezone.model.Sale;
@@ -19,6 +20,7 @@ public class ReturnService {
     private final SaleService saleService;
     private final ProductService productService;
     private final AccessoryService accessoryService;
+    private final WarrantyService warrantyService;
 
     /**
      * Creates a return service with its required dependencies.
@@ -27,18 +29,21 @@ public class ReturnService {
      * @param saleService service used to access sales
      * @param productService service used to access products and restore stock
      * @param accessoryService service used to access accessories and restore stock
+     * @param warrantyService service used to cancel warranties
      * @throws IllegalArgumentException if any dependency is null
      */
     public ReturnService(
             ReturnRepository returnRepository,
             SaleService saleService,
             ProductService productService,
-            AccessoryService accessoryService) {
+            AccessoryService accessoryService,
+            WarrantyService warrantyService) {
 
         if (returnRepository == null
                 || saleService == null
                 || productService == null
-                || accessoryService == null) {
+                || accessoryService == null
+                || warrantyService == null) {
 
             throw new IllegalArgumentException(
                     "Return service dependencies cannot be null."
@@ -49,6 +54,7 @@ public class ReturnService {
         this.saleService = saleService;
         this.productService = productService;
         this.accessoryService = accessoryService;
+        this.warrantyService = warrantyService;
     }
 
     /**
@@ -113,6 +119,12 @@ public class ReturnService {
             returnedProducts.add(product);
         }
 
+        double warrantyRefundAmount =
+                cancelReturnedConsoleWarranties(
+                        saleId,
+                        returnedProducts
+                );
+
         String identifier =
                 "RET-" + System.currentTimeMillis();
 
@@ -122,7 +134,8 @@ public class ReturnService {
                         LocalDate.now(),
                         sale,
                         returnedProducts,
-                        reason
+                        reason,
+                        warrantyRefundAmount
                 );
 
         restoreReturnedStock(returnedProducts);
@@ -135,6 +148,35 @@ public class ReturnService {
         returnRepository.saveAll(returns);
 
         return returnItem;
+    }
+
+    /**
+     * Cancels warranties for every returned console.
+     *
+     * @param saleId identifier of the original sale
+     * @param returnedProducts returned products
+     * @return total refundable warranty cost
+     */
+    private double cancelReturnedConsoleWarranties(
+            String saleId,
+            List<Product> returnedProducts) {
+
+        double warrantyRefundAmount = 0.0;
+
+        for (Product product :
+                returnedProducts) {
+
+            if (product instanceof Console) {
+
+                warrantyRefundAmount +=
+                        warrantyService.cancelWarranties(
+                                product.getIdentifier(),
+                                saleId
+                        );
+            }
+        }
+
+        return warrantyRefundAmount;
     }
 
     /**

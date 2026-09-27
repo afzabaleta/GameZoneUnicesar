@@ -105,7 +105,8 @@ public class Main {
                         returnRepository,
                         saleService,
                         productService,
-                        accessoryService
+                        accessoryService,
+                        warrantyService
                 );
 
         GameZoneUI gameZoneUI =

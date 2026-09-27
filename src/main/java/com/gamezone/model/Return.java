@@ -14,10 +14,11 @@ public class Return {
     private Sale originalSale;
     private List<Product> returnedProducts;
     private String reason;
+    private double warrantyRefundAmount;
     private double refundAmount;
 
     /**
-     * Creates a return.
+     * Creates a return without a warranty refund.
      *
      * @param identifier return identifier
      * @param returnDate return date
@@ -32,17 +33,47 @@ public class Return {
             List<Product> returnedProducts,
             String reason) {
 
+        this(
+                identifier,
+                returnDate,
+                originalSale,
+                returnedProducts,
+                reason,
+                0.0
+        );
+    }
+
+    /**
+     * Creates a return including a refundable warranty amount.
+     *
+     * @param identifier return identifier
+     * @param returnDate return date
+     * @param originalSale original sale
+     * @param returnedProducts returned products
+     * @param reason reason for the return
+     * @param warrantyRefundAmount refundable warranty amount
+     */
+    public Return(
+            String identifier,
+            LocalDate returnDate,
+            Sale originalSale,
+            List<Product> returnedProducts,
+            String reason,
+            double warrantyRefundAmount) {
+
         validateIdentifier(identifier);
         validateReturnDate(returnDate);
         validateSale(originalSale);
         validateProducts(returnedProducts);
         validateReason(reason);
+        validateWarrantyRefundAmount(warrantyRefundAmount);
 
         this.identifier = identifier;
         this.returnDate = returnDate;
         this.originalSale = originalSale;
         this.returnedProducts = new ArrayList<>(returnedProducts);
         this.reason = reason;
+        this.warrantyRefundAmount = warrantyRefundAmount;
         this.refundAmount = calculateRefundAmount();
     }
 
@@ -78,6 +109,19 @@ public class Return {
         if (reason == null || reason.isBlank()) {
             throw new IllegalArgumentException(
                     "Return reason cannot be blank.");
+        }
+    }
+
+    private void validateWarrantyRefundAmount(
+            double warrantyRefundAmount) {
+
+        if (Double.isNaN(warrantyRefundAmount)
+                || Double.isInfinite(warrantyRefundAmount)
+                || warrantyRefundAmount < 0) {
+
+            throw new IllegalArgumentException(
+                    "Warranty refund amount cannot be negative."
+            );
         }
     }
 
@@ -118,7 +162,7 @@ public class Return {
     }
 
     /**
-     * Returns the reason for this return.
+     * Returns the reason for the return.
      *
      * @return return reason
      */
@@ -127,9 +171,19 @@ public class Return {
     }
 
     /**
-     * Returns the refund amount.
+     * Returns the refundable warranty amount.
      *
-     * @return refund amount
+     * @return warranty refund amount
+     */
+    public double getWarrantyRefundAmount() {
+        return warrantyRefundAmount;
+    }
+
+    /**
+     * Returns the refund amount including the refundable
+     * warranty cost.
+     *
+     * @return total refund amount
      */
     public double getRefundAmount() {
         return refundAmount;
@@ -137,9 +191,11 @@ public class Return {
 
     /**
      * Calculates the refund amount applying the proportional
-     * share of the original sale discount.
+     * share of the original sale discount and adding the
+     * refundable warranty amount.
      *
      * @return refund amount after the proportional discount
+     * and warranty refund
      */
     public double calculateRefundAmount() {
 
@@ -152,19 +208,27 @@ public class Return {
         double saleSubtotal = originalSale.calculateSubtotal();
         double saleDiscount = originalSale.getDiscountAmount();
 
+        double productRefund;
+
         if (saleSubtotal <= 0 || saleDiscount <= 0) {
-            this.refundAmount = returnedSubtotal;
-            return refundAmount;
+
+            productRefund = returnedSubtotal;
+
+        } else {
+
+            double proportionalDiscount =
+                    saleDiscount
+                            * (returnedSubtotal / saleSubtotal);
+
+            productRefund =
+                    Math.max(
+                            0.0,
+                            returnedSubtotal - proportionalDiscount
+                    );
         }
 
-        double proportionalDiscount =
-                saleDiscount
-                        * (returnedSubtotal / saleSubtotal);
-
         this.refundAmount =
-                Math.max(
-                        0.0,
-                        returnedSubtotal - proportionalDiscount);
+                productRefund + warrantyRefundAmount;
 
         return refundAmount;
     }
@@ -235,7 +299,11 @@ public class Return {
                     .append("\n");
         }
 
-        receipt.append("\nValor devolución: $")
+        receipt.append("\nReembolso de garantía: $")
+                .append(warrantyRefundAmount)
+                .append("\n");
+
+        receipt.append("Valor devolución: $")
                 .append(refundAmount)
                 .append("\n");
 

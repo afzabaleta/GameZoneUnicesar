@@ -10,6 +10,7 @@ import com.gamezone.persistence.WarrantyRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -176,6 +177,73 @@ public class WarrantyService {
         }
 
         return null;
+    }
+
+    /**
+     * Cancels all warranties associated with a product
+     * in the specified sale and returns the refundable warranty cost.
+     *
+     * Basic warranties have no additional refundable cost,
+     * while extended warranties refund their additional cost.
+     *
+     * @param productId product identifier
+     * @param saleId sale reference
+     * @return refundable warranty cost
+     */
+    public double cancelWarranties(
+            String productId,
+            String saleId) {
+
+        if (productId == null || productId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Product identifier cannot be blank."
+            );
+        }
+
+        if (saleId == null || saleId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Sale identifier cannot be blank."
+            );
+        }
+
+        double refundableAmount = 0.0;
+        boolean removedAnyWarranty = false;
+
+        Iterator<Warranty> iterator =
+                warranties.iterator();
+
+        while (iterator.hasNext()) {
+
+            Warranty warranty =
+                    iterator.next();
+
+            boolean sameProduct =
+                    warranty.getProduct()
+                            .getIdentifier()
+                            .equalsIgnoreCase(productId);
+
+            boolean sameSale =
+                    warranty.getSale()
+                            .getDate()
+                            .toString()
+                            .equals(saleId);
+
+            if (sameProduct && sameSale) {
+
+                refundableAmount +=
+                        warranty.getAdditionalCost();
+
+                iterator.remove();
+
+                removedAnyWarranty = true;
+            }
+        }
+
+        if (removedAnyWarranty) {
+            repository.saveAll(warranties);
+        }
+
+        return refundableAmount;
     }
 
     /**

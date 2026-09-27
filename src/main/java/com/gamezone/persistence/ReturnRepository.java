@@ -105,6 +105,9 @@ public class ReturnRepository {
     /**
      * Loads all persisted returns from the CSV file.
      *
+     * <p>Records created before the warranty refund field was added
+     * contain six fields and are loaded with a warranty refund of zero.</p>
+     *
      * @return list of persisted returns
      * @throws IllegalStateException if the file cannot be read
      */
@@ -170,11 +173,16 @@ public class ReturnRepository {
                 + returnItem.getReason()
                 .replace(";", ",")
                 + ";"
-                + returnItem.getRefundAmount();
+                + returnItem.getRefundAmount()
+                + ";"
+                + returnItem.getWarrantyRefundAmount();
     }
 
     /**
      * Reconstructs a return from a CSV record.
+     *
+     * <p>Both the current seven-field format and the previous
+     * six-field format are supported.</p>
      *
      * @param line CSV record
      * @return reconstructed return
@@ -184,10 +192,11 @@ public class ReturnRepository {
         String[] fields =
                 line.split(";", -1);
 
-        if (fields.length != 6) {
+        if (fields.length != 6
+                && fields.length != 7) {
 
             throw new IllegalStateException(
-                    "Invalid return record. Expected 6 fields."
+                    "Invalid return record. Expected 6 or 7 fields."
             );
         }
 
@@ -207,6 +216,27 @@ public class ReturnRepository {
 
         String reason =
                 fields[4].trim();
+
+        double warrantyRefundAmount = 0.0;
+
+        if (fields.length == 7) {
+
+            try {
+
+                warrantyRefundAmount =
+                        Double.parseDouble(
+                                fields[6].trim()
+                        );
+
+            } catch (NumberFormatException e) {
+
+                throw new IllegalStateException(
+                        "Invalid warranty refund amount: "
+                                + fields[6],
+                        e
+                );
+            }
+        }
 
         Sale sale =
                 findSaleByReference(
@@ -231,7 +261,8 @@ public class ReturnRepository {
                 returnDate,
                 sale,
                 products,
-                reason
+                reason,
+                warrantyRefundAmount
         );
     }
 

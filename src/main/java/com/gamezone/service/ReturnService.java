@@ -1,5 +1,6 @@
 package com.gamezone.service;
 
+import com.gamezone.model.Accessory;
 import com.gamezone.model.Product;
 import com.gamezone.model.Return;
 import com.gamezone.model.Sale;
@@ -17,6 +18,7 @@ public class ReturnService {
     private final ReturnRepository returnRepository;
     private final SaleService saleService;
     private final ProductService productService;
+    private final AccessoryService accessoryService;
 
     /**
      * Creates a return service with its required dependencies.
@@ -24,23 +26,29 @@ public class ReturnService {
      * @param returnRepository repository used to persist returns
      * @param saleService service used to access sales
      * @param productService service used to access products and restore stock
+     * @param accessoryService service used to access accessories and restore stock
      * @throws IllegalArgumentException if any dependency is null
      */
     public ReturnService(
             ReturnRepository returnRepository,
             SaleService saleService,
-            ProductService productService) {
+            ProductService productService,
+            AccessoryService accessoryService) {
 
         if (returnRepository == null
                 || saleService == null
-                || productService == null) {
+                || productService == null
+                || accessoryService == null) {
+
             throw new IllegalArgumentException(
-                    "Return service dependencies cannot be null.");
+                    "Return service dependencies cannot be null."
+            );
         }
 
         this.returnRepository = returnRepository;
         this.saleService = saleService;
         this.productService = productService;
+        this.accessoryService = accessoryService;
     }
 
     /**
@@ -61,61 +69,85 @@ public class ReturnService {
 
         if (saleId == null || saleId.isBlank()) {
             throw new IllegalArgumentException(
-                    "Sale identifier cannot be blank.");
+                    "Sale identifier cannot be blank."
+            );
         }
 
         if (productIds == null || productIds.isEmpty()) {
             throw new IllegalArgumentException(
-                    "At least one product must be returned.");
+                    "At least one product must be returned."
+            );
         }
 
         validateProductIds(productIds);
 
         if (reason == null || reason.isBlank()) {
             throw new IllegalArgumentException(
-                    "Return reason cannot be blank.");
+                    "Return reason cannot be blank."
+            );
         }
 
         Sale sale = findSale(saleId);
 
         if (!sale.canBeReturned()) {
             throw new IllegalArgumentException(
-                    "La venta supera el plazo de 30 dias.");
+                    "La venta supera el plazo de 30 dias."
+            );
         }
 
-        List<Product> returnedProducts = new ArrayList<>();
+        List<Product> returnedProducts =
+                new ArrayList<>();
 
         for (String productId : productIds) {
-            Product product = findProduct(productId);
+
+            Product product =
+                    findProduct(productId);
 
             if (!containsProduct(sale, productId)) {
                 throw new IllegalArgumentException(
                         "El producto no pertenece a la venta indicada: "
-                                + productId);
+                                + productId
+                );
             }
 
             returnedProducts.add(product);
         }
 
-        String identifier = "RET-" + System.currentTimeMillis();
+        String identifier =
+                "RET-" + System.currentTimeMillis();
 
-        Return returnItem = new Return(
-                identifier,
-                LocalDate.now(),
-                sale,
-                returnedProducts,
-                reason
-        );
+        Return returnItem =
+                new Return(
+                        identifier,
+                        LocalDate.now(),
+                        sale,
+                        returnedProducts,
+                        reason
+                );
 
         for (Product product : returnedProducts) {
-            productService.restoreStock(
-                    product.getIdentifier(),
-                    1
-            );
+
+            if (product instanceof Accessory) {
+
+                accessoryService.restoreStock(
+                        product.getIdentifier(),
+                        1
+                );
+
+            } else {
+
+                productService.restoreStock(
+                        product.getIdentifier(),
+                        1
+                );
+            }
         }
 
-        List<Return> returns = returnRepository.loadAll();
+        List<Return> returns =
+                returnRepository.loadAll();
+
         returns.add(returnItem);
+
         returnRepository.saveAll(returns);
 
         return returnItem;
@@ -127,6 +159,7 @@ public class ReturnService {
      * @return list containing all registered returns
      */
     public List<Return> viewAllReturns() {
+
         return returnRepository.loadAll();
     }
 
@@ -136,14 +169,20 @@ public class ReturnService {
      * @param customerId customer identification
      * @return list of returns associated with the customer
      */
-    public List<Return> viewReturnsByCustomer(String customerId) {
-        List<Return> result = new ArrayList<>();
+    public List<Return> viewReturnsByCustomer(
+            String customerId) {
 
-        for (Return returnItem : returnRepository.loadAll()) {
+        List<Return> result =
+                new ArrayList<>();
+
+        for (Return returnItem :
+                returnRepository.loadAll()) {
+
             if (returnItem.getOriginalSale()
                     .getCustomer()
                     .getIdentification()
                     .equals(customerId)) {
+
                 result.add(returnItem);
             }
         }
@@ -157,14 +196,20 @@ public class ReturnService {
      * @param saleId identifier of the sale
      * @return list of returns associated with the sale
      */
-    public List<Return> viewReturnsBySale(String saleId) {
-        List<Return> result = new ArrayList<>();
+    public List<Return> viewReturnsBySale(
+            String saleId) {
 
-        for (Return returnItem : returnRepository.loadAll()) {
+        List<Return> result =
+                new ArrayList<>();
+
+        for (Return returnItem :
+                returnRepository.loadAll()) {
+
             if (returnItem.getOriginalSale()
                     .getDate()
                     .toString()
                     .equals(saleId)) {
+
                 result.add(returnItem);
             }
         }
@@ -181,31 +226,44 @@ public class ReturnService {
      * @return monthly sales total minus return refunds
      * @throws IllegalArgumentException if the month or year is invalid
      */
-    public double generateMonthlyBalance(int month, int year) {
+    public double generateMonthlyBalance(
+            int month,
+            int year) {
+
         if (month < 1 || month > 12) {
             throw new IllegalArgumentException(
-                    "Month must be between 1 and 12.");
+                    "Month must be between 1 and 12."
+            );
         }
 
         if (year < 1) {
             throw new IllegalArgumentException(
-                    "Year must be positive.");
+                    "Year must be positive."
+            );
         }
 
         double salesTotal = 0.0;
 
-        for (Sale sale : saleService.listSales()) {
+        for (Sale sale :
+                saleService.listSales()) {
+
             if (sale.getDate().getMonthValue() == month
                     && sale.getDate().getYear() == year) {
+
                 salesTotal += sale.calculateTotal();
             }
         }
 
         double returnsTotal = 0.0;
 
-        for (Return returnItem : returnRepository.loadAll()) {
-            if (returnItem.getReturnDate().getMonthValue() == month
-                    && returnItem.getReturnDate().getYear() == year) {
+        for (Return returnItem :
+                returnRepository.loadAll()) {
+
+            if (returnItem.getReturnDate()
+                    .getMonthValue() == month
+                    && returnItem.getReturnDate()
+                    .getYear() == year) {
+
                 returnsTotal += returnItem.getRefundAmount();
             }
         }
@@ -219,37 +277,86 @@ public class ReturnService {
      * @param productIds product identifiers to validate
      * @throws IllegalArgumentException if any identifier is null or blank
      */
-    private void validateProductIds(List<String> productIds) {
+    private void validateProductIds(
+            List<String> productIds) {
+
         for (String productId : productIds) {
-            if (productId == null || productId.isBlank()) {
+
+            if (productId == null
+                    || productId.isBlank()) {
+
                 throw new IllegalArgumentException(
-                        "Product identifier cannot be blank.");
+                        "Product identifier cannot be blank."
+                );
             }
         }
     }
 
+    /**
+     * Finds a sale by its identifier.
+     *
+     * @param saleId sale identifier
+     * @return matching sale
+     */
     private Sale findSale(String saleId) {
-        for (Sale sale : saleService.listSales()) {
-            if (sale.getDate().toString().equals(saleId)) {
+
+        for (Sale sale :
+                saleService.listSales()) {
+
+            if (sale.getDate()
+                    .toString()
+                    .equals(saleId)) {
+
                 return sale;
             }
         }
 
         throw new IllegalArgumentException(
-                "Venta no encontrada: " + saleId);
+                "Venta no encontrada: " + saleId
+        );
     }
 
+    /**
+     * Finds a product or accessory by identifier.
+     *
+     * @param productId product or accessory identifier
+     * @return matching product or accessory
+     */
     private Product findProduct(String productId) {
-        for (Product product : productService.listProducts()) {
-            if (product.getIdentifier().equals(productId)) {
+
+        for (Product product :
+                productService.listProducts()) {
+
+            if (product.getIdentifier()
+                    .equals(productId)) {
+
                 return product;
             }
         }
 
+        for (Accessory accessory :
+                accessoryService.listAccessories()) {
+
+            if (accessory.getIdentifier()
+                    .equals(productId)) {
+
+                return accessory;
+            }
+        }
+
         throw new IllegalArgumentException(
-                "Producto no encontrado: " + productId);
+                "Producto o accesorio no encontrado: "
+                        + productId
+        );
     }
 
+    /**
+     * Checks whether the sale contains the specified item.
+     *
+     * @param sale sale to inspect
+     * @param productId item identifier
+     * @return true if the item belongs to the sale
+     */
     private boolean containsProduct(
             Sale sale,
             String productId) {
@@ -257,6 +364,8 @@ public class ReturnService {
         return sale.getProducts()
                 .stream()
                 .anyMatch(product ->
-                        product.getIdentifier().equals(productId));
+                        product.getIdentifier()
+                                .equals(productId)
+                );
     }
 }

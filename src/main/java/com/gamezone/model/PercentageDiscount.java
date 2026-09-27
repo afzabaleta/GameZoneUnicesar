@@ -71,6 +71,6 @@ public class PercentageDiscount extends Promotion {
                     "Sale cannot be null.");
         }
 
-        return sale.calculateTotal() * discountPercentage / 100;
+        return sale.calculateSubtotal() * discountPercentage / 100;
     }
 }

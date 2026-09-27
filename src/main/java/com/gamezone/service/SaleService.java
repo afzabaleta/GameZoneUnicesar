@@ -87,20 +87,15 @@ public class SaleService {
     }
 
     /**
-     * Registers a new sale without extended warranties.
+     * Registers a sale using the unified integration flow.
      *
-     * @param sale the sale to register
-     */
-    public void registerSale(Sale sale) {
-        registerSale(sale, new ArrayList<>());
-    }
-
-    /**
-     * Registers a new sale after validating stock, applying warranties
-     * and applying the best active promotion.
+     * <p>The flow validates the sale, validates product and accessory stock,
+     * calculates the subtotal, applies the best promotion, assigns basic
+     * and requested extended warranties, updates inventory and persists
+     * the sale.</p>
      *
-     * @param sale the sale to register
-     * @param productIdsWithExtendedWarranty identifiers of products
+     * @param sale sale to register
+     * @param productIdsWithExtendedWarranty identifiers of consoles
      *        requesting extended warranty
      */
     public void registerSale(
@@ -115,10 +110,14 @@ public class SaleService {
                 );
 
         Map<String, Integer> productQuantities =
-                countProductQuantities(sale.getProducts());
+                countProductQuantities(
+                        sale.getProducts()
+                );
 
         Map<String, Integer> accessoryQuantities =
-                countAccessoryQuantities(sale.getProducts());
+                countAccessoryQuantities(
+                        sale.getProducts()
+                );
 
         List<Product> availableProducts =
                 productService.listProducts();
@@ -136,13 +135,16 @@ public class SaleService {
                 availableAccessories
         );
 
+        // Select the best applicable promotion using the subtotal.
+        applyBestPromotion(sale);
+
+        // Assign basic warranties and requested extended warranties.
         assignWarranties(
                 sale,
                 extendedWarrantyIds
         );
 
-        applyBestPromotion(sale);
-
+        // Update inventory only after all validations and calculations succeed.
         updateProductStock(
                 productQuantities,
                 availableProducts
@@ -153,8 +155,12 @@ public class SaleService {
                 availableAccessories
         );
 
-        List<Sale> sales = saleRepository.loadSales();
+        // Persist the completed sale.
+        List<Sale> sales =
+                saleRepository.loadSales();
+
         sales.add(sale);
+
         saleRepository.saveSales(sales);
     }
 
@@ -340,6 +346,18 @@ public class SaleService {
             throw new IllegalArgumentException(
                     "A sale must contain at least one product."
             );
+        }
+
+        for (Product product : sale.getProducts()) {
+
+            if (product == null
+                    || product.getIdentifier() == null
+                    || product.getIdentifier().isBlank()) {
+
+                throw new IllegalArgumentException(
+                        "Every sale item must have a valid identifier."
+                );
+            }
         }
     }
 

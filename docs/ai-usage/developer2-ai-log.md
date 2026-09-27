@@ -68,6 +68,30 @@
 
 **Related commit:** `refactor: decouple warranty repository dependencies`
 
+---
+
+### 7. R5 - Return accessory integration
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `feature/return-accessory-integration`
+
+**Purpose:** Implement A4 so returns support accessories, restore accessory inventory, and resolve accessories when persisted returns are loaded.
+
+**AI query:** Reviewed the R5 A4 requirements and requested step-by-step guidance to add accessory stock restoration, inject `AccessoryService` into `ReturnService` and `ReturnRepository`, update `Main`, and organize the return stock restoration logic.
+
+**AI response summary:** The assistant guided the implementation of `AccessoryService.restoreStock`, the integration of `AccessoryService` into `ReturnService`, the resolution of accessories in `ReturnRepository`, and the corresponding dependency injection changes in `Main`. The return stock restoration logic was also extracted into a dedicated method in `ReturnService`.
+
+**Student decision:** The proposed changes were reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commits:**
+- `feat: restore accessory stock on returns`
+- `refactor: restore stock by returned item type`
+- `refactor: resolve accessories when loading returns`
+- `refactor: inject accessory service into returns`
+- `refactor: centralize return stock restoration`
+- `docs: update developer 2 AI usage log`
+
 ## Final Reflection
 
-AI was used as a support tool to review the people model, persistence, validation, and service logic. The final implementation decisions were made by the student and verified through project testing.
+AI was used as a support tool to review the people model, persistence, validation, service logic, repository dependencies, and return integration. The final implementation decisions were made by the student and verified through project testing.

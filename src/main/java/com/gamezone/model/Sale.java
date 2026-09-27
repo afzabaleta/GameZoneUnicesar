@@ -49,21 +49,32 @@ public class Sale {
     }
 
     /**
-     * Calculates the total price of the sale including warranty costs.
+     * Calculates the subtotal of the sale before discounts
+     * and warranty costs.
      *
-     * @return total sale amount
+     * @return subtotal amount
+     */
+    public double calculateSubtotal() {
+
+        double subtotal = 0.0;
+
+        for (Product product : products) {
+            subtotal += product.getPrice();
+        }
+
+        return subtotal;
+    }
+
+    /**
+     * Calculates the final total of the sale.
+     *
+     * @return subtotal minus discount plus warranty cost
      */
     public double calculateTotal() {
 
-        double total = 0.0;
-
-        for (Product product : products) {
-            total += product.getPrice();
-        }
-
-        total += warrantyAdditionalCost;
-
-        return total;
+        return calculateSubtotal()
+                - discountAmount
+                + warrantyAdditionalCost;
     }
 
     /**
@@ -89,8 +100,8 @@ public class Sale {
      */
     public String generateReceipt() {
 
-        double subtotal = calculateTotal();
-        double finalTotal = subtotal - discountAmount;
+        double subtotal = calculateSubtotal();
+        double finalTotal = calculateTotal();
 
         StringBuilder receipt = new StringBuilder();
 
@@ -112,10 +123,6 @@ public class Sale {
                 .append(subtotal)
                 .append("\n");
 
-        receipt.append("Costo garantías: $")
-                .append(warrantyAdditionalCost)
-                .append("\n");
-
         if (appliedPromotionName != null
                 && !appliedPromotionName.isBlank()) {
 
@@ -123,15 +130,18 @@ public class Sale {
                     .append(appliedPromotionName)
                     .append("\n");
 
-            receipt.append("Descuento: $")
-                    .append(discountAmount)
-                    .append("\n");
-
         } else {
 
             receipt.append("Promoción aplicada: Ninguna\n");
-            receipt.append("Descuento: $0.0\n");
         }
+
+        receipt.append("Descuento: $")
+                .append(discountAmount)
+                .append("\n");
+
+        receipt.append("Costo garantías: $")
+                .append(warrantyAdditionalCost)
+                .append("\n");
 
         receipt.append("Total final: $")
                 .append(finalTotal)

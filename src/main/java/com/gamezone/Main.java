@@ -75,14 +75,13 @@ public class Main {
                 );
 
         WarrantyRepository warrantyRepository =
-                new WarrantyRepository(
-                        saleRepository,
-                        productService
-                );
+                new WarrantyRepository();
 
         WarrantyService warrantyService =
                 new WarrantyService(
-                        warrantyRepository
+                        warrantyRepository,
+                        saleRepository,
+                        productService
                 );
 
         SaleService saleService =

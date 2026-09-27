@@ -2,10 +2,7 @@ package com.gamezone.persistence;
 
 import com.gamezone.model.BasicWarranty;
 import com.gamezone.model.ExtendedWarranty;
-import com.gamezone.model.Product;
-import com.gamezone.model.Sale;
 import com.gamezone.model.Warranty;
-import com.gamezone.service.ProductService;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,38 +25,18 @@ public class WarrantyRepository {
     private static final String SEPARATOR = ";";
 
     private final Path filePath;
-    private final SaleRepository saleRepository;
-    private final ProductService productService;
 
     /**
      * Creates a warranty repository.
-     *
-     * @param saleRepository repository used to resolve sales
-     * @param productService service used to resolve products
      */
-    public WarrantyRepository(
-            SaleRepository saleRepository,
-            ProductService productService) {
-
-        if (saleRepository == null) {
-            throw new IllegalArgumentException(
-                    "Sale repository cannot be null."
-            );
-        }
-
-        if (productService == null) {
-            throw new IllegalArgumentException(
-                    "Product service cannot be null."
-            );
-        }
-
+    public WarrantyRepository() {
         this.filePath = Paths.get(FILE_PATH);
-        this.saleRepository = saleRepository;
-        this.productService = productService;
     }
 
     /**
-     * Saves all warranties to the CSV file.
+     * Saves warranty records to the CSV file.
+     *
+     * Only warranty data and references are persisted.
      *
      * @param warranties warranties to persist
      */
@@ -97,16 +74,20 @@ public class WarrantyRepository {
     }
 
     /**
-     * Loads all warranties from the CSV file.
+     * Loads persisted warranty records.
      *
-     * @return list of loaded warranties
+     * The repository only reads stored identifiers and warranty data.
+     * It does not resolve Product or Sale objects.
+     *
+     * @return persisted warranty records
      */
-    public List<Warranty> loadAll() {
+    public List<WarrantyRecord> loadAll() {
 
-        List<Warranty> warranties = new ArrayList<>();
+        List<WarrantyRecord> records =
+                new ArrayList<>();
 
         if (Files.notExists(filePath)) {
-            return warranties;
+            return records;
         }
 
         try (BufferedReader reader =
@@ -120,10 +101,11 @@ public class WarrantyRepository {
                     continue;
                 }
 
-                Warranty warranty = fromCsvLine(line);
+                WarrantyRecord record =
+                        fromCsvLine(line);
 
-                if (warranty != null) {
-                    warranties.add(warranty);
+                if (record != null) {
+                    records.add(record);
                 }
             }
 
@@ -135,14 +117,14 @@ public class WarrantyRepository {
             );
         }
 
-        return warranties;
+        return records;
     }
 
     /**
      * Converts a warranty into a CSV record.
      *
      * @param warranty warranty to convert
-     * @return CSV representation of the warranty
+     * @return CSV representation
      */
     private String toCsvLine(Warranty warranty) {
 
@@ -174,12 +156,12 @@ public class WarrantyRepository {
     }
 
     /**
-     * Converts a CSV record into a concrete warranty object.
+     * Converts a CSV record into a persistence-only record.
      *
      * @param line CSV record
-     * @return reconstructed warranty or null if references cannot be resolved
+     * @return persistence record
      */
-    private Warranty fromCsvLine(String line) {
+    private WarrantyRecord fromCsvLine(String line) {
 
         String[] fields =
                 line.split(SEPARATOR, -1);
@@ -194,86 +176,29 @@ public class WarrantyRepository {
         String type = fields[0];
         String id = fields[1];
         String productId = fields[2];
-        String saleDateText = fields[3];
+        String saleId = fields[3];
 
         LocalDate startDate =
                 LocalDate.parse(fields[4]);
 
-        Product product =
-                findProduct(productId);
-
-        Sale sale =
-                findSale(saleDateText);
-
-        if (product == null || sale == null) {
-            return null;
-        }
-
-        if ("BASIC".equalsIgnoreCase(type)) {
-
-            return new BasicWarranty(
-                    id,
-                    product,
-                    sale,
-                    startDate
-            );
-        }
-
-        if ("EXTENDED".equalsIgnoreCase(type)) {
-
-            return new ExtendedWarranty(
-                    id,
-                    product,
-                    sale,
-                    startDate
-            );
-        }
-
-        throw new IllegalArgumentException(
-                "Unsupported warranty type: " + type
+        return new WarrantyRecord(
+                type,
+                id,
+                productId,
+                saleId,
+                startDate
         );
     }
 
     /**
-     * Finds a product by identifier.
-     *
-     * @param productId product identifier
-     * @return matching product or null
+     * Persistence record containing only stored warranty data
+     * and references.
      */
-    private Product findProduct(String productId) {
-
-        for (Product product :
-                productService.listProducts()) {
-
-            if (product.getIdentifier()
-                    .equalsIgnoreCase(productId)) {
-
-                return product;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Finds a sale using its stored date reference.
-     *
-     * @param saleDateText sale date reference
-     * @return matching sale or null
-     */
-    private Sale findSale(String saleDateText) {
-
-        for (Sale sale :
-                saleRepository.loadSales()) {
-
-            if (sale.getDate()
-                    .toString()
-                    .equals(saleDateText)) {
-
-                return sale;
-            }
-        }
-
-        return null;
+    public record WarrantyRecord(
+            String type,
+            String id,
+            String productId,
+            String saleId,
+            LocalDate startDate) {
     }
 }

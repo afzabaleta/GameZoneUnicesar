@@ -52,6 +52,22 @@
 
 ---
 
+### 6. R5 - Warranty repository dependency decoupling
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `feature/warranty-repository-decoupling`
+
+**Purpose:** Implement A2 to remove the circular dependency involving `WarrantyRepository`, `WarrantyService`, and `SaleService`.
+
+**AI query:** Reviewed the R5 A2 requirements and requested step-by-step guidance to decouple `WarrantyRepository`, move reference resolution to `WarrantyService`, update `Main`, and document the new dependencies.
+
+**AI response summary:** The assistant guided the modification of `WarrantyRepository` so it persists identifiers only, the injection of `SaleRepository` and `ProductService` into `WarrantyService`, the corresponding `Main` construction changes, and the creation of `docs/warranty-class-diagram.md`.
+
+**Student decision:** The proposed architecture was reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commit:** `refactor: decouple warranty repository dependencies`
+
 ## Final Reflection
 
 AI was used as a support tool to review the people model, persistence, validation, and service logic. The final implementation decisions were made by the student and verified through project testing.

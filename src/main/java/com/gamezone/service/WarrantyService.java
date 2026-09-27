@@ -5,6 +5,7 @@ import com.gamezone.model.ExtendedWarranty;
 import com.gamezone.model.Product;
 import com.gamezone.model.Sale;
 import com.gamezone.model.Warranty;
+import com.gamezone.persistence.SaleRepository;
 import com.gamezone.persistence.WarrantyRepository;
 
 import java.time.LocalDate;
@@ -18,14 +19,21 @@ import java.util.UUID;
 public class WarrantyService {
 
     private final WarrantyRepository repository;
+    private final SaleRepository saleRepository;
+    private final ProductService productService;
     private final List<Warranty> warranties;
 
     /**
      * Creates a WarrantyService and loads persisted warranties.
      *
      * @param repository repository used for warranty persistence
+     * @param saleRepository repository used to resolve sales
+     * @param productService service used to resolve products
      */
-    public WarrantyService(WarrantyRepository repository) {
+    public WarrantyService(
+            WarrantyRepository repository,
+            SaleRepository saleRepository,
+            ProductService productService) {
 
         if (repository == null) {
             throw new IllegalArgumentException(
@@ -33,8 +41,22 @@ public class WarrantyService {
             );
         }
 
+        if (saleRepository == null) {
+            throw new IllegalArgumentException(
+                    "Sale repository cannot be null."
+            );
+        }
+
+        if (productService == null) {
+            throw new IllegalArgumentException(
+                    "Product service cannot be null."
+            );
+        }
+
         this.repository = repository;
-        this.warranties = repository.loadAll();
+        this.saleRepository = saleRepository;
+        this.productService = productService;
+        this.warranties = loadWarranties();
     }
 
     /**
@@ -164,9 +186,11 @@ public class WarrantyService {
     public List<Warranty> listActiveWarranties() {
 
         LocalDate today = LocalDate.now();
-        List<Warranty> activeWarranties = new ArrayList<>();
+        List<Warranty> activeWarranties =
+                new ArrayList<>();
 
         for (Warranty warranty : warranties) {
+
             if (warranty.isActive(today)) {
                 activeWarranties.add(warranty);
             }
@@ -182,7 +206,8 @@ public class WarrantyService {
      * @param daysAhead number of days to look ahead
      * @return list of warranties expiring soon
      */
-    public List<Warranty> listWarrantiesExpiringSoon(int daysAhead) {
+    public List<Warranty> listWarrantiesExpiringSoon(
+            int daysAhead) {
 
         if (daysAhead < 0) {
             throw new IllegalArgumentException(
@@ -191,13 +216,16 @@ public class WarrantyService {
         }
 
         LocalDate today = LocalDate.now();
-        LocalDate limitDate = today.plusDays(daysAhead);
+        LocalDate limitDate =
+                today.plusDays(daysAhead);
 
-        List<Warranty> expiringWarranties = new ArrayList<>();
+        List<Warranty> expiringWarranties =
+                new ArrayList<>();
 
         for (Warranty warranty : warranties) {
 
-            LocalDate endDate = warranty.getEndDate();
+            LocalDate endDate =
+                    warranty.getEndDate();
 
             boolean expiresSoon =
                     !endDate.isBefore(today)
@@ -209,5 +237,116 @@ public class WarrantyService {
         }
 
         return expiringWarranties;
+    }
+
+    /**
+     * Loads persisted warranties and resolves their references
+     * through the service layer.
+     *
+     * @return reconstructed warranties
+     */
+    private List<Warranty> loadWarranties() {
+
+        List<Warranty> loadedWarranties =
+                new ArrayList<>();
+
+        List<Sale> sales =
+                saleRepository.loadSales();
+
+        for (WarrantyRepository.WarrantyRecord record :
+                repository.loadAll()) {
+
+            Product product =
+                    findProduct(record.productId());
+
+            Sale sale =
+                    findSale(
+                            sales,
+                            record.saleId()
+                    );
+
+            if (product == null || sale == null) {
+                continue;
+            }
+
+            Warranty warranty;
+
+            if ("BASIC".equalsIgnoreCase(record.type())) {
+
+                warranty =
+                        new BasicWarranty(
+                                record.id(),
+                                product,
+                                sale,
+                                record.startDate()
+                        );
+
+            } else if ("EXTENDED".equalsIgnoreCase(
+                    record.type())) {
+
+                warranty =
+                        new ExtendedWarranty(
+                                record.id(),
+                                product,
+                                sale,
+                                record.startDate()
+                        );
+
+            } else {
+                throw new IllegalArgumentException(
+                        "Unsupported warranty type: "
+                                + record.type()
+                );
+            }
+
+            loadedWarranties.add(warranty);
+        }
+
+        return loadedWarranties;
+    }
+
+    /**
+     * Finds a product by identifier.
+     *
+     * @param productId product identifier
+     * @return matching product or null
+     */
+    private Product findProduct(String productId) {
+
+        for (Product product :
+                productService.listProducts()) {
+
+            if (product.getIdentifier()
+                    .equalsIgnoreCase(productId)) {
+
+                return product;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Finds a sale using its stored date reference.
+     *
+     * @param sales loaded sales
+     * @param saleId sale reference
+     * @return matching sale or null
+     */
+    private Sale findSale(
+            List<Sale> sales,
+            String saleId) {
+
+        for (Sale sale : sales) {
+
+            if (sale.getDate()
+                    .toString()
+                    .equals(saleId)) {
+
+                return sale;
+            }
+        }
+
+        return null;
     }
 }

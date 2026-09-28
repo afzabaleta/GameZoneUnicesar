@@ -64,6 +64,28 @@
 
 ---
 
+---
+
+### 7. R5 - Integrated sale flow
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `feature/sale-integration`
+
+**Purpose:** Implement A3, integrating the sale flow for products and accessories, promotions, warranties, inventory updates and final receipt calculation.
+
+**AI query:** Reviewed the R5 A3 requirements and requested step-by-step guidance to separate the sale subtotal from the final total, calculate promotions from the subtotal, and refactor `SaleService.registerSale()`.
+
+**AI response summary:** The assistant guided the modification of `Sale`, `PercentageDiscount`, `BulkPurchaseDiscount`, and `SaleService` so the integrated sale flow calculates the subtotal before discounts and warranties, applies the best promotion, manages warranties, updates inventory, persists the sale, and generates the required receipt breakdown.
+
+**Student decision:** The proposed changes were reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commits:**
+- `refactor: separate sale subtotal and final total`
+- `fix: calculate percentage discount from subtotal`
+- `fix: calculate bulk discount from subtotal`
+- `refactor: unify integrated sale registration`
+
 ## Final Reflection
 
 AI was used as a support tool for reviewing architecture, debugging, validating integration, and understanding persistence behavior. The team made the final implementation decisions and tested the application manually through the console.

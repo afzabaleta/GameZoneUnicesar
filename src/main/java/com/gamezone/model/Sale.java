@@ -7,78 +7,213 @@ import java.util.List;
 /**
  * Represents a sale transaction in the GameZone system.
  * A sale is associated with one customer, one seller and one or more products.
+ * It also stores promotion and warranty information.
  */
-
 public class Sale {
+
     private LocalDate date;
     private Customer customer;
     private Seller seller;
     private List<Product> products;
+    private String appliedPromotionName;
+    private double discountAmount;
+    private double warrantyAdditionalCost;
 
     /**
      * Creates a new sale.
      *
-     * @param date     the date the sale was made
-     * @param customer the customer who made the purchase
-     * @param seller   the seller who attended the sale
-     * @param products the list of products included in the sale (must contain at least one product)
+     * @param date sale date
+     * @param customer customer who made the purchase
+     * @param seller seller who attended the sale
+     * @param products products included in the sale
      */
-    public Sale(LocalDate date, Customer customer, Seller seller, List<Product> products) {
+    public Sale(
+            LocalDate date,
+            Customer customer,
+            Seller seller,
+            List<Product> products) {
+
         if (products == null || products.isEmpty()) {
-            throw new IllegalArgumentException("A sale must contain at least one product.");
+            throw new IllegalArgumentException(
+                    "A sale must contain at least one product."
+            );
         }
+
         this.date = date;
         this.customer = customer;
         this.seller = seller;
         this.products = products;
+        this.appliedPromotionName = null;
+        this.discountAmount = 0.0;
+        this.warrantyAdditionalCost = 0.0;
     }
 
     /**
-     * Calculates the total price of the sale by summing the price of every product.
+     * Calculates the subtotal of the sale before discounts
+     * and warranty costs.
      *
-     * @return the total amount of the sale
+     * @return subtotal amount
+     */
+    public double calculateSubtotal() {
+
+        double subtotal = 0.0;
+
+        for (Product product : products) {
+            subtotal += product.getPrice();
+        }
+
+        return subtotal;
+    }
+
+    /**
+     * Calculates the final total of the sale.
+     *
+     * @return subtotal minus discount plus warranty cost
      */
     public double calculateTotal() {
-        double total = 0.0;
-        for (Product product : products) {
-            total += product.getPrice();
-        }
-        return total;
+
+        return calculateSubtotal()
+                - discountAmount
+                + warrantyAdditionalCost;
     }
 
     /**
-     * Returns the sale date.
+     * Determines whether the sale can be returned.
      *
-     * @return the date of the sale
+     * @return true if the sale is within the allowed return period
      */
-    public LocalDate getDate(){
+    public boolean canBeReturned() {
+
+        if (date == null) {
+            return false;
+        }
+
+        LocalDate returnDeadline = date.plusDays(30);
+
+        return !LocalDate.now().isAfter(returnDeadline);
+    }
+
+    /**
+     * Generates the sale receipt.
+     *
+     * @return formatted receipt
+     */
+    public String generateReceipt() {
+
+        double subtotal = calculateSubtotal();
+        double finalTotal = calculateTotal();
+
+        StringBuilder receipt = new StringBuilder();
+
+        receipt.append("===== RECIBO DE VENTA =====\n");
+
+        receipt.append("Fecha: ")
+                .append(date)
+                .append("\n");
+
+        receipt.append("Cliente: ")
+                .append(customer.getName())
+                .append("\n");
+
+        receipt.append("Vendedor: ")
+                .append(seller.getName())
+                .append("\n");
+
+        receipt.append("Subtotal: $")
+                .append(subtotal)
+                .append("\n");
+
+        if (appliedPromotionName != null
+                && !appliedPromotionName.isBlank()) {
+
+            receipt.append("Promoción aplicada: ")
+                    .append(appliedPromotionName)
+                    .append("\n");
+
+        } else {
+
+            receipt.append("Promoción aplicada: Ninguna\n");
+        }
+
+        receipt.append("Descuento: $")
+                .append(discountAmount)
+                .append("\n");
+
+        receipt.append("Costo garantías: $")
+                .append(warrantyAdditionalCost)
+                .append("\n");
+
+        receipt.append("Total final: $")
+                .append(finalTotal)
+                .append("\n");
+
+        receipt.append("==========================");
+
+        return receipt.toString();
+    }
+
+    public LocalDate getDate() {
         return date;
     }
 
-    /**
-     * Returns the customer associated with the sale.
-     *
-     * @return the sale customer
-     */
-    public Customer getCustomer(){
+    public Customer getCustomer() {
         return customer;
     }
 
-    /**
-     * Returns the seller associated with the sale.
-     *
-     * @return the sale seller
-     */
-    public Seller getSeller(){
+    public Seller getSeller() {
         return seller;
     }
 
-    /**
-     * Returns a copy of the products included in this sale.
-     *
-     * @return a copy of the products
-     */
-    public List<Product> getProducts(){
+    public List<Product> getProducts() {
         return new ArrayList<>(products);
+    }
+
+    public String getAppliedPromotionName() {
+        return appliedPromotionName;
+    }
+
+    public void setAppliedPromotionName(String appliedPromotionName) {
+        this.appliedPromotionName = appliedPromotionName;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+
+        if (discountAmount < 0) {
+            throw new IllegalArgumentException(
+                    "Discount amount cannot be negative."
+            );
+        }
+
+        this.discountAmount = discountAmount;
+    }
+
+    /**
+     * Returns the additional cost generated by warranties.
+     *
+     * @return warranty additional cost
+     */
+    public double getWarrantyAdditionalCost() {
+        return warrantyAdditionalCost;
+    }
+
+    /**
+     * Sets the additional cost generated by warranties.
+     *
+     * @param warrantyAdditionalCost additional warranty cost
+     */
+    public void setWarrantyAdditionalCost(
+            double warrantyAdditionalCost) {
+
+        if (warrantyAdditionalCost < 0) {
+            throw new IllegalArgumentException(
+                    "Warranty additional cost cannot be negative."
+            );
+        }
+
+        this.warrantyAdditionalCost = warrantyAdditionalCost;
     }
 }

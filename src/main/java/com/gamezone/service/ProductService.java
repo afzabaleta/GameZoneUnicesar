@@ -88,5 +88,50 @@ public class ProductService {
      */
 
 
+    /**
+     * Restores stock after a successful product return.
+     *
+     * @param productId identifier of the product
+     * @param quantity quantity to restore
+     */
+    public void restoreStock(String productId, int quantity) {
+
+        if (productId == null || productId.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Product identifier cannot be blank."
+            );
+        }
+
+        if (quantity <= 0) {
+            throw new IllegalArgumentException(
+                    "Restored quantity must be greater than zero."
+            );
+        }
+
+        Product product = productRepository.findByIdentifier(productId);
+
+        if (product == null) {
+            throw new IllegalArgumentException(
+                    "Product not found: " + productId
+            );
+        }
+
+        int restoredStock =
+                product.getAvailableQuantity() + quantity;
+
+        product.setAvailableQuantity(restoredStock);
+
+        try {
+            productRepository.saveProducts(
+                    productRepository.findAll()
+            );
+        } catch (IOException e) {
+            throw new IllegalStateException(
+                    "Could not restore product stock.",
+                    e
+            );
+        }
+    }
+
 
 }

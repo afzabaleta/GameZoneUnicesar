@@ -52,6 +52,91 @@
 
 ---
 
+### 6. R5 - Warranty repository dependency decoupling
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `feature/warranty-repository-decoupling`
+
+**Purpose:** Implement A2 to remove the circular dependency involving `WarrantyRepository`, `WarrantyService`, and `SaleService`.
+
+**AI query:** Reviewed the R5 A2 requirements and requested step-by-step guidance to decouple `WarrantyRepository`, move reference resolution to `WarrantyService`, update `Main`, and document the new dependencies.
+
+**AI response summary:** The assistant guided the modification of `WarrantyRepository` so it persists identifiers only, the injection of `SaleRepository` and `ProductService` into `WarrantyService`, the corresponding `Main` construction changes, and the creation of `docs/warranty-class-diagram.md`.
+
+**Student decision:** The proposed architecture was reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commit:** `refactor: decouple warranty repository dependencies`
+
+---
+
+### 7. R5 - Return accessory integration
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `feature/return-accessory-integration`
+
+**Purpose:** Implement A4 so returns support accessories, restore accessory inventory, and resolve accessories when persisted returns are loaded.
+
+**AI query:** Reviewed the R5 A4 requirements and requested step-by-step guidance to add accessory stock restoration, inject `AccessoryService` into `ReturnService` and `ReturnRepository`, update `Main`, and organize the return stock restoration logic.
+
+**AI response summary:** The assistant guided the implementation of `AccessoryService.restoreStock`, the integration of `AccessoryService` into `ReturnService`, the resolution of accessories in `ReturnRepository`, and the corresponding dependency injection changes in `Main`. The return stock restoration logic was also extracted into a dedicated method in `ReturnService`.
+
+**Student decision:** The proposed changes were reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commits:**
+- `feat: restore accessory stock on returns`
+- `refactor: restore stock by returned item type`
+- `refactor: resolve accessories when loading returns`
+- `refactor: inject accessory service into returns`
+- `refactor: centralize return stock restoration`
+- `docs: update developer 2 AI usage log`
+
+---
+
+### 8. R5 - Monthly balance report
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `fix/monthly-balance-report`
+
+**Purpose:** Implement A6 so the monthly balance report displays total sales, total refunds, and the net balance.
+
+**AI query:** Reviewed the R5 A6 requirements and requested step-by-step guidance to add monthly sales and refund calculations to `ReturnService` and display the three report values in `GameZoneUI`.
+
+**AI response summary:** The assistant guided the implementation of `calculateMonthlySales(int month, int year)`, `calculateMonthlyReturns(int month, int year)`, the refactoring of `generateMonthlyBalance(int month, int year)`, and the update of the monthly balance menu to display sales, refunds, and net balance.
+
+**Student decision:** The proposed changes were reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commits:**
+- `feat: add monthly sales calculation`
+- `feat: display monthly balance breakdown`
+- `docs: update developer 2 AI usage log`
+
+---
+
+### 9. R5 - Warranty cancellation on returns
+
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
+**Phase/Branch:** R5 - `feature/return-warranty-cancellation`
+
+**Purpose:** Implement A7 so warranties associated with returned consoles are cancelled and the refundable extended warranty cost is included in the return amount.
+
+**AI query:** Reviewed the R5 A7 requirements and requested step-by-step guidance to add warranty cancellation, integrate it into `ReturnService`, include the warranty refund in `Return`, update persistence, and verify the dependency injection.
+
+**AI response summary:** The assistant guided the implementation of `WarrantyService.cancelWarranties(String productId, String saleId)`, the integration of warranty cancellation into `ReturnService`, the addition of the refundable warranty amount to `Return`, the persistence of that amount in `ReturnRepository`, and the corresponding `Main` dependency injection.
+
+**Student decision:** The proposed changes were reviewed and implemented. The project was verified with `mvn clean test`, which completed successfully.
+
+**Related commits:**
+- `feat: cancel warranties on returned products`
+- `feat: include warranty refund in returns`
+- `feat: integrate warranty cancellation into returns`
+- `refactor: inject warranty service into returns`
+- `feat: persist warranty refunds in returns`
+- `docs: update developer 2 AI usage log`
+
 ## Final Reflection
 
-AI was used as a support tool to review the people model, persistence, validation, and service logic. The final implementation decisions were made by the student and verified through project testing.
+AI was used as a support tool to review the people model, persistence, validation, service logic, repository dependencies, and return integration. The final implementation decisions were made by the student and verified through project testing.

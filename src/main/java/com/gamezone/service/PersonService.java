@@ -1,8 +1,11 @@
 package com.gamezone.service;
 
+import com.gamezone.exceptions.InvalidDataException;
 import com.gamezone.model.Customer;
+import com.gamezone.model.Person;
 import com.gamezone.model.Seller;
 import com.gamezone.persistence.PersonRepository;
+import com.gamezone.validation.PersonValidator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +13,8 @@ import java.util.List;
 /**
  * Service responsible for managing people in the GameZone system.
  *
- * <p>This service communicates with the person repository and provides
- * operations for registering and listing customers and sellers.</p>
+ * Person data and uniqueness checks are delegated to PersonValidator.
+ * Persistence errors are handled by PersonRepository.
  */
 public class PersonService {
 
@@ -26,8 +29,9 @@ public class PersonService {
      */
     public PersonService(PersonRepository personRepository) {
         if (personRepository == null) {
-            throw new IllegalArgumentException(
-                    "Person repository cannot be null"
+            throw new InvalidDataException(
+                    "personRepository",
+                    "es obligatorio."
             );
         }
 
@@ -41,16 +45,43 @@ public class PersonService {
     }
 
     /**
-     * Registers a new customer and persists the updated customer list.
+     * Registers a new customer after validating the data
+     * and identification.
      *
      * @param customer customer to register
-     * @throws IllegalArgumentException if the customer is null or has invalid data
      */
     public void registerCustomer(Customer customer) {
-        validateCustomer(customer);
+        if (customer == null) {
+            throw new InvalidDataException(
+                    "customer",
+                    "es obligatorio."
+            );
+        }
+
+        PersonValidator.validatePersonData(
+                customer.getIdentification(),
+                customer.getName(),
+                customer.getEmail(),
+                customer.getPhone()
+        );
+
+        List<Person> existingPeople = new ArrayList<>();
+        existingPeople.addAll(customers);
+        existingPeople.addAll(sellers);
+
+        PersonValidator.validateUniquePerson(
+                existingPeople,
+                customer.getIdentification()
+        );
+
+        List<Customer> updatedCustomers =
+                new ArrayList<>(customers);
+
+        updatedCustomers.add(customer);
+
+        personRepository.saveCustomers(updatedCustomers);
 
         customers.add(customer);
-        personRepository.saveCustomers(customers);
     }
 
     /**
@@ -69,48 +100,5 @@ public class PersonService {
      */
     public List<Seller> listSellers() {
         return new ArrayList<>(sellers);
-    }
-
-    /**
-     * Validates the information of a customer before registration.
-     *
-     * @param customer customer to validate
-     * @throws IllegalArgumentException if any required customer data is invalid
-     */
-    private void validateCustomer(Customer customer) {
-        if (customer == null) {
-            throw new IllegalArgumentException("Customer cannot be null");
-        }
-
-        if (customer.getName() == null || customer.getName().isBlank()) {
-            throw new IllegalArgumentException(
-                    "Customer name cannot be blank"
-            );
-        }
-
-        if (customer.getIdentification() == null
-                || customer.getIdentification().isBlank()) {
-            throw new IllegalArgumentException(
-                    "Customer identification cannot be blank"
-            );
-        }
-
-        if (customer.getPhone() == null || customer.getPhone().isBlank()) {
-            throw new IllegalArgumentException(
-                    "Customer phone cannot be blank"
-            );
-        }
-
-        if (customer.getEmail() == null || customer.getEmail().isBlank()) {
-            throw new IllegalArgumentException(
-                    "Customer email cannot be blank"
-            );
-        }
-
-        if (!customer.getEmail().contains("@")) {
-            throw new IllegalArgumentException(
-                    "Customer email must contain @"
-            );
-        }
     }
 }

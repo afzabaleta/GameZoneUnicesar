@@ -20,6 +20,10 @@ import com.gamezone.service.WarrantyService;
 import com.gamezone.model.Return;
 import com.gamezone.service.ReturnService;
 import com.gamezone.model.Promotion;
+import com.gamezone.exceptions.BusinessRuleException;
+import com.gamezone.exceptions.InvalidDataException;
+import com.gamezone.exceptions.PersistenceException;
+import com.gamezone.exceptions.ResourceNotFoundException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -670,34 +674,34 @@ public class GameZoneUI {
     }
 
     /**
-     * Registers a video game.
+     * Registers a video game and handles validation errors.
      */
     private void registerVideoGame() {
         System.out.println();
         System.out.println("-- Registrar videojuego --");
 
-        System.out.print("Identificador: ");
-        String identifier = scanner.nextLine();
-
-        System.out.print("Título: ");
-        String title = scanner.nextLine();
-
-        System.out.print("Precio: ");
-        double price = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Cantidad disponible: ");
-        int quantity = Integer.parseInt(scanner.nextLine());
-
-        System.out.print("Plataforma: ");
-        String platform = scanner.nextLine();
-
-        System.out.print("Género: ");
-        String genre = scanner.nextLine();
-
-        System.out.print("Clasificación por edad: ");
-        String ageRating = scanner.nextLine();
-
         try {
+            System.out.print("Identificador: ");
+            String identifier = scanner.nextLine();
+
+            System.out.print("Título: ");
+            String title = scanner.nextLine();
+
+            System.out.print("Precio: ");
+            double price = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Cantidad disponible: ");
+            int quantity = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Plataforma: ");
+            String platform = scanner.nextLine();
+
+            System.out.print("Género: ");
+            String genre = scanner.nextLine();
+
+            System.out.print("Clasificación por edad: ");
+            String ageRating = scanner.nextLine();
+
             VideoGame videoGame = new VideoGame(
                     identifier,
                     title,
@@ -713,7 +717,38 @@ public class GameZoneUI {
             System.out.println(
                     "Videojuego registrado correctamente."
             );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Los datos ingresados no son válidos: "
+                            + "el precio y la cantidad deben ser números."
+            );
+
         } catch (RuntimeException e) {
+
             System.out.println(
                     "No se pudo registrar el videojuego: "
                             + e.getMessage()
@@ -722,34 +757,34 @@ public class GameZoneUI {
     }
 
     /**
-     * Registers a console.
+     * Registers a console and handles validation errors.
      */
     private void registerConsole() {
         System.out.println();
         System.out.println("-- Registrar consola --");
 
-        System.out.print("Identificador: ");
-        String identifier = scanner.nextLine();
-
-        System.out.print("Título: ");
-        String title = scanner.nextLine();
-
-        System.out.print("Precio: ");
-        double price = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Cantidad disponible: ");
-        int quantity = Integer.parseInt(scanner.nextLine());
-
-        System.out.print("Marca: ");
-        String brand = scanner.nextLine();
-
-        System.out.print("Modelo: ");
-        String model = scanner.nextLine();
-
-        System.out.print("Generación: ");
-        String generation = scanner.nextLine();
-
         try {
+            System.out.print("Identificador: ");
+            String identifier = scanner.nextLine();
+
+            System.out.print("Título: ");
+            String title = scanner.nextLine();
+
+            System.out.print("Precio: ");
+            double price = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Cantidad disponible: ");
+            int quantity = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Marca: ");
+            String brand = scanner.nextLine();
+
+            System.out.print("Modelo: ");
+            String model = scanner.nextLine();
+
+            System.out.print("Generación: ");
+            String generation = scanner.nextLine();
+
             Console console = new Console(
                     identifier,
                     title,
@@ -765,7 +800,38 @@ public class GameZoneUI {
             System.out.println(
                     "Consola registrada correctamente."
             );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Los datos ingresados no son válidos: "
+                            + "el precio y la cantidad deben ser números."
+            );
+
         } catch (RuntimeException e) {
+
             System.out.println(
                     "No se pudo registrar la consola: "
                             + e.getMessage()

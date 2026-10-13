@@ -1,5 +1,6 @@
 package com.gamezone.persistence;
 
+import com.gamezone.exceptions.PersistenceException;
 import com.gamezone.model.Product;
 
 import java.io.File;
@@ -14,7 +15,8 @@ import java.util.List;
 /**
  * Repository responsible for managing product persistence.
  *
- * <p>This class stores and loads products using Java serialization.</p>
+ * <p>This class stores and loads products using Java serialization. I/O and
+ * serialization failures are converted to PersistenceException.</p>
  */
 public class ProductRepository {
 
@@ -27,27 +29,18 @@ public class ProductRepository {
     public ProductRepository() {
         this.filePath = "data/products.dat";
         this.products = new ArrayList<>();
-
-        try {
-            loadProducts();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new IllegalStateException("Could not load products.", e);
-        }
+        loadProducts();
     }
 
     /**
-     * Saves a product in memory and persists the updated list.
+     * Saves a product and persists the updated product list.
      *
      * @param product product to save
      */
     public void save(Product product) {
-        products.add(product);
-
-        try {
-            saveProducts(products);
-        } catch (IOException e) {
-            throw new IllegalStateException("Could not save product.", e);
-        }
+        List<Product> updatedProducts = new ArrayList<>(products);
+        updatedProducts.add(product);
+        saveProducts(updatedProducts);
     }
 
     /**
@@ -59,35 +52,29 @@ public class ProductRepository {
         return products;
     }
 
-    /**
-     * Finds a product by its identifier.
-     *
-     * @param identifier product identifier
-     * @return matching product or null if not found
-     */
-    public Product findByIdentifier(String identifier) {
-        for (Product product : products) {
-            if (product.getIdentifier().equals(identifier)) {
-                return product;
-            }
+/**
+ * Finds a product by its identifier.
+ *
+ * @param identifier product identifier
+ * @return matching product or null if not found
+ */
+public Product findByIdentifier(String identifier) {
+    for (Product product : products) {
+        if (product.getIdentifier().equals(identifier)) {
+            return product;
         }
-
-        return null;
     }
+    return null;
+}
 
     /**
      * Loads products from the persistence file.
      *
      * @return loaded products
-     * @throws IOException if an input/output error occurs
-     * @throws ClassNotFoundException if a stored class cannot be found
      */
     @SuppressWarnings("unchecked")
-    public List<Product> loadProducts()
-            throws IOException, ClassNotFoundException {
-
+    public List<Product> loadProducts() {
         File file = new File(filePath);
-
         if (!file.exists()) {
             products.clear();
             return products;
@@ -95,40 +82,52 @@ public class ProductRepository {
 
         try (ObjectInputStream inputStream =
                      new ObjectInputStream(new FileInputStream(file))) {
+            Object storedObject = inputStream.readObject();
+            if (!(storedObject instanceof List<?>)) {
+                throw new ClassCastException("The serialized value is not a product list.");
+            }
 
-            List<Product> loadedProducts =
-                    (List<Product>) inputStream.readObject();
-
+            List<Product> loadedProducts = (List<Product>) storedObject;
             products.clear();
             products.addAll(loadedProducts);
-
             return products;
+
+        } catch (IOException | ClassNotFoundException | ClassCastException e) {
+            throw new PersistenceException(
+                    "Unable to read product file '" + filePath
+                            + "'. The file may be inaccessible or corrupted.",
+                    e
+            );
         }
     }
 
     /**
      * Saves the product list to the persistence file.
      *
-     * @param products products to save
-     * @throws IOException if an input/output error occurs
+     * @param productsToSave products to save
      */
-    public void saveProducts(List<Product> products) throws IOException {
-
+    public void saveProducts(List<Product> productsToSave) {
         File file = new File(filePath);
-
         File parent = file.getParentFile();
-
-        if (parent != null && !parent.exists()) {
-            parent.mkdirs();
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
+            throw new PersistenceException(
+                    "Unable to create directory for product file '" + filePath + "'.",
+                    new IOException("Could not create directory: " + parent)
+            );
         }
 
+        List<Product> snapshot = new ArrayList<>(productsToSave);
         try (ObjectOutputStream outputStream =
                      new ObjectOutputStream(new FileOutputStream(file))) {
-
-            outputStream.writeObject(products);
+            outputStream.writeObject(snapshot);
+        } catch (IOException e) {
+            throw new PersistenceException(
+                    "Unable to write product file '" + filePath + "'.",
+                    e
+            );
         }
 
-        this.products.clear();
-        this.products.addAll(products);
+        products.clear();
+        products.addAll(snapshot);
     }
 }

@@ -1,5 +1,6 @@
 package com.gamezone.persistence;
 
+import com.gamezone.exceptions.PersistenceException;
 import com.gamezone.model.Customer;
 import com.gamezone.model.Seller;
 
@@ -13,11 +14,8 @@ import java.util.List;
 /**
  * Repository responsible for persisting and loading customers and sellers.
  *
- * <p>The repository uses plain text files to preserve person information
- * between application executions.</p>
- *
- * <p>Customers and sellers are stored in separate files inside the
- * application's data directory.</p>
+ * <p>I/O and malformed-file errors are represented as PersistenceException
+ * with the affected file and operation in the message.</p>
  */
 public class PersonRepository {
 
@@ -30,10 +28,6 @@ public class PersonRepository {
 
     /**
      * Creates a person repository using the default data directory.
-     *
-     * <p>The repository stores customer information in
-     * {@code data/customers.txt} and seller information in
-     * {@code data/sellers.txt}.</p>
      */
     public PersonRepository() {
         Path dataPath = Paths.get(DATA_DIRECTORY);
@@ -42,123 +36,102 @@ public class PersonRepository {
     }
 
     /**
-     * Saves the provided customers to the customers file.
+     * Saves customers to the customers file.
      *
      * @param customers list of customers to persist
-     * @throws IllegalStateException if the customers cannot be saved
      */
     public void saveCustomers(List<Customer> customers) {
         try {
             Files.createDirectories(customersPath.getParent());
-
             List<String> lines = new ArrayList<>();
-
             for (Customer customer : customers) {
-                lines.add(
-                        customer.getName() + "|" +
-                                customer.getIdentification() + "|" +
-                                customer.getPhone() + "|" +
-                                customer.getEmail()
-                );
+                lines.add(customer.getName() + "|"
+                        + customer.getIdentification() + "|"
+                        + customer.getPhone() + "|"
+                        + customer.getEmail());
             }
-
             Files.write(customersPath, lines);
-
         } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Unable to save customers to file.",
+            throw new PersistenceException(
+                    "Unable to write customers file '" + customersPath + "'.",
                     e
             );
         }
     }
 
     /**
-     * Saves the provided sellers to the sellers file.
+     * Saves sellers to the sellers file.
      *
      * @param sellers list of sellers to persist
-     * @throws IllegalStateException if the sellers cannot be saved
      */
     public void saveSellers(List<Seller> sellers) {
         try {
             Files.createDirectories(sellersPath.getParent());
-
             List<String> lines = new ArrayList<>();
-
             for (Seller seller : sellers) {
-                lines.add(
-                        seller.getName() + "|" +
-                                seller.getIdentification() + "|" +
-                                seller.getPhone() + "|" +
-                                seller.getEmployeeCode() + "|" +
-                                seller.getWorkShift()
-                );
+                lines.add(seller.getName() + "|"
+                        + seller.getIdentification() + "|"
+                        + seller.getPhone() + "|"
+                        + seller.getEmployeeCode() + "|"
+                        + seller.getWorkShift());
             }
-
             Files.write(sellersPath, lines);
-
         } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Unable to save sellers to file.",
+            throw new PersistenceException(
+                    "Unable to write sellers file '" + sellersPath + "'.",
                     e
             );
         }
     }
 
     /**
-     * Loads all persisted customers from the customers file.
+     * Loads customers from the customers file.
      *
-     * <p>If the customers file does not exist, an empty list is returned.</p>
-     *
-     * @return the persisted customers, or an empty list when the file does not exist
-     * @throws IllegalStateException if the customers file cannot be read
+     * @return persisted customers, or an empty list if the file does not exist
      */
     public List<Customer> loadCustomers() {
         if (!Files.exists(customersPath)) {
             return new ArrayList<>();
         }
 
-        List<Customer> customers = new ArrayList<>();
-
+        List<String> lines;
         try {
-            List<String> lines = Files.readAllLines(customersPath);
-
-            for (String line : lines) {
-                if (line.isBlank()) {
-                    continue;
-                }
-
-                String[] data = line.split("\\|", -1);
-
-                if (data.length == 4) {
-                    Customer customer = new Customer(
-                            data[0],
-                            data[1],
-                            data[2],
-                            data[3]
-                    );
-
-                    customers.add(customer);
-                }
-            }
-
+            lines = Files.readAllLines(customersPath);
         } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Unable to load customers from file.",
+            throw new PersistenceException(
+                    "Unable to read customers file '" + customersPath + "'.",
                     e
             );
         }
 
+        List<Customer> customers = new ArrayList<>();
+        try {
+            for (String line : lines) {
+                if (line.isBlank()) {
+                    continue;
+                }
+                String[] data = line.split("\\|", -1);
+                if (data.length != 4) {
+                    throw new IllegalArgumentException(
+                            "Expected 4 fields in a customer record, found " + data.length
+                    );
+                }
+                customers.add(new Customer(data[0], data[1], data[2], data[3]));
+            }
+        } catch (RuntimeException e) {
+            throw new PersistenceException(
+                    "Unable to parse customers file '" + customersPath
+                            + "'. The file may contain a corrupted record.",
+                    e
+            );
+        }
         return customers;
     }
 
     /**
-     * Loads all persisted sellers from the sellers file.
+     * Loads sellers from the sellers file or initializes default sellers.
      *
-     * <p>If the sellers file does not exist, the repository provides
-     * three default sellers for the first execution.</p>
-     *
-     * @return the persisted sellers or the default sellers
-     * @throws IllegalStateException if the sellers file cannot be read
+     * @return persisted sellers or the default sellers
      */
     public List<Seller> loadSellers() {
         if (!Files.exists(sellersPath)) {
@@ -166,38 +139,38 @@ public class PersonRepository {
             saveSellers(defaultSellers);
             return defaultSellers;
         }
-        List<Seller> sellers = new ArrayList<>();
 
+        List<String> lines;
         try {
-            List<String> lines = Files.readAllLines(sellersPath);
-
-            for (String line : lines) {
-                if (line.isBlank()) {
-                    continue;
-                }
-
-                String[] data = line.split("\\|", -1);
-
-                if (data.length == 5) {
-                    Seller seller = new Seller(
-                            data[0],
-                            data[1],
-                            data[2],
-                            data[3],
-                            data[4]
-                    );
-
-                    sellers.add(seller);
-                }
-            }
-
+            lines = Files.readAllLines(sellersPath);
         } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Unable to load sellers from file.",
+            throw new PersistenceException(
+                    "Unable to read sellers file '" + sellersPath + "'.",
                     e
             );
         }
 
+        List<Seller> sellers = new ArrayList<>();
+        try {
+            for (String line : lines) {
+                if (line.isBlank()) {
+                    continue;
+                }
+                String[] data = line.split("\\|", -1);
+                if (data.length != 5) {
+                    throw new IllegalArgumentException(
+                            "Expected 5 fields in a seller record, found " + data.length
+                    );
+                }
+                sellers.add(new Seller(data[0], data[1], data[2], data[3], data[4]));
+            }
+        } catch (RuntimeException e) {
+            throw new PersistenceException(
+                    "Unable to parse sellers file '" + sellersPath
+                            + "'. The file may contain a corrupted record.",
+                    e
+            );
+        }
         return sellers;
     }
 
@@ -208,31 +181,9 @@ public class PersonRepository {
      */
     private List<Seller> createDefaultSellers() {
         List<Seller> sellers = new ArrayList<>();
-
-        sellers.add(new Seller(
-                "Carlos Rodriguez",
-                "1001",
-                "3001111111",
-                "EMP001",
-                "Morning"
-        ));
-
-        sellers.add(new Seller(
-                "Laura Martinez",
-                "1002",
-                "3002222222",
-                "EMP002",
-                "Afternoon"
-        ));
-
-        sellers.add(new Seller(
-                "Andres Gomez",
-                "1003",
-                "3003333333",
-                "EMP003",
-                "Evening"
-        ));
-
+        sellers.add(new Seller("Carlos Rodriguez", "1001", "3001111111", "EMP001", "Morning"));
+        sellers.add(new Seller("Laura Martinez", "1002", "3002222222", "EMP002", "Afternoon"));
+        sellers.add(new Seller("Andres Gomez", "1003", "3003333333", "EMP003", "Evening"));
         return sellers;
     }
 

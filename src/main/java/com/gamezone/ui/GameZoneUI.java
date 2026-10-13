@@ -24,6 +24,7 @@ import com.gamezone.exceptions.BusinessRuleException;
 import com.gamezone.exceptions.InvalidDataException;
 import com.gamezone.exceptions.PersistenceException;
 import com.gamezone.exceptions.ResourceNotFoundException;
+import java.time.format.DateTimeParseException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -140,29 +141,24 @@ public class GameZoneUI {
      * Registers a percentage discount promotion.
      */
     private void registerPercentagePromotion() {
-
         System.out.println();
         System.out.println("-- Registrar descuento porcentual --");
 
-        System.out.print("Identificador: ");
-        String identifier = scanner.nextLine();
-
-        System.out.print("Nombre: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Fecha de inicio (YYYY-MM-DD): ");
-        LocalDate startDate =
-                LocalDate.parse(scanner.nextLine());
-
-        System.out.print("Fecha de fin (YYYY-MM-DD): ");
-        LocalDate endDate =
-                LocalDate.parse(scanner.nextLine());
-
-        System.out.print("Porcentaje de descuento: ");
-        double percentage =
-                Double.parseDouble(scanner.nextLine());
-
         try {
+            System.out.print("Identificador: ");
+            String identifier = scanner.nextLine();
+
+            System.out.print("Nombre: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Fecha de inicio (YYYY-MM-DD): ");
+            LocalDate startDate = LocalDate.parse(scanner.nextLine());
+
+            System.out.print("Fecha de fin (YYYY-MM-DD): ");
+            LocalDate endDate = LocalDate.parse(scanner.nextLine());
+
+            System.out.print("Porcentaje de descuento: ");
+            double percentage = Double.parseDouble(scanner.nextLine());
 
             promotionService.registerPercentageDiscount(
                     identifier,
@@ -174,6 +170,42 @@ public class GameZoneUI {
 
             System.out.println(
                     "Promoción porcentual registrada correctamente."
+            );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Los datos ingresados no son válidos: "
+                            + "el porcentaje debe ser un número."
+            );
+
+        } catch (DateTimeParseException e) {
+
+            System.out.println(
+                    "La fecha ingresada no es válida. "
+                            + "Utiliza el formato YYYY-MM-DD."
             );
 
         } catch (RuntimeException e) {
@@ -189,36 +221,31 @@ public class GameZoneUI {
      * Registers a category discount promotion.
      */
     private void registerCategoryPromotion() {
-
         System.out.println();
         System.out.println("-- Registrar descuento por categoría --");
 
-        System.out.print("Identificador: ");
-        String identifier = scanner.nextLine();
-
-        System.out.print("Nombre: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Fecha de inicio (YYYY-MM-DD): ");
-        LocalDate startDate =
-                LocalDate.parse(scanner.nextLine());
-
-        System.out.print("Fecha de fin (YYYY-MM-DD): ");
-        LocalDate endDate =
-                LocalDate.parse(scanner.nextLine());
-
-        System.out.print("Porcentaje de descuento: ");
-        double percentage =
-                Double.parseDouble(scanner.nextLine());
-
-        System.out.print(
-                "Categoría (VIDEOGAME/CONSOLE/ACCESSORY): "
-        );
-
-        String targetCategory =
-                scanner.nextLine().trim().toUpperCase();
-
         try {
+            System.out.print("Identificador: ");
+            String identifier = scanner.nextLine();
+
+            System.out.print("Nombre: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Fecha de inicio (YYYY-MM-DD): ");
+            LocalDate startDate = LocalDate.parse(scanner.nextLine());
+
+            System.out.print("Fecha de fin (YYYY-MM-DD): ");
+            LocalDate endDate = LocalDate.parse(scanner.nextLine());
+
+            System.out.print("Porcentaje de descuento: ");
+            double percentage = Double.parseDouble(scanner.nextLine());
+
+            System.out.print(
+                    "Categoría (VIDEOGAME/CONSOLE/ACCESSORY): "
+            );
+
+            String targetCategory =
+                    scanner.nextLine().trim().toUpperCase();
 
             promotionService.registerCategoryDiscount(
                     identifier,
@@ -231,6 +258,42 @@ public class GameZoneUI {
 
             System.out.println(
                     "Promoción por categoría registrada correctamente."
+            );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Los datos ingresados no son válidos: "
+                            + "el porcentaje debe ser un número."
+            );
+
+        } catch (DateTimeParseException e) {
+
+            System.out.println(
+                    "La fecha ingresada no es válida. "
+                            + "Utiliza el formato YYYY-MM-DD."
             );
 
         } catch (RuntimeException e) {
@@ -246,33 +309,27 @@ public class GameZoneUI {
      * Registers a bulk purchase discount promotion.
      */
     private void registerBulkPromotion() {
-
         System.out.println();
         System.out.println("-- Registrar descuento por volumen --");
 
-        System.out.print("Identificador: ");
-        String identifier = scanner.nextLine();
-
-        System.out.print("Nombre: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Fecha de inicio (YYYY-MM-DD): ");
-        LocalDate startDate =
-                LocalDate.parse(scanner.nextLine());
-
-        System.out.print("Fecha de fin (YYYY-MM-DD): ");
-        LocalDate endDate =
-                LocalDate.parse(scanner.nextLine());
-
-        System.out.print("Cantidad mínima de productos: ");
-        int minimumQuantity =
-                Integer.parseInt(scanner.nextLine());
-
-        System.out.print("Porcentaje de descuento: ");
-        double percentage =
-                Double.parseDouble(scanner.nextLine());
-
         try {
+            System.out.print("Identificador: ");
+            String identifier = scanner.nextLine();
+
+            System.out.print("Nombre: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Fecha de inicio (YYYY-MM-DD): ");
+            LocalDate startDate = LocalDate.parse(scanner.nextLine());
+
+            System.out.print("Fecha de fin (YYYY-MM-DD): ");
+            LocalDate endDate = LocalDate.parse(scanner.nextLine());
+
+            System.out.print("Cantidad mínima de productos: ");
+            int minimumQuantity = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Porcentaje de descuento: ");
+            double percentage = Double.parseDouble(scanner.nextLine());
 
             promotionService.registerBulkPurchaseDiscount(
                     identifier,
@@ -285,6 +342,42 @@ public class GameZoneUI {
 
             System.out.println(
                     "Promoción por volumen registrada correctamente."
+            );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Los datos ingresados no son válidos: "
+                            + "la cantidad y el porcentaje deben ser números."
+            );
+
+        } catch (DateTimeParseException e) {
+
+            System.out.println(
+                    "La fecha ingresada no es válida. "
+                            + "Utiliza el formato YYYY-MM-DD."
             );
 
         } catch (RuntimeException e) {
@@ -846,25 +939,25 @@ public class GameZoneUI {
         System.out.println();
         System.out.println("-- Registrar controller --");
 
-        System.out.print("Identificador: ");
-        String identifier = scanner.nextLine();
-
-        System.out.print("Título: ");
-        String title = scanner.nextLine();
-
-        System.out.print("Precio: ");
-        double price = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Cantidad disponible: ");
-        int quantity = Integer.parseInt(scanner.nextLine());
-
-        System.out.print("Tipo de conexión: ");
-        String connectionType = scanner.nextLine();
-
-        List<Console> compatibleConsoles =
-                selectCompatibleConsoles();
-
         try {
+            System.out.print("Identificador: ");
+            String identifier = scanner.nextLine();
+
+            System.out.print("Título: ");
+            String title = scanner.nextLine();
+
+            System.out.print("Precio: ");
+            double price = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Cantidad disponible: ");
+            int quantity = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Tipo de conexión: ");
+            String connectionType = scanner.nextLine();
+
+            List<Console> compatibleConsoles =
+                    selectCompatibleConsoles();
+
             Controller controller = new Controller(
                     identifier,
                     title,
@@ -879,7 +972,38 @@ public class GameZoneUI {
             System.out.println(
                     "Controller registrado correctamente."
             );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Los datos ingresados no son válidos: "
+                            + "el precio y la cantidad deben ser números."
+            );
+
         } catch (RuntimeException e) {
+
             System.out.println(
                     "No se pudo registrar el controller: "
                             + e.getMessage()
@@ -894,25 +1018,25 @@ public class GameZoneUI {
         System.out.println();
         System.out.println("-- Registrar cable --");
 
-        System.out.print("Identificador: ");
-        String identifier = scanner.nextLine();
-
-        System.out.print("Título: ");
-        String title = scanner.nextLine();
-
-        System.out.print("Precio: ");
-        double price = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Cantidad disponible: ");
-        int quantity = Integer.parseInt(scanner.nextLine());
-
-        System.out.print("Longitud en metros: ");
-        double length = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Tipo de conector: ");
-        String connectorType = scanner.nextLine();
-
         try {
+            System.out.print("Identificador: ");
+            String identifier = scanner.nextLine();
+
+            System.out.print("Título: ");
+            String title = scanner.nextLine();
+
+            System.out.print("Precio: ");
+            double price = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Cantidad disponible: ");
+            int quantity = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Longitud en metros: ");
+            double length = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Tipo de conector: ");
+            String connectorType = scanner.nextLine();
+
             Cable cable = new Cable(
                     identifier,
                     title,
@@ -927,7 +1051,39 @@ public class GameZoneUI {
             System.out.println(
                     "Cable registrado correctamente."
             );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Los datos ingresados no son válidos: "
+                            + "el precio, la cantidad y la longitud "
+                            + "deben ser números."
+            );
+
         } catch (RuntimeException e) {
+
             System.out.println(
                     "No se pudo registrar el cable: "
                             + e.getMessage()
@@ -942,28 +1098,28 @@ public class GameZoneUI {
         System.out.println();
         System.out.println("-- Registrar memoria --");
 
-        System.out.print("Identificador: ");
-        String identifier = scanner.nextLine();
-
-        System.out.print("Título: ");
-        String title = scanner.nextLine();
-
-        System.out.print("Precio: ");
-        double price = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Cantidad disponible: ");
-        int quantity = Integer.parseInt(scanner.nextLine());
-
-        System.out.print("Capacidad en GB: ");
-        double capacityGB = Double.parseDouble(scanner.nextLine());
-
-        System.out.print("Tipo de memoria: ");
-        String memoryType = scanner.nextLine();
-
-        List<Console> compatibleConsoles =
-                selectCompatibleConsoles();
-
         try {
+            System.out.print("Identificador: ");
+            String identifier = scanner.nextLine();
+
+            System.out.print("Título: ");
+            String title = scanner.nextLine();
+
+            System.out.print("Precio: ");
+            double price = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Cantidad disponible: ");
+            int quantity = Integer.parseInt(scanner.nextLine());
+
+            System.out.print("Capacidad en GB: ");
+            double capacityGB = Double.parseDouble(scanner.nextLine());
+
+            System.out.print("Tipo de memoria: ");
+            String memoryType = scanner.nextLine();
+
+            List<Console> compatibleConsoles =
+                    selectCompatibleConsoles();
+
             Memory memory = new Memory(
                     identifier,
                     title,
@@ -979,7 +1135,39 @@ public class GameZoneUI {
             System.out.println(
                     "Memoria registrada correctamente."
             );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
+        } catch (NumberFormatException e) {
+
+            System.out.println(
+                    "Los datos ingresados no son válidos: "
+                            + "el precio, la cantidad y la capacidad "
+                            + "deben ser números."
+            );
+
         } catch (RuntimeException e) {
+
             System.out.println(
                     "No se pudo registrar la memoria: "
                             + e.getMessage()

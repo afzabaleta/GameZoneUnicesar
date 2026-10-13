@@ -1421,25 +1421,25 @@ public class GameZoneUI {
     }
 
     /**
-     * Registers a customer.
+     * Registers a customer and handles validation and persistence errors.
      */
     private void registerCustomer() {
         System.out.println();
         System.out.println("-- Registrar cliente --");
 
-        System.out.print("Nombre: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Identificación: ");
-        String identification = scanner.nextLine();
-
-        System.out.print("Teléfono: ");
-        String phone = scanner.nextLine();
-
-        System.out.print("Correo electrónico: ");
-        String email = scanner.nextLine();
-
         try {
+            System.out.print("Nombre: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Identificación: ");
+            String identification = scanner.nextLine();
+
+            System.out.print("Teléfono: ");
+            String phone = scanner.nextLine();
+
+            System.out.print("Correo electrónico: ");
+            String email = scanner.nextLine();
+
             Customer customer = new Customer(
                     name,
                     identification,
@@ -1452,7 +1452,31 @@ public class GameZoneUI {
             System.out.println(
                     "Cliente registrado correctamente."
             );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
         } catch (RuntimeException e) {
+
             System.out.println(
                     "No se pudo registrar el cliente: "
                             + e.getMessage()
@@ -1461,57 +1485,119 @@ public class GameZoneUI {
     }
 
     /**
-     * Lists registered customers.
+     * Lists registered customers and handles persistence errors.
      */
     private void listCustomers() {
         System.out.println();
         System.out.println("-- Clientes --");
 
-        List<Customer> customers =
-                personService.listCustomers();
+        try {
+            List<Customer> customers =
+                    personService.listCustomers();
 
-        if (customers.isEmpty()) {
+            if (customers.isEmpty()) {
+                System.out.println(
+                        "Todavía no hay clientes registrados."
+                );
+                return;
+            }
+
+            for (Customer customer : customers) {
+                System.out.println(
+                        customer.getIdentification()
+                                + " | "
+                                + customer.getName()
+                                + " | "
+                                + customer.getEmail()
+                );
+            }
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
             System.out.println(
-                    "Todavía no hay clientes registrados."
+                    "No se puede completar la operación: "
+                            + e.getMessage()
             );
-            return;
-        }
 
-        for (Customer customer : customers) {
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
             System.out.println(
-                    customer.getIdentification()
-                            + " | "
-                            + customer.getName()
-                            + " | "
-                            + customer.getEmail()
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
+        } catch (RuntimeException e) {
+
+            System.out.println(
+                    "No se pudieron consultar los clientes: "
+                            + e.getMessage()
             );
         }
     }
 
     /**
-     * Lists registered sellers.
+     * Lists registered sellers and handles persistence errors.
      */
     private void listSellers() {
         System.out.println();
         System.out.println("-- Vendedores --");
 
-        List<Seller> sellers =
-                personService.listSellers();
+        try {
+            List<Seller> sellers =
+                    personService.listSellers();
 
-        if (sellers.isEmpty()) {
+            if (sellers.isEmpty()) {
+                System.out.println(
+                        "No hay vendedores precargados."
+                );
+                return;
+            }
+
+            for (Seller seller : sellers) {
+                System.out.println(
+                        seller.getIdentification()
+                                + " | "
+                                + seller.getName()
+                                + " | turno: "
+                                + seller.getWorkShift()
+                );
+            }
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
             System.out.println(
-                    "No hay vendedores precargados."
+                    "No se puede completar la operación: "
+                            + e.getMessage()
             );
-            return;
-        }
 
-        for (Seller seller : sellers) {
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
             System.out.println(
-                    seller.getIdentification()
-                            + " | "
-                            + seller.getName()
-                            + " | turno: "
-                            + seller.getWorkShift()
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
+        } catch (RuntimeException e) {
+
+            System.out.println(
+                    "No se pudieron consultar los vendedores: "
+                            + e.getMessage()
             );
         }
     }

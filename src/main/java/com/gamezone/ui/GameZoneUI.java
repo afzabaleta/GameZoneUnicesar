@@ -25,6 +25,10 @@ import com.gamezone.exceptions.InvalidDataException;
 import com.gamezone.exceptions.PersistenceException;
 import com.gamezone.exceptions.ResourceNotFoundException;
 import java.time.format.DateTimeParseException;
+import com.gamezone.exceptions.BusinessRuleException;
+import com.gamezone.exceptions.InvalidDataException;
+import com.gamezone.exceptions.PersistenceException;
+import com.gamezone.exceptions.ResourceNotFoundException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -1603,61 +1607,49 @@ public class GameZoneUI {
     }
 
     /**
-     * Registers a sale.
+     * Registers a sale and handles each custom exception separately.
      */
     private void registerSale() {
         System.out.println();
         System.out.println("-- Registrar venta --");
 
-        System.out.print(
-                "Identificación del cliente: "
-        );
-
-        String customerId = scanner.nextLine();
-
-        Customer customer =
-                findCustomerById(customerId);
-
-        if (customer == null) {
-            System.out.println(
-                    "Cliente no encontrado."
-            );
-            return;
-        }
-
-        System.out.print(
-                "Identificación del vendedor: "
-        );
-
-        String sellerId = scanner.nextLine();
-
-        Seller seller =
-                findSellerById(sellerId);
-
-        if (seller == null) {
-            System.out.println(
-                    "Vendedor no encontrado."
-            );
-            return;
-        }
-
-        List<Product> selectedItems =
-                selectItemsForSale();
-
-        if (selectedItems.isEmpty()) {
-            System.out.println(
-                    "La venta debe tener al menos un producto "
-                            + "o accesorio. Venta cancelada."
-            );
-            return;
-        }
-
-        List<String> extendedWarrantyIds =
-                selectExtendedWarrantyProducts(
-                        selectedItems
-                );
-
         try {
+            System.out.print("Identificación del cliente: ");
+            String customerId = scanner.nextLine().trim();
+
+            Customer customer = findCustomerById(customerId);
+
+            if (customer == null) {
+                throw new ResourceNotFoundException(
+                        "cliente",
+                        customerId
+                );
+            }
+
+            System.out.print("Identificación del vendedor: ");
+            String sellerId = scanner.nextLine().trim();
+
+            Seller seller = findSellerById(sellerId);
+
+            if (seller == null) {
+                throw new ResourceNotFoundException(
+                        "vendedor",
+                        sellerId
+                );
+            }
+
+            List<Product> selectedItems = selectItemsForSale();
+
+            if (selectedItems.isEmpty()) {
+                throw new BusinessRuleException(
+                        "La venta debe contener al menos un producto "
+                                + "o accesorio."
+                );
+            }
+
+            List<String> extendedWarrantyIds =
+                    selectExtendedWarrantyProducts(selectedItems);
+
             Sale sale = new Sale(
                     LocalDate.now(),
                     customer,
@@ -1675,10 +1667,32 @@ public class GameZoneUI {
             );
 
             System.out.println();
+            System.out.println(sale.generateReceipt());
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
             System.out.println(
-                    sale.generateReceipt()
+                    "No se puede completar la operación: "
+                            + e.getMessage()
             );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
         } catch (RuntimeException e) {
+
             System.out.println(
                     "No se pudo registrar la venta: "
                             + e.getMessage()
@@ -2004,27 +2018,21 @@ public class GameZoneUI {
 
     /**
      * Finds a warranty by product and sale reference.
+     * Handles custom exceptions separately.
      */
     private void findWarranty() {
-
         System.out.println();
-        System.out.println(
-                "===== CONSULTAR GARANTÍA ====="
-        );
+        System.out.println("===== CONSULTAR GARANTÍA =====");
 
         System.out.print("Identificador del producto: ");
-        String productId =
-                scanner.nextLine().trim();
+        String productId = scanner.nextLine().trim();
 
         System.out.print(
                 "Referencia de la venta (YYYY-MM-DD): "
         );
-
-        String saleId =
-                scanner.nextLine().trim();
+        String saleId = scanner.nextLine().trim();
 
         try {
-
             Warranty warranty =
                     warrantyService.findWarrantyByProduct(
                             productId,
@@ -2032,18 +2040,37 @@ public class GameZoneUI {
                     );
 
             if (warranty == null) {
-
-                System.out.println(
-                        "No se encontró una garantía para "
-                                + "el producto y la venta indicados."
+                throw new ResourceNotFoundException(
+                        "garantía",
+                        productId + " / " + saleId
                 );
-
-                return;
             }
 
             System.out.println();
             System.out.println(
                     warranty.generateWarrantyCertificate()
+            );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
             );
 
         } catch (RuntimeException e) {
@@ -2091,7 +2118,6 @@ public class GameZoneUI {
      * Lists warranties that will expire within a given number of days.
      */
     private void listWarrantiesExpiringSoon() {
-
         System.out.println();
         System.out.println(
                 "===== GARANTÍAS PRÓXIMAS A VENCER ====="
@@ -2101,13 +2127,10 @@ public class GameZoneUI {
                 "¿Cuántos días de anticipación?: "
         );
 
-        String daysInput =
-                scanner.nextLine().trim();
+        String daysInput = scanner.nextLine().trim();
 
         try {
-
-            int daysAhead =
-                    Integer.parseInt(daysInput);
+            int daysAhead = Integer.parseInt(daysInput);
 
             List<Warranty> warranties =
                     warrantyService.listWarrantiesExpiringSoon(
@@ -2116,10 +2139,33 @@ public class GameZoneUI {
 
             printWarranties(warranties);
 
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
         } catch (NumberFormatException e) {
 
             System.out.println(
-                    "Debe ingresar un número válido."
+                    "Los datos ingresados no son válidos: "
+                            + "debe indicar un número entero."
             );
 
         } catch (RuntimeException e) {
@@ -2212,28 +2258,38 @@ public class GameZoneUI {
         }
     }
 
+    /**
+     * Registers a product return and handles custom exceptions.
+     */
     private void registerReturn() {
-
         System.out.println();
         System.out.println("===== REGISTRAR DEVOLUCIÓN =====");
 
-        System.out.print("Referencia de la venta (YYYY-MM-DD): ");
+        System.out.print(
+                "Referencia de la venta (YYYY-MM-DD): "
+        );
         String saleId = scanner.nextLine().trim();
 
         if (saleId.isBlank()) {
-            System.out.println("La referencia de la venta no puede estar vacía.");
+            System.out.println(
+                    "La referencia de la venta no puede estar vacía."
+            );
             return;
         }
 
-        System.out.print("IDs de los productos a devolver (separados por coma): ");
+        System.out.print(
+                "IDs de los productos a devolver (separados por coma): "
+        );
         String productsInput = scanner.nextLine().trim();
 
         if (productsInput.isBlank()) {
-            System.out.println("Debe indicar al menos un producto.");
+            System.out.println(
+                    "Debe indicar al menos un producto."
+            );
             return;
         }
 
-        java.util.List<String> productIds = new java.util.ArrayList<>();
+        List<String> productIds = new ArrayList<>();
 
         String[] products = productsInput.split(",");
 
@@ -2246,7 +2302,9 @@ public class GameZoneUI {
         }
 
         if (productIds.isEmpty()) {
-            System.out.println("Debe indicar al menos un producto válido.");
+            System.out.println(
+                    "Debe indicar al menos un producto válido."
+            );
             return;
         }
 
@@ -2254,12 +2312,13 @@ public class GameZoneUI {
         String reason = scanner.nextLine().trim();
 
         if (reason.isBlank()) {
-            System.out.println("El motivo no puede estar vacío.");
+            System.out.println(
+                    "El motivo no puede estar vacío."
+            );
             return;
         }
 
         try {
-
             Return returnItem =
                     returnService.registerReturn(
                             saleId,
@@ -2268,15 +2327,38 @@ public class GameZoneUI {
                     );
 
             System.out.println();
-            System.out.println("Devolución registrada correctamente.");
+            System.out.println(
+                    "Devolución registrada correctamente."
+            );
             System.out.println();
             System.out.println(
                     returnItem.generateReturnReceipt()
             );
 
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
+            );
+
         } catch (RuntimeException e) {
 
-            System.out.println();
             System.out.println(
                     "No fue posible registrar la devolución: "
                             + e.getMessage()
@@ -2347,25 +2429,18 @@ public class GameZoneUI {
      * Displays the monthly sales, returns and net balance.
      */
     private void showMonthlyBalance() {
-
         System.out.println();
         System.out.println("===== BALANCE MENSUAL =====");
 
         System.out.print("Mes (1-12): ");
-        String monthInput =
-                scanner.nextLine().trim();
+        String monthInput = scanner.nextLine().trim();
 
         System.out.print("Año: ");
-        String yearInput =
-                scanner.nextLine().trim();
+        String yearInput = scanner.nextLine().trim();
 
         try {
-
-            int month =
-                    Integer.parseInt(monthInput);
-
-            int year =
-                    Integer.parseInt(yearInput);
+            int month = Integer.parseInt(monthInput);
+            int year = Integer.parseInt(yearInput);
 
             double totalSales =
                     returnService.calculateMonthlySales(
@@ -2391,24 +2466,44 @@ public class GameZoneUI {
             );
 
             System.out.println(
-                    "Total de ventas: $"
-                            + totalSales
+                    "Total de ventas: $" + totalSales
             );
 
             System.out.println(
-                    "Total de devoluciones: $"
-                            + totalReturns
+                    "Total de devoluciones: $" + totalReturns
             );
 
             System.out.println(
-                    "Balance neto: $"
-                            + netBalance
+                    "Balance neto: $" + netBalance
+            );
+
+        } catch (ResourceNotFoundException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (BusinessRuleException e) {
+
+            System.out.println(
+                    "No se puede completar la operación: "
+                            + e.getMessage()
+            );
+
+        } catch (InvalidDataException e) {
+
+            System.out.println(e.getMessage());
+
+        } catch (PersistenceException e) {
+
+            System.out.println(
+                    "Ocurrió un problema al acceder a los datos "
+                            + "del sistema. Contacte al administrador."
             );
 
         } catch (NumberFormatException e) {
 
             System.out.println(
-                    "El mes y el año deben ser valores numéricos."
+                    "Los datos ingresados no son válidos: "
+                            + "el mes y el año deben ser números enteros."
             );
 
         } catch (RuntimeException e) {

@@ -331,6 +331,56 @@ GameZoneUnicesar/
 ├── pom.xml
 └── README.md
 ```
+## Exception Handling and Validation
+
+The GameZone Unicesar system includes a dedicated exception-handling
+and validation layer to improve error management and maintainability.
+
+### Custom Exceptions
+
+The package `com.gamezone.exceptions` contains the following classes:
+
+- `GameZoneException`: root exception for application errors.
+- `ResourceNotFoundException`: represents resources that cannot be found.
+- `BusinessRuleException`: represents violations of business rules.
+- `InvalidDataException`: represents invalid input data.
+- `PersistenceException`: represents errors when reading or writing files.
+
+The custom exception hierarchy allows the application to distinguish
+between different categories of errors.
+
+### Validation Layer
+
+The package `com.gamezone.validation` contains:
+
+- `ProductValidator`: validates product information and stock availability.
+- `PersonValidator`: validates person information and identifier uniqueness.
+- `SaleValidator`: validates sale information and required references.
+
+The services use these validators to separate validation responsibilities
+from the main business logic.
+
+### Error Handling
+
+The `GameZoneUI` class handles the custom exceptions and provides
+different messages to users according to the type of error.
+
+The application distinguishes between:
+
+- Missing resources.
+- Business rule violations.
+- Invalid input data.
+- Persistence failures.
+
+User-facing error messages are displayed in Spanish.
+
+### Related Documentation
+
+The following documents describe the design and implementation:
+
+- `docs/exception-analysis.md`
+- `docs/exception-class-diagram.md`
+
 
 ## Integrantes
 

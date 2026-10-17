@@ -178,4 +178,67 @@ Correct applications:
   compares `targetCategory.equals(product.getCategory())`. The valid
   categories stay listed in one place inside `CategoryDiscount`.
 - **Other member's code:** no.
+
+## 8. Pure Fabrication
+
+**Verdict: Correct**
+
+- `ProductRepository` keeps file access and serialization out of
+  `Product`.
+- `ProductValidator`, `PersonValidator` and `SaleValidator` are fabricated
+  classes. They centralize validation that belongs to no single domain
+  object; they are stateless, `final` and do no I/O, as Requirement 6
+  required.
+
+## 9. Indirection
+
+**Verdict: Correct**
+
+The validators sit between the services and the exception types. Services
+call `ProductValidator.validateProductExists(...)` and do not build
+`ResourceNotFoundException` messages themselves (`ProductValidator`,
+lines 52-56). `GameZoneException` is an indirection point: the UI depends
+on four categories, not on every place that can fail.
+
+## 10. Protected Variations
+
+**Verdict: Violation**
+
+Correct applications:
+
+- The `Promotion` abstraction protects `SaleService` and `PromotionService`
+  from new promotion types.
+- The exception hierarchy (`GameZoneException` plus `getErrorCode()`)
+  protects the UI from new specific exceptions.
+
+### V-03
+
+- **Pattern:** Protected Variations.
+- **Module:** Products (Workshop 1), Requirement 6.
+- **Evidence:** `ProductService.registerVideoGame(VideoGame)` (lines 44-60)
+  and `ProductService.registerConsole(Console)` (lines 67-83) have identical
+  bodies: null check, `ProductValidator.validateProductData(...)` with the
+  same four getters, and `productRepository.save(...)`. The only difference
+  is the parameter type.
+- **Explanation:** registration does not depend on the concrete product
+  type, but the service exposes one method per type. The variation point
+  (product type) is not protected behind the `Product` abstraction.
+- **Consequence:** each new product type needs a copy of the method. A
+  change to the registration rule (for example, rejecting duplicate
+  identifiers) must be repeated in each copy.
+- **Proposed solution:** a single `registerProduct(Product)` with the common
+  body. `registerVideoGame` and `registerConsole` delegate to it, so the UI
+  and its messages do not change. Pattern applied: Protected Variations
+  through the `Product` abstraction.
+- **Other member's code:** no.
+
+---
+
+## Summary
+
+- **V-01** - Information Expert - `Return` - other member: Technical Lead
+  (`Sale`).
+- **V-02** - Polymorphism - `CategoryDiscount` and the `Product`
+  hierarchy - other member: none.
+- **V-03** - Protected Variations - `ProductService` - other member: none.
   

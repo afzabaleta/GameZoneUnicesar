@@ -141,4 +141,41 @@ No model class, validator or exception receives system events directly.
 format text inside the model. This is accepted because Requirements 3 and 4
 asked for these methods on these classes. They use only the object's own
 data and do no I/O.
+
+## 7. Polymorphism
+
+**Verdict: Violation**
+
+Correct applications:
+
+- `Product.getDescription()` is overridden in every product and accessory.
+- `Promotion.calculateDiscount(Sale)` is overridden in the three promotion
+  types.
+- `Warranty` declares `getDurationInMonths()`, `getWarrantyType()` and
+  `getAdditionalCost()` as abstract, and each subclass answers for itself.
+- The exception hierarchy lets the UI catch errors by category.
+
+### V-02
+
+- **Pattern:** Polymorphism (also Protected Variations).
+- **Module:** Promotions (Requirement 2), category for accessories
+  (Requirement 5, A1).
+- **Evidence:** `CategoryDiscount.calculateDiscount`, lines 107-131: three
+  `if` blocks that combine the category string with
+  `product instanceof VideoGame`, `instanceof Console` and
+  `instanceof Accessory`. `CategoryDiscount.setTargetCategory`, lines 76-84,
+  repeats the closed list `"VIDEOGAME"`, `"CONSOLE"`, `"ACCESSORY"`.
+- **Explanation:** the category of a product is a property of the product.
+  Instead of asking the product, the promotion inspects its concrete class.
+  This is the conditional on type that Polymorphism is meant to remove.
+- **Consequence:** adding a new product type (for example `Collectible`)
+  requires a new `instanceof` branch in `CategoryDiscount`, a new string in
+  its validation, and probably new branches elsewhere. Requirement 5 (A1)
+  already had to edit this method for accessories.
+- **Proposed solution:** add the abstract method `String getCategory()` to
+  `Product`: `VideoGame` returns `"VIDEOGAME"`, `Console` returns
+  `"CONSOLE"` and `Accessory` returns `"ACCESSORY"`. `calculateDiscount`
+  compares `targetCategory.equals(product.getCategory())`. The valid
+  categories stay listed in one place inside `CategoryDiscount`.
+- **Other member's code:** no.
   

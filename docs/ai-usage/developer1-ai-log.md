@@ -89,3 +89,21 @@
 ## Final Reflection
 
 AI was used as a support tool to review the product model, persistence, service logic, and validation rules. The final implementation decisions were made by the student and verified through project testing.
+
+---
+
+## Requirement 7 - GRASP Audit and Correction
+
+### Phase 1 - Audit
+
+**Date:** 2026-10-17
+**Tool:** ChatGPT (OpenAI)
+**Branch:** `feature/grasp-audit`
+
+**Purpose:** Document the GRASP audit of the product module, the accessory, promotion and warranty hierarchies, `Return`, `Sale.canBeReturned`, and the exceptions and validation packages. Prepare `developer1-audit.md` and the answers to questions 1 and 3 of `grasp-analysis.md`.
+
+**AI query:** Provided the Requirement 7 Phase 1 guide and requested step-by-step assistance in IntelliJ IDEA to update the repository, prepare the GRASP audit documentation, and complete the required Git commits.
+
+**AI response summary:** The assistant provided the documentation sections in English, including the GRASP pattern verdicts, three reported violations (V-01, V-02 and V-03), their evidence, consequences and proposed solutions. It also provided the answers to guiding questions 1 and 3 and instructions for creating and uploading the commits.
+
+**Student decision:** I followed the steps in IntelliJ IDEA, reviewed the documentation while adding it to the project, and created the required files and commits. The source-code evidence and referenced line numbers must be verified against the audited commit before the audit is considered fully validated.

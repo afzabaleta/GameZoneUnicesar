@@ -115,4 +115,30 @@ Correct applications:
 "register video game", "register console" and "list products" to it
 (`registerVideoGame`, `registerConsole`, `listProducts`, lines 44-92).
 No model class, validator or exception receives system events directly.
+
+## 5. Low Coupling
+
+**Verdict: Correct**
+
+- The model hierarchies depend only on other model classes.
+  `Promotion.calculateDiscount(Sale)` is the only coupling between
+  promotions and sales, and the requirement needs it.
+- `ProductRepository` depends only on `Product` and `PersistenceException`.
+- Validators depend only on the model and the exceptions package, and hold
+  no state (`final` classes with private constructors).
+- The exceptions package depends on nothing in the system.
+
+## 6. High Cohesion
+
+**Verdict: Correct**
+
+- Each subclass adds only its own attributes and its own description
+  (`Cable`, `Memory`, `Controller`, `VideoGame`, `Console`).
+- There is one validator per aggregate (product, person, sale) and one
+  exception per error category.
+
+`Return.generateReturnReceipt` and `Warranty.generateWarrantyCertificate`
+format text inside the model. This is accepted because Requirements 3 and 4
+asked for these methods on these classes. They use only the object's own
+data and do no I/O.
   

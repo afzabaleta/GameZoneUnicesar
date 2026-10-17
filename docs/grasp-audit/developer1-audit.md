@@ -94,3 +94,25 @@ Correct applications:
   The formulas keep the same order of operations, so the printed and stored
   values do not change. Pattern applied: Information Expert.
 - **Other member's code:** yes - `Sale` (Technical Lead).
+
+## 3. Creator
+
+**Verdict: Correct**
+
+- `ProductRepository.loadProducts()` (lines 76-102) creates the product
+  list from the serialized file, so it holds the initializing data.
+- The `Warranty` constructor (lines 24-61) calculates its own `endDate` from
+  the data it receives.
+- `Return` copies the returned products into its own list (line 74), so it
+  owns what it aggregates.
+- Validators and exceptions create no domain objects.
+
+## 4. Controller
+
+**Verdict: Correct**
+
+`ProductService` is the use-case controller for products. The UI delegates
+"register video game", "register console" and "list products" to it
+(`registerVideoGame`, `registerConsole`, `listProducts`, lines 44-92).
+No model class, validator or exception receives system events directly.
+  

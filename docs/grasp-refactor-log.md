@@ -68,15 +68,7 @@ month.
 - **Result:** BUILD SUCCESS. The 10 scripts ran to the end of the menu
   ("Cerrando GameZoneUnicesar") with no exceptions. The results are stored
   in `docs/regression/results/baseline/`.
-- ### 2.1.1 Phase 2 regression results (Sherly)
-
-- Compilation: BUILD SUCCESS using Maven 3.9.11 and Java 25.
-- Regression runner: 10 scenarios executed.
-- Results: `docs/regression/results/phase2-sherly-java25/`.
-- Comparison against baseline: 9 of 10 scenarios match when ignoring whitespace and line-ending differences.
-- Pending: `08_returns.txt` differs from baseline and requires investigation.
-- Final approval remains the responsibility of the Technical Lead.
-
+  
 ### 2.2 Final verification
 
 Recorded by the Technical Lead at the end of Phase 2.
@@ -90,20 +82,20 @@ Recorded by the Technical Lead at the end of Phase 2.
 | SaleService | Adds calculateMonthlySales(int, int) | V-06 | Information Expert | b610aef (PR #43) | Andres |
 | SaleService | Adds findSaleByReference(String) | V-01 | Low Coupling | b610aef (PR #43) | Andres |
 | InventoryService | New class: finds items, validates and moves stock | V-02 | Pure Fabrication | 896d079 (PR #_43 | Andres |
-| Product | Adds abstract getCategory() | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
-| VideoGame | Returns VIDEOGAME; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
-| Console | Returns CONSOLE; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
-| Accessory | Returns ACCESSORY for every accessory | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
-| CategoryDiscount | Uses getCategory() instead of instanceof | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
-| ProductService | Adds registerProduct(Product); others delegate | V-13 | Protected Variations | bec143f (PR #__) | Sherly |
-| Product | Adds isWarrantyEligible() (false by default) | V-03 | Polymorphism | ce73efe (PR #__) | Sherly |
-| Console | Overrides isWarrantyEligible() (true) | V-03 | Polymorphism | ce73efe (PR #__) | Sherly |
-| Accessory | Adds abstract getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #__) | Sherly |
-| Controller | Returns CONTROLLER from getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #__) | Sherly |
-| Cable | Returns CABLE from getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #__) | Sherly |
-| Memory | Returns MEMORY from getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #__) | Sherly |
-| ProductService | Adds listConsoles() to filter registered consoles | V-08 | Information Expert | b7f477b (PR #__) | Sherly |
-| CategoryDiscount | Adds static validateTargetCategory(String); setter reuses validation | V-11 | Information Expert | 6bea9b5 (PR #__) | Sherly |
-| SaleValidator | Adds blank product identifier validation to validateSaleData() | V-17 | Pure Fabrication | b5c8228 (PR #__) | Sherly |
-| Return | calculateRefundAmount() delegates proportional discount calculation to Sale | V-05 | Information Expert | 02658e0 (PR #__) | Sherly |
-| Return | generateReturnReceipt() uses Sale.calculateProportionalDiscount() | V-05 | Information Expert | 02658e0 (PR #__) | Sherly |
+| Product | Adds abstract getCategory() | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
+| VideoGame | Returns VIDEOGAME; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
+| Console | Returns CONSOLE; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
+| Accessory | Returns ACCESSORY for every accessory | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
+| CategoryDiscount | Uses getCategory() instead of instanceof | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
+| ProductService | Adds registerProduct(Product); others delegate | V-13 | Protected Variations | bec143f (PR #44) | Sherly |
+| Product | Adds isWarrantyEligible() (false by default) | V-03 | Polymorphism | ce73efe (PR #44) | Sherly |
+| Console | Overrides isWarrantyEligible() (true) | V-03 | Polymorphism | ce73efe (PR #44) | Sherly |
+| Accessory | Adds abstract getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #44) | Sherly |
+| Controller | Returns CONTROLLER from getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #44) | Sherly |
+| Cable | Returns CABLE from getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #44) | Sherly |
+| Memory | Returns MEMORY from getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #44) | Sherly |
+| ProductService | Adds listConsoles() to filter registered consoles | V-08 | Information Expert | b7f477b (PR #44) | Sherly |
+| CategoryDiscount | Adds static validateTargetCategory(String); setter reuses validation | V-11 | Information Expert | 6bea9b5 (PR #44) | Sherly |
+| SaleValidator | Adds blank product identifier validation to validateSaleData() | V-17 | Pure Fabrication | b5c8228 (PR #44) | Sherly |
+| Return | calculateRefundAmount() delegates proportional discount calculation to Sale | V-05 | Information Expert | 02658e0 (PR #44) | Sherly |
+| Return | generateReturnReceipt() uses Sale.getDiscountRate() | V-05 | Information Expert | 2d0418c (PR #44) | Sherly |

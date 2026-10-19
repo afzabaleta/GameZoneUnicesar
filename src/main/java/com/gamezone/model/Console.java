@@ -75,4 +75,14 @@ public class Console extends Product {
     public String getCategory() {
         return "CONSOLE";
     }
+
+    /**
+     * Consoles always receive a warranty when they are sold.
+     *
+     * @return true
+     */
+    @Override
+    public boolean isWarrantyEligible() {
+        return true;
+    }
 }

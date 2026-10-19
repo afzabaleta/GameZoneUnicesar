@@ -94,4 +94,15 @@ public abstract class Product implements Serializable {
      * @return product category: VIDEOGAME, CONSOLE or ACCESSORY
      */
     public abstract String getCategory();
+    /**
+     * Indicates whether the product receives a warranty when it is sold.
+     *
+     * <p>Products have no warranty by default; subclasses that do,
+     * override this method.</p>
+     *
+     * @return true if the product is eligible for a warranty
+     */
+    public boolean isWarrantyEligible() {
+        return false;
+    }
 }

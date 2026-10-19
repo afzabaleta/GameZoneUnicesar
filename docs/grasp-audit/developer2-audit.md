@@ -80,3 +80,26 @@ The `if/else` on the stored type in `WarrantyService.loadWarranties` (lines 342-
 **Verdict: Correct**
 
 `PersonService`, `AccessoryService`, `PromotionService`, `ReturnService` and `WarrantyService` each receive the operations of their submenu from the UI and coordinate them (for example, `ReturnService.registerReturn` validates, cancels warranties, restores stock and persists). None of my classes reads from the console.
+
+## 5. Low Coupling
+
+**Verdict: Violation**
+
+### V-04
+
+- **Pattern:** Low Coupling.
+- **Module:** Returns (Requirement 3), Requirement 5 A4.
+- **Evidence:** `ReturnRepository`, lines 7-9 and 27-29, depends on `SaleService`, `ProductService` and `AccessoryService`.
+- **Explanation:** A repository is a persistence component. Depending on services reverses the intended layer direction and couples file storage to business operations.
+- **Consequence:** Changes to those services can force changes in `ReturnRepository`, and the repository cannot be tested independently without bringing in service dependencies.
+- **Proposed solution:** `ReturnRepository` should persist return data without depending on services. `ReturnService` resolves the sale and the items through `SaleService` and `InventoryService`, keeping the same error messages. The file format does not change.
+- **Other member's code:** yes - `Main` wiring (Technical Lead).
+
+## 6. High Cohesion
+
+**Verdict: Violation (registered under Information Expert and Pure Fabrication)**
+
+- `ReturnService` also calculates sales totals: registered as V-02, because the root cause is who owns the information.
+- `AccessoryService` contains its own validation rules: registered as V-08 (Pure Fabrication).
+
+Correct: `PersonRepository`, `PromotionRepository` and `WarrantyRepository` each handle only one file format.

@@ -97,3 +97,5 @@ Recorded by the Technical Lead at the end of Phase 2.
 | ProductService | Adds listConsoles() to filter registered consoles | V-08 | Information Expert | b7f477b (PR #__) | Sherly |
 | CategoryDiscount | Adds static validateTargetCategory(String); setter reuses validation | V-11 | Information Expert | 6bea9b5 (PR #__) | Sherly |
 | SaleValidator | Adds blank product identifier validation to validateSaleData() | V-17 | Pure Fabrication | b5c8228 (PR #__) | Sherly |
+| Return | calculateRefundAmount() delegates proportional discount calculation to Sale | V-05 | Information Expert | 02658e0 (PR #__) | Sherly |
+| Return | generateReturnReceipt() uses Sale.calculateProportionalDiscount() | V-05 | Information Expert | 02658e0 (PR #__) | Sherly |

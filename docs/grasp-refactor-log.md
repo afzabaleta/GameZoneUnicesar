@@ -68,6 +68,14 @@ month.
 - **Result:** BUILD SUCCESS. The 10 scripts ran to the end of the menu
   ("Cerrando GameZoneUnicesar") with no exceptions. The results are stored
   in `docs/regression/results/baseline/`.
+- ### 2.1.1 Phase 2 regression results (Sherly)
+
+- Compilation: BUILD SUCCESS using Maven 3.9.11 and Java 25.
+- Regression runner: 10 scenarios executed.
+- Results: `docs/regression/results/phase2-sherly-java25/`.
+- Comparison against baseline: 9 of 10 scenarios match when ignoring whitespace and line-ending differences.
+- Pending: `08_returns.txt` differs from baseline and requires investigation.
+- Final approval remains the responsibility of the Technical Lead.
 
 ### 2.2 Final verification
 

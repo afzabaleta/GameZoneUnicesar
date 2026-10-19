@@ -1,0 +1,239 @@
+
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Registrar descuento porcentual --
+Identificador: Nombre: Fecha de inicio (YYYY-MM-DD): Fecha de fin (YYYY-MM-DD): Porcentaje de descuento: Promoción porcentual registrada correctamente.
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Registrar descuento por categoría --
+Identificador: Nombre: Fecha de inicio (YYYY-MM-DD): Fecha de fin (YYYY-MM-DD): Porcentaje de descuento: Categoría (VIDEOGAME/CONSOLE/ACCESSORY): Promoción por categoría registrada correctamente.
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Registrar descuento por categoría --
+Identificador: Nombre: Fecha de inicio (YYYY-MM-DD): Fecha de fin (YYYY-MM-DD): Porcentaje de descuento: Categoría (VIDEOGAME/CONSOLE/ACCESSORY): No se pudo registrar la promoción: Target category must be VIDEOGAME, CONSOLE or ACCESSORY.
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Registrar descuento por categoría --
+Identificador: Nombre: Fecha de inicio (YYYY-MM-DD): Fecha de fin (YYYY-MM-DD): Porcentaje de descuento: Categoría (VIDEOGAME/CONSOLE/ACCESSORY): No se pudo registrar la promoción: Target category must be VIDEOGAME, CONSOLE or ACCESSORY.
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Registrar descuento por categoría --
+Identificador: Nombre: Fecha de inicio (YYYY-MM-DD): Fecha de fin (YYYY-MM-DD): Porcentaje de descuento: Categoría (VIDEOGAME/CONSOLE/ACCESSORY): No se pudo registrar la promoción: Target category must be VIDEOGAME, CONSOLE or ACCESSORY.
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Registrar descuento por volumen --
+Identificador: Nombre: Fecha de inicio (YYYY-MM-DD): Fecha de fin (YYYY-MM-DD): Cantidad mínima de productos: Porcentaje de descuento: Promoción por volumen registrada correctamente.
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Registrar descuento porcentual --
+Identificador: Nombre: Fecha de inicio (YYYY-MM-DD): La fecha ingresada no es válida. Utiliza el formato YYYY-MM-DD.
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Registrar descuento porcentual --
+Identificador: Nombre: Fecha de inicio (YYYY-MM-DD): Fecha de fin (YYYY-MM-DD): Porcentaje de descuento: No se pudo registrar la promoción: Promotion identifier already exists: PROMO001
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Registrar descuento por volumen --
+Identificador: Nombre: Fecha de inicio (YYYY-MM-DD): Fecha de fin (YYYY-MM-DD): Cantidad mínima de productos: Los datos ingresados no son válidos: la cantidad y el porcentaje deben ser números.
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Todas las promociones --
+PROMO001 | 15 Percent Discount | PercentageDiscount | Inicio: 2026-09-01 | Fin: 2026-12-31
+PROMO002 | Video Game Discount | CategoryDiscount | Inicio: 2026-09-01 | Fin: 2026-12-31
+PROMO003 | Bulk Purchase Discount | BulkPurchaseDiscount | Inicio: 2026-09-01 | Fin: 2026-12-31
+PROMO004 | Accessory Discount | CategoryDiscount | Inicio: 2026-09-21 | Fin: 2026-09-26
+P10 | Ten | PercentageDiscount | Inicio: 2026-10-01 | Fin: 2026-12-31
+C10 | Consoles | CategoryDiscount | Inicio: 2026-10-01 | Fin: 2026-12-31
+B5 | Bulk5 | BulkPurchaseDiscount | Inicio: 2026-10-01 | Fin: 2026-12-31
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Promociones vigentes --
+PROMO001 | 15 Percent Discount | PercentageDiscount | Inicio: 2026-09-01 | Fin: 2026-12-31
+PROMO002 | Video Game Discount | CategoryDiscount | Inicio: 2026-09-01 | Fin: 2026-12-31
+PROMO003 | Bulk Purchase Discount | BulkPurchaseDiscount | Inicio: 2026-09-01 | Fin: 2026-12-31
+P10 | Ten | PercentageDiscount | Inicio: 2026-10-01 | Fin: 2026-12-31
+C10 | Consoles | CategoryDiscount | Inicio: 2026-10-01 | Fin: 2026-12-31
+B5 | Bulk5 | BulkPurchaseDiscount | Inicio: 2026-10-01 | Fin: 2026-12-31
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Buscar promoción --
+Identificador: Identificador: PROMO002
+Nombre: Video Game Discount
+Inicio: 2026-09-01
+Fin: 2026-12-31
+Tipo: CategoryDiscount
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Buscar promoción --
+Identificador: Identificador: C10
+Nombre: Consoles
+Inicio: 2026-10-01
+Fin: 2026-12-31
+Tipo: CategoryDiscount
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+-- Buscar promoción --
+Identificador: Promoción no encontrada.
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: Cerrando GameZoneUnicesar. ¡Hasta pronto!
+=== data/accessories.csv
+CONTROLLER|ACC001|Control Pro|59.99|10|wireless|-|PS5,XBOX_SERIES
+CABLE|ACC002|Cable HDMI 2.1|14.99|25|2.0|HDMI|PS5,XBOX_SERIES,NINTENDO_SWITCH
+MEMORY|ACC003|Memory Card 128GB|29.99|15|128|Memory Card|NINTENDO_SWITCH
+=== data/customers.txt
+Andres|1080574183|3015838495|zabaletadiaz2907@gmail.com
+=== data/products.dat
+aeabae0cde6c234833ebb1f8e50464a6964aa1e92752e3e3140de25aa91ca51a
+=== data/promotions.csv
+PERCENTAGE|PROMO001|15 Percent Discount|2026-09-01|2026-12-31|15.0|-|-
+CATEGORY|PROMO002|Video Game Discount|2026-09-01|2026-12-31|20.0|VIDEOGAME|-
+BULK|PROMO003|Bulk Purchase Discount|2026-09-01|2026-12-31|10.0|-|3
+CATEGORY|PROMO004|Accessory Discount|2026-09-21|2026-09-26|10.0|ACCESSORY|-
+PERCENTAGE|P10|Ten|2026-10-01|2026-12-31|10.0|-|-
+CATEGORY|C10|Consoles|2026-10-01|2026-12-31|25.0|CONSOLE|-
+BULK|B5|Bulk5|2026-10-01|2026-12-31|12.0|-|5
+=== data/sales.txt
+2026-09-07;1080574183;1001;101
+=== data/sellers.txt
+Carlos Rodriguez|1001|3001111111|EMP001|Morning
+Laura Martinez|1002|3002222222|EMP002|Afternoon
+Andres Gomez|1003|3003333333|EMP003|Evening

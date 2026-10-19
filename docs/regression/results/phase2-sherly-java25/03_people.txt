@@ -1,0 +1,103 @@
+
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Personas -----
+1. Registrar cliente
+2. Listar clientes
+3. Listar vendedores
+4. Volver
+Selecciona una opción: 
+-- Registrar cliente --
+Nombre: Identificación: Teléfono: Correo electrónico: Cliente registrado correctamente.
+
+----- Personas -----
+1. Registrar cliente
+2. Listar clientes
+3. Listar vendedores
+4. Volver
+Selecciona una opción: 
+-- Registrar cliente --
+Nombre: Identificación: Teléfono: Correo electrónico: No se puede completar la operación: Ya existe una persona con el identificador 1080574183.
+
+----- Personas -----
+1. Registrar cliente
+2. Listar clientes
+3. Listar vendedores
+4. Volver
+Selecciona una opción: 
+-- Registrar cliente --
+Nombre: Identificación: Teléfono: Correo electrónico: Los datos del campo 'email' no son válidos: el correo debe contener una arroba y un punto en posiciones válidas.
+
+----- Personas -----
+1. Registrar cliente
+2. Listar clientes
+3. Listar vendedores
+4. Volver
+Selecciona una opción: 
+-- Registrar cliente --
+Nombre: Identificación: Teléfono: Correo electrónico: No se pudo registrar el cliente: name cannot be null or blank
+
+----- Personas -----
+1. Registrar cliente
+2. Listar clientes
+3. Listar vendedores
+4. Volver
+Selecciona una opción: 
+-- Clientes --
+1080574183 | Andres | zabaletadiaz2907@gmail.com
+2002 | Laura | laura@mail.com
+
+----- Personas -----
+1. Registrar cliente
+2. Listar clientes
+3. Listar vendedores
+4. Volver
+Selecciona una opción: 
+-- Vendedores --
+1001 | Carlos Rodriguez | turno: Morning
+1002 | Laura Martinez | turno: Afternoon
+1003 | Andres Gomez | turno: Evening
+
+----- Personas -----
+1. Registrar cliente
+2. Listar clientes
+3. Listar vendedores
+4. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: Cerrando GameZoneUnicesar. ¡Hasta pronto!
+=== data/accessories.csv
+CONTROLLER|ACC001|Control Pro|59.99|10|wireless|-|PS5,XBOX_SERIES
+CABLE|ACC002|Cable HDMI 2.1|14.99|25|2.0|HDMI|PS5,XBOX_SERIES,NINTENDO_SWITCH
+MEMORY|ACC003|Memory Card 128GB|29.99|15|128|Memory Card|NINTENDO_SWITCH
+=== data/customers.txt
+Andres|1080574183|3015838495|zabaletadiaz2907@gmail.com
+Laura|2002|3001234567|laura@mail.com
+=== data/products.dat
+aeabae0cde6c234833ebb1f8e50464a6964aa1e92752e3e3140de25aa91ca51a
+=== data/promotions.csv
+PERCENTAGE|PROMO001|15 Percent Discount|2026-09-01|2026-12-31|15|-|-
+CATEGORY|PROMO002|Video Game Discount|2026-09-01|2026-12-31|20|VIDEOGAME|-
+BULK|PROMO003|Bulk Purchase Discount|2026-09-01|2026-12-31|10|-|3
+CATEGORY|PROMO004|Accessory Discount|2026-09-21|2026-09-26|10|ACCESSORY|-=== data/sales.txt
+2026-09-07;1080574183;1001;101
+=== data/sellers.txt
+Carlos Rodriguez|1001|3001111111|EMP001|Morning
+Laura Martinez|1002|3002222222|EMP002|Afternoon
+Andres Gomez|1003|3003333333|EMP003|Evening

@@ -63,3 +63,20 @@ Classes and methods audited, by module and requirement:
 - **Consequence:** Requirement 5 (A1) already had to update both lists to add `ACCESSORY`. A new category added to only one of them makes the service reject a category that the model accepts, or the opposite.
 - **Proposed solution:** `CategoryDiscount` exposes a static `validateTargetCategory(String)` used by its own setter. `PromotionService` calls it at the same point where it validates today, so the error appears in the same order and with the same message.
 - **Other member's code:** yes - `CategoryDiscount` (Developer 1).
+
+## 3. Creator
+
+**Verdict: Correct**
+
+- `PromotionService` creates the promotions it records (`registerPercentageDiscount`, `registerCategoryDiscount`, `registerBulkPurchaseDiscount`).
+- `WarrantyService` creates the warranties it registers (`assignBasicWarranty`, `assignExtendedWarranty`).
+- `ReturnService.registerReturn` creates the `Return` it persists (lines 131-139).
+- `PersonRepository.createDefaultSellers` (lines 182-188) creates the preloaded sellers.
+
+The `if/else` on the stored type in `WarrantyService.loadWarranties` (lines 342-368) and the `switch` in `parseAccessory` and `parsePromotion` are the factory step that turns a stored type code into an object. They are accepted as correct: at that point there is no object yet to ask polymorphically.
+
+## 4. Controller
+
+**Verdict: Correct**
+
+`PersonService`, `AccessoryService`, `PromotionService`, `ReturnService` and `WarrantyService` each receive the operations of their submenu from the UI and coordinate them (for example, `ReturnService.registerReturn` validates, cancels warranties, restores stock and persists). None of my classes reads from the console.

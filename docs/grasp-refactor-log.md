@@ -82,3 +82,8 @@ Recorded by the Technical Lead at the end of Phase 2.
 | SaleService | Adds calculateMonthlySales(int, int) | V-06 | Information Expert | b610aef (PR #43) | Andres |
 | SaleService | Adds findSaleByReference(String) | V-01 | Low Coupling | b610aef (PR #43) | Andres |
 | InventoryService | New class: finds items, validates and moves stock | V-02 | Pure Fabrication | 896d079 (PR #_43 | Andres |
+| Product | Adds abstract getCategory() | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
+| VideoGame | Returns VIDEOGAME; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
+| Console | Returns CONSOLE; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
+| Accessory | Returns ACCESSORY for every accessory | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
+| CategoryDiscount | Uses getCategory() instead of instanceof | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |

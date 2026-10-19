@@ -241,3 +241,56 @@ warranty subclass.
   it.
 - **Other member's code:** yes - `Product` and `Console` (Developer 1). The
   same check exists in `ReturnService` (Developer 2).
+
+## 8. Pure Fabrication
+
+**Verdict: Correct**
+
+`SaleRepository` is a fabricated class that keeps file access out of `Sale`,
+and `Main` is a fabricated composition root. The repeated error translation
+of the UI that needs a new fabrication is registered under High Cohesion
+(V-05), and `InventoryService` under Polymorphism (V-06), to avoid counting
+the same fragment twice.
+
+## 9. Indirection
+
+**Verdict: Correct**
+
+The services stand between the UI and the repositories: `GameZoneUI` calls
+`saleService.listSales()` (line 1817) and never `SaleRepository`.
+`SaleService` reaches promotions and warranties only through
+`PromotionService` and `WarrantyService` (lines 170, 179, 220). The missing
+indirection in `SaleRepository` is registered under Low Coupling (V-04),
+because coupling is the problem it causes.
+
+## 10. Protected Variations
+
+**Verdict: Violation (registered under Polymorphism)**
+
+The two variation points that are not protected - the kind of sellable item
+(V-06) and the warranty-eligible product types (V-07) - are registered
+under Polymorphism, because polymorphism is the mechanism that fixes them.
+
+Correctly protected: the promotion strategy (`Promotion.calculateDiscount`)
+and the warranty type (`Warranty.getAdditionalCost`) are abstractions that
+`SaleService` uses without knowing the subclass.
+
+`ProductService.restoreStock` (lines 133-164) was also reviewed:
+**Verdict: correct.** The rule check is delegated to
+`ProductValidator`, as Requirement 6 decided.
+
+---
+
+## Summary
+
+- **V-01** - Information Expert - `GameZoneUI` - other member: Developer 2
+  (`PersonService`).
+- **V-02** - Information Expert - `GameZoneUI` - other member: Developer 1
+  (`ProductService`).
+- **V-03** - Creator - `GameZoneUI`, `SaleService` - other member: none.
+- **V-04** - Low Coupling - `SaleRepository`, `Main` - other member: none.
+- **V-05** - High Cohesion - `GameZoneUI` - other member: none.
+- **V-06** - Polymorphism - `SaleService`, `GameZoneUI` - other member:
+  Developer 2 (same pattern in `ReturnService`).
+- **V-07** - Polymorphism - `SaleService`, `GameZoneUI` - other members:
+  Developer 1 (`Product`, `Console`) and Developer 2 (`ReturnService`).

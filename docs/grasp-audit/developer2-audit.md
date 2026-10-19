@@ -169,3 +169,60 @@ the layer rules of the project.
   `toCsv` also uses it for the type column.
 - **Other member's code:** yes - `Accessory`, `Controller`, `Cable` and
   `Memory` (Developer 1).
+- ## 8. Pure Fabrication
+
+**Verdict: Violation**
+
+### V-08
+
+- **Pattern:** Pure Fabrication (also High Cohesion).
+- **Module:** Accessories (Requirement 1).
+- **Evidence:** `AccessoryService` contains validation rules for accessory types and data.
+- **Explanation:** the service mixes business operations with validation responsibilities that can be separated into a dedicated validator.
+- **Consequence:** validation logic becomes harder to reuse and test independently.
+- **Proposed solution:** delegate accessory validation to a dedicated validator, following the project's existing validation approach.
+- **Other member's code:** no, within Developer 2's responsibility.
+
+### V-09
+
+- **Pattern:** Pure Fabrication.
+- **Module:** Returns (Requirement 3).
+- **Evidence:** `ReturnService` handles item lookup and stock restoration separately for products and accessories.
+- **Explanation:** these responsibilities require the service to know the concrete storage services.
+- **Consequence:** return logic becomes coupled to the specific repositories and services used by each item type.
+- **Proposed solution:** use the agreed `InventoryService` abstraction to centralize item lookup and stock restoration.
+- **Other member's code:** yes - `InventoryService` is created by the Technical Lead (boundary finding).
+
+## 9. Indirection
+
+**Verdict: Violation**
+
+### V-10
+
+- **Pattern:** Indirection.
+- **Module:** Returns (Requirement 3).
+- **Evidence:** `ReturnService` directly coordinates `ProductService` and `AccessoryService` to find items and restore stock.
+- **Explanation:** the return service communicates directly with concrete services instead of using the agreed intermediary.
+- **Consequence:** changes to inventory services propagate into the return flow.
+- **Proposed solution:** introduce the agreed `InventoryService` as the intermediary for item lookup and stock restoration.
+- **Other member's code:** yes - `InventoryService` is created by the Technical Lead.
+
+## 10. Protected Variations
+
+**Verdict: Violation**
+
+### V-11
+
+- **Pattern:** Protected Variations.
+- **Module:** Returns and sales integration (Requirement 3).
+- **Evidence:** the return flow depends on separate product and accessory service APIs and on concrete type checks.
+- **Explanation:** the return flow is exposed to variations in how different sellable items are located and how their stock is restored.
+- **Consequence:** adding or changing an item category requires changes in the return flow.
+- **Proposed solution:** use `InventoryService` as a stable interface for finding items and restoring stock.
+- **Other member's code:** yes - `InventoryService` is created by the Technical Lead.
+
+## 11. Summary
+
+The audit identified violations related to Information Expert, Low Coupling, Polymorphism, Pure Fabrication, Indirection and Protected Variations. Creator and Controller were also reviewed, with their verdicts documented above.
+
+The findings involving `InventoryService` are boundary findings: the Technical Lead owns the shared abstraction, while Developer 2 documents the impact on `ReturnService`. The proposed solutions are recommendations for the correction phase; no Java code is changed in this audit commit.

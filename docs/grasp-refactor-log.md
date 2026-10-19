@@ -87,3 +87,4 @@ Recorded by the Technical Lead at the end of Phase 2.
 | Console | Returns CONSOLE; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
 | Accessory | Returns ACCESSORY for every accessory | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
 | CategoryDiscount | Uses getCategory() instead of instanceof | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
+| ProductService | Adds registerProduct(Product); others delegate | V-13 | Protected Variations | bec143f (PR #__) | Sherly |

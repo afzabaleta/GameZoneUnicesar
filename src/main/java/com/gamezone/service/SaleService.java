@@ -281,6 +281,44 @@ public class SaleService {
     }
 
     /**
+     * Finds a sale by its reference.
+     *
+     * @param reference sale reference, as returned by {@link Sale#getReference()}
+     * @return the first sale with that reference, or null if none exists
+     */
+    public Sale findSaleByReference(String reference) {
+        for (Sale sale : saleRepository.loadSales()) {
+            if (sale.getReference().equals(reference)) {
+                return sale;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Calculates the total of the sales registered in a month.
+     *
+     * <p>The caller validates the month and the year.</p>
+     *
+     * @param month month to calculate, from 1 to 12
+     * @param year year to calculate
+     * @return sum of the final totals of the sales of that month
+     */
+    public double calculateMonthlySales(int month, int year) {
+        double salesTotal = 0.0;
+
+        for (Sale sale : saleRepository.loadSales()) {
+            if (sale.getDate().getMonthValue() == month
+                    && sale.getDate().getYear() == year) {
+                salesTotal += sale.calculateTotal();
+            }
+        }
+
+        return salesTotal;
+    }
+
+    /**
      * Counts only regular products included in the sale.
      *
      * @param products sale items

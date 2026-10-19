@@ -68,12 +68,12 @@ public class CategoryDiscount extends Promotion {
     }
 
     /**
-     * Updates the target category.
+     * Validates that a target category is supported.
      *
-     * @param targetCategory new target category
+     * @param targetCategory category to validate
+     * @throws IllegalArgumentException if the category is invalid
      */
-    public void setTargetCategory(String targetCategory) {
-
+    public static void validateTargetCategory(String targetCategory) {
         if (targetCategory == null
                 || (!targetCategory.equalsIgnoreCase("VIDEOGAME")
                 && !targetCategory.equalsIgnoreCase("CONSOLE")
@@ -83,7 +83,17 @@ public class CategoryDiscount extends Promotion {
                     "Target category must be VIDEOGAME, CONSOLE or ACCESSORY."
             );
         }
+    }
 
+    /**
+     * Updates the target category.
+     *
+     * @param targetCategory new target category
+     */
+
+
+    public void setTargetCategory(String targetCategory) {
+        validateTargetCategory(targetCategory);
         this.targetCategory = targetCategory.toUpperCase();
     }
 

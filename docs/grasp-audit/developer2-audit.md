@@ -169,60 +169,99 @@ the layer rules of the project.
   `toCsv` also uses it for the type column.
 - **Other member's code:** yes - `Accessory`, `Controller`, `Cable` and
   `Memory` (Developer 1).
-- ## 8. Pure Fabrication
+## 8. Pure Fabrication
 
 **Verdict: Violation**
+
+Correct applications: my repositories are fabricated classes that keep file
+access out of the model, and in Requirement 6 `ProductService` and
+`PersonService` delegate their checks to `ProductValidator` and
+`PersonValidator` (for example, `PersonService` lines 61-75).
 
 ### V-08
 
 - **Pattern:** Pure Fabrication (also High Cohesion).
 - **Module:** Accessories (Requirement 1).
-- **Evidence:** `AccessoryService.validateAccessory`, lines 223-270: null, identifier, title, price, stock and duplicate checks written inline with `IllegalArgumentException`, called from `registerController`, `registerCable` and `registerMemory` (lines 42, 53, 64).
-- **Explanation:** the service mixes business operations with validation responsibilities that can be separated into a dedicated validator.
-- **Consequence:** validation logic becomes harder to reuse and test independently.
-- **Proposed solution:** delegate accessory validation to a dedicated validator, following the project's existing validation approach.
+- **Evidence:** `AccessoryService.validateAccessory`, lines 223-270: null,
+  identifier, title, price, stock and duplicate checks written inline with
+  `IllegalArgumentException`, called from `registerController`,
+  `registerCable` and `registerMemory` (lines 42, 53, 64).
+- **Explanation:** the service mixes business operations with validation
+  responsibilities that can be separated into a dedicated validator.
+- **Consequence:** validation logic becomes harder to reuse and test
+  independently.
+- **Proposed solution:** create `AccessoryValidator` in package
+  `validation` with the same checks, order, exception type and messages, so
+  the UI shows exactly the same text. `AccessoryService` delegates to it.
 - **Other member's code:** no, within Developer 2's responsibility.
 
 ### V-09
 
 - **Pattern:** Pure Fabrication.
-- **Module:** Returns (Requirement 3).
-- **Evidence:** `ReturnService` handles item lookup and stock restoration separately for products and accessories.
-- **Explanation:** these responsibilities require the service to know the concrete storage services.
-- **Consequence:** return logic becomes coupled to the specific repositories and services used by each item type.
-- **Proposed solution:** use the agreed `InventoryService` abstraction to centralize item lookup and stock restoration.
-- **Other member's code:** yes - `InventoryService` is created by the Technical Lead (boundary finding).
+- **Module:** Exceptions and validations (Requirement 6).
+- **Evidence:** `SaleService.registerSale`, lines 108-120: after
+  `SaleValidator.validateSaleData(...)` (lines 102-106), a loop checks again
+  for `null` products (unreachable, because `SaleValidator` already rejects
+  them) and throws `InvalidDataException("product identifier", ...)` for
+  blank identifiers.
+- **Explanation:** my Requirement 6 refactor left part of the sale-data
+  validation inside the service instead of delegating all of it to
+  `SaleValidator`.
+- **Consequence:** sale validation is split across two classes; a new rule
+  may be added to one and forgotten in the other.
+- **Proposed solution:** move the blank-identifier rule into
+  `SaleValidator` (same field name and message) and remove the loop from
+  `SaleService`.
+- **Other member's code:** yes - `SaleValidator` (Developer 1).
 
 ## 9. Indirection
 
-**Verdict: Violation**
+**Verdict: Correct**
 
-### V-10
+`WarrantyRecord` (lines 197-203 of `WarrantyRepository`) is an intermediate
+object that decouples the warranty file from `Product` and `Sale`, and
+`PersonService` reaches the uniqueness rule through `PersonValidator`.
 
-- **Pattern:** Indirection.
-- **Module:** Returns (Requirement 3).
-- **Evidence:** `ReturnService` directly coordinates `ProductService` and `AccessoryService` to find items and restore stock.
-- **Explanation:** the return service communicates directly with concrete services instead of using the agreed intermediary.
-- **Consequence:** changes to inventory services propagate into the return flow.
-- **Proposed solution:** introduce the agreed `InventoryService` as the intermediary for item lookup and stock restoration.
-- **Other member's code:** yes - `InventoryService` is created by the Technical Lead.
+The direct use of `ProductService` and `AccessoryService` from
+`ReturnService` is the same finding as V-05. It is registered once, under
+Polymorphism, because the fix (the shared `InventoryService`) removes the
+type check; Indirection is the mechanism of that fix, not a separate
+violation.
 
 ## 10. Protected Variations
 
-**Verdict: Violation**
+**Verdict: Violation (registered under Information Expert and
+Polymorphism)**
 
-### V-11
+The unprotected variation points in my code are the sale reference format
+(V-01) and the kinds of item and accessory (V-05, V-06, V-07). They are not
+registered again here, to avoid counting the same fragment twice.
 
-- **Pattern:** Protected Variations.
-- **Module:** Returns and sales integration (Requirement 3).
-- **Evidence:** the return flow depends on separate product and accessory service APIs and on concrete type checks.
-- **Explanation:** the return flow is exposed to variations in how different sellable items are located and how their stock is restored.
-- **Consequence:** adding or changing an item category requires changes in the return flow.
-- **Proposed solution:** use `InventoryService` as a stable interface for finding items and restoring stock.
-- **Other member's code:** yes - `InventoryService` is created by the Technical Lead.
+Correct applications: in Requirement 6, `ProductRepository`,
+`PersonRepository` and `SaleRepository` wrap every I/O and parsing error
+into `PersistenceException` with the file name (for example,
+`PersonRepository` lines 54-59 and 121-127).
 
 ## 11. Summary
 
-The audit identified violations related to Information Expert, Low Coupling, Polymorphism, Pure Fabrication, Indirection and Protected Variations. Creator and Controller were also reviewed, with their verdicts documented above.
+- **V-01** - Information Expert - `ReturnRepository`, `ReturnService`,
+  `WarrantyRepository`, `WarrantyService` - other member: Technical Lead.
+- **V-02** - Information Expert - `ReturnService` - other member: Technical
+  Lead.
+- **V-03** - Information Expert - `PromotionService` - other member:
+  Developer 1.
+- **V-04** - Low Coupling - `ReturnRepository` - other member: Technical
+  Lead (`Main`).
+- **V-05** - Polymorphism - `ReturnService` - other member: Technical Lead
+  (`InventoryService`). Also covers the Indirection and Protected
+  Variations aspects of the same fragment.
+- **V-06** - Polymorphism - `ReturnService` - other members: Developer 1
+  and Technical Lead.
+- **V-07** - Polymorphism - `AccessoryRepository` - other member:
+  Developer 1.
+- **V-08** - Pure Fabrication - `AccessoryService` - other member: none.
+- **V-09** - Pure Fabrication - `SaleService` (Requirement 6 part) - other
+  member: Developer 1 (`SaleValidator`).
 
-The findings involving `InventoryService` are boundary findings: the Technical Lead owns the shared abstraction, while Developer 2 documents the impact on `ReturnService`. The proposed solutions are recommendations for the correction phase; no Java code is changed in this audit commit.
+The proposed solutions are recommendations for the correction phase; no
+Java code is changed in this audit.

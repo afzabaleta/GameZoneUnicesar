@@ -58,4 +58,9 @@ public abstract class Accessory extends Product {
      */
     @Override
     public abstract String getDescription();
+
+    @Override
+    public String getCategory() {
+        return "ACCESSORY";
+    }
 }

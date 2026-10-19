@@ -6,6 +6,11 @@ package com.gamezone.model;
  */
 
 public class Console extends Product {
+    /**
+     * Keeps compatibility with the products already stored in
+     * data/products.dat.
+     */
+    private static final long serialVersionUID = 7091003648521894664L;
 
     /**
      * Brand name of the console.
@@ -61,5 +66,13 @@ public class Console extends Product {
                 + " Model: " + model
                 + " Generation: " + generation;
     }
-
+    /**
+     * Returns the category of consoles.
+     *
+     * @return CONSOLE
+     */
+    @Override
+    public String getCategory() {
+        return "CONSOLE";
+    }
 }

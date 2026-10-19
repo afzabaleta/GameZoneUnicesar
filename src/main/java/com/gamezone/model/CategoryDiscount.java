@@ -1,3 +1,4 @@
+
 package com.gamezone.model;
 
 import java.time.LocalDate;
@@ -83,8 +84,7 @@ public class CategoryDiscount extends Promotion {
             );
         }
 
-        this.targetCategory =
-                targetCategory.toUpperCase();
+        this.targetCategory = targetCategory.toUpperCase();
     }
 
     /**
@@ -106,27 +106,7 @@ public class CategoryDiscount extends Promotion {
 
         for (Product product : sale.getProducts()) {
 
-            boolean matches = false;
-
-            if ("VIDEOGAME".equals(targetCategory)
-                    && product instanceof VideoGame) {
-
-                matches = true;
-            }
-
-            if ("CONSOLE".equals(targetCategory)
-                    && product instanceof Console) {
-
-                matches = true;
-            }
-
-            if ("ACCESSORY".equals(targetCategory)
-                    && product instanceof Accessory) {
-
-                matches = true;
-            }
-
-            if (matches) {
+            if (targetCategory.equals(product.getCategory())) {
                 categoryTotal += product.getPrice();
             }
         }

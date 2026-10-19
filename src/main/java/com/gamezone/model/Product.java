@@ -87,4 +87,11 @@ public abstract class Product implements Serializable {
      * @return product description
      */
     public abstract String getDescription();
+    /**
+     * Returns the commercial category of the product,
+     * used by category promotions.
+     *
+     * @return product category: VIDEOGAME, CONSOLE or ACCESSORY
+     */
+    public abstract String getCategory();
 }

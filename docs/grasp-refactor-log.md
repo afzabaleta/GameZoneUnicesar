@@ -75,10 +75,10 @@ Recorded by the Technical Lead at the end of Phase 2.
 
 ## 3. Change log
 
-| Class | Change | Violation | Pattern | Commit / PR | Responsible |
-|---|---|---|---|---|---|
-| Sale | Adds getReference() | V-04 | Information Expert | cf6826c (PR #__) | Andres |
-| Sale | Adds getDiscountRate(), calculateProportionalDiscount() | V-05 | Information Expert | cf6826c (PR #__) | Andres |
-| SaleService | Adds calculateMonthlySales(int, int) | V-06 | Information Expert | b610aef (PR #__) | Andres |
-| SaleService | Adds findSaleByReference(String) | V-01 | Low Coupling | b610aef (PR #__) | Andres |
-| InventoryService | New class: finds items, validates and moves stock | V-02 | Pure Fabrication | 896d079 (PR #__) | Andres |
+| Class | Change | Violation | Pattern | Commit / PR      | Responsible |
+|---|---|---|---|------------------|---|
+| Sale | Adds getReference() | V-04 | Information Expert | cf6826c (PR #43) | Andres |
+| Sale | Adds getDiscountRate(), calculateProportionalDiscount() | V-05 | Information Expert | cf6826c (PR #43) | Andres |
+| SaleService | Adds calculateMonthlySales(int, int) | V-06 | Information Expert | b610aef (PR #43) | Andres |
+| SaleService | Adds findSaleByReference(String) | V-01 | Low Coupling | b610aef (PR #43) | Andres |
+| InventoryService | New class: finds items, validates and moves stock | V-02 | Pure Fabrication | 896d079 (PR #_43 | Andres |

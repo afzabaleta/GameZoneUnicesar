@@ -103,3 +103,69 @@ The `if/else` on the stored type in `WarrantyService.loadWarranties` (lines 342-
 - `AccessoryService` contains its own validation rules: registered as V-08 (Pure Fabrication).
 
 Correct: `PersonRepository`, `PromotionRepository` and `WarrantyRepository` each handle only one file format.
+## 7. Polymorphism
+
+**Verdict: Violation**
+
+Correct applications: `PromotionService.findBestPromotionFor`
+(lines 196-220) calls `promotion.calculateDiscount(sale)` without checking
+the type.
+
+Accepted with justification: the `instanceof` chains in the `toCsv` methods
+of `AccessoryRepository` (lines 321-342), `PromotionRepository`
+(lines 171-223) and `WarrantyRepository` (lines 133-146) map each concrete
+class to its file columns. That mapping is persistence knowledge; moving it
+into the model would put file-format concerns in domain classes, against
+the layer rules of the project.
+
+### V-05
+
+- **Pattern:** Polymorphism (also Protected Variations).
+- **Module:** Returns (Requirement 3), accessory returns (Requirement 5, A4).
+- **Evidence:** `ReturnService.restoreReturnedStock`, lines 187-208:
+  `if (product instanceof Accessory)` calls `accessoryService.restoreStock`,
+  otherwise `productService.restoreStock`. `ReturnService.findProduct`,
+  lines 432-458, searches `productService.listProducts()` and then
+  `accessoryService.listAccessories()`.
+- **Explanation:** `ReturnService` decides with a type check where each
+  kind of item is stored. The same decision exists in `SaleService` and
+  `GameZoneUI` (Technical Lead).
+- **Consequence:** a new kind of sellable item needs a new branch here and in
+  the sale flow, and returns would silently restore stock in the wrong
+  repository if one branch is forgotten.
+- **Proposed solution:** use the `InventoryService` agreed with the
+  Technical Lead (`findItem`, `restoreStock`). `ReturnService` no longer
+  knows whether an item is a product or an accessory.
+- **Other member's code:** yes - `InventoryService` is created by the Technical Lead (boundary finding).
+
+### V-06
+
+- **Pattern:** Polymorphism.
+- **Module:** Warranty cancellation on returns (Requirement 5, A7).
+- **Evidence:** `ReturnService.cancelReturnedConsoleWarranties`, line 169:
+  `if (product instanceof Console)`.
+- **Explanation:** the rule "only consoles have a warranty" is a type check,
+  not a behaviour of the product.
+- **Consequence:** if warranties are extended to another product type,
+  returns would not cancel or refund them unless this check is found.
+- **Proposed solution:** use `product.isWarrantyEligible()`.
+- **Other member's code:** yes - `Product` and `Console` (Developer 1); the
+  same check is in `SaleService` and `GameZoneUI` (Technical Lead).
+
+### V-07
+
+- **Pattern:** Polymorphism (also Protected Variations).
+- **Module:** Accessories (Requirement 1).
+- **Evidence:** `AccessoryRepository.findByType`, lines 79-93, combines
+  `"controller"` with `instanceof Controller`, `"cable"` with
+  `instanceof Cable` and `"memory"` with `instanceof Memory`.
+- **Explanation:** this is a query, not a file mapping: "which accessories
+  are of type X" should ask each accessory for its type.
+- **Consequence:** a new accessory type needs a new branch in the query,
+  besides the new class.
+- **Proposed solution:** abstract `Accessory.getAccessoryType()`
+  (`"CONTROLLER"`, `"CABLE"`, `"MEMORY"`); `findByType` compares
+  `accessory.getAccessoryType().equalsIgnoreCase(normalizedType)`, and
+  `toCsv` also uses it for the type column.
+- **Other member's code:** yes - `Accessory`, `Controller`, `Cable` and
+  `Memory` (Developer 1).

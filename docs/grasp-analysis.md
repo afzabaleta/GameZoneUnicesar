@@ -76,3 +76,17 @@ the new design is?"
   whoever has the sales, so Information Expert guides it.
 - For the accessory validation, the fix is a new fabricated validator, so
   Pure Fabrication guides it.
+- ## 4. Violations found in Developer 2's scope
+
+The audit of Developer 2's scope identified violations involving Information Expert, Low Coupling, Polymorphism, Pure Fabrication, Indirection and Protected Variations.
+
+- **Information Expert:** `ReturnService` calculates monthly sales totals, although the calculation should belong to the class that owns the relevant sales information. The finding is registered as V-02.
+- **Low Coupling:** `ReturnRepository` depends on service classes to locate sales and items. Persistence should remain independent of business services. The finding is registered as V-04.
+- **Polymorphism:** `ReturnService` uses `instanceof` checks to distinguish products from accessories and to identify consoles for warranty cancellation. The design should delegate these decisions to polymorphic behavior or a shared abstraction. The findings are registered as V-05 and V-06.
+- **Pure Fabrication:** accessory validation and inventory coordination require supporting responsibilities to be separated from the services that currently perform them. See V-08 and V-09 in the audit report.
+- **Indirection:** return operations should use `InventoryService` as an intermediary for item lookup and stock restoration, rather than depending directly on separate product and accessory services. See V-10.
+- **Protected Variations:** the return flow should depend on stable abstractions and polymorphic operations so that adding new item types does not require changing the same conditional logic in several classes. See V-05, V-07 and V-11.
+
+The audit also reviewed Creator and Controller. Their verdicts and evidence are documented in `docs/grasp-audit/developer2-audit.md`.
+
+These findings are documented as recommendations for the correction phase. No Java implementation changes are included in this audit.

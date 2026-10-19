@@ -38,8 +38,8 @@ Classes and methods audited, by module and requirement:
 
 - **Pattern:** Information Expert (also Protected Variations).
 - **Module:** Returns and warranties (Requirements 3 and 4).
-- **Evidence:** `ReturnRepository` and `WarrantyRepository`, together with `ReturnService` and `WarrantyService`, construct a sale reference with `sale.getDate().toString()` in eight places.
-- **Explanation:** `Sale` owns the sale date and should be responsible for providing the sale reference. The other classes should not know how that reference is formatted.
+- **Evidence:** the reference of a sale is rebuilt as `sale.getDate().toString()` in eight places: `ReturnRepository` lines 281-283 and 335-338; `WarrantyRepository` line 153; `ReturnService` lines 262-265 and 413-415; `WarrantyService` lines 169-172, 226-229 and 410-412.
+- - **Explanation:** `Sale` owns the sale date and should be responsible for providing the sale reference. The other classes should not know how that reference is formatted.
 - **Consequence:** If the reference format changes, eight places must be updated. Missing one would cause inconsistent references when loading or matching returns and warranties.
 - **Proposed solution:** `Sale` exposes `getReference()` (it returns `date.toString()` today). All eight places call it. The file format and the outputs stay the same. Pattern applied: Information Expert; the reference format becomes a protected variation.
 - **Other member's code:** yes - `Sale` (Technical Lead).
@@ -89,7 +89,7 @@ The `if/else` on the stored type in `WarrantyService.loadWarranties` (lines 342-
 
 - **Pattern:** Low Coupling.
 - **Module:** Returns (Requirement 3), Requirement 5 A4.
-- **Evidence:** `ReturnRepository`, lines 7-9 and 27-29, depends on `SaleService`, `ProductService` and `AccessoryService`.
+- **Evidence:** `ReturnRepository` imports `SaleService`, `ProductService` and `AccessoryService` (lines 7-9), keeps them as fields (lines 27-29) and calls `saleService.listSales()` (line 279), `productService.listProducts()` (line 304) and `accessoryService.listAccessories()` (line 314).
 - **Explanation:** A repository is a persistence component. Depending on services reverses the intended layer direction and couples file storage to business operations.
 - **Consequence:** Changes to those services can force changes in `ReturnRepository`, and the repository cannot be tested independently without bringing in service dependencies.
 - **Proposed solution:** `ReturnRepository` should persist return data without depending on services. `ReturnService` resolves the sale and the items through `SaleService` and `InventoryService`, keeping the same error messages. The file format does not change.
@@ -177,7 +177,7 @@ the layer rules of the project.
 
 - **Pattern:** Pure Fabrication (also High Cohesion).
 - **Module:** Accessories (Requirement 1).
-- **Evidence:** `AccessoryService` contains validation rules for accessory types and data.
+- **Evidence:** `AccessoryService.validateAccessory`, lines 223-270: null, identifier, title, price, stock and duplicate checks written inline with `IllegalArgumentException`, called from `registerController`, `registerCable` and `registerMemory` (lines 42, 53, 64).
 - **Explanation:** the service mixes business operations with validation responsibilities that can be separated into a dedicated validator.
 - **Consequence:** validation logic becomes harder to reuse and test independently.
 - **Proposed solution:** delegate accessory validation to a dedicated validator, following the project's existing validation approach.

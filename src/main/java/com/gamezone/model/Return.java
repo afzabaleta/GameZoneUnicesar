@@ -205,28 +205,19 @@ public class Return {
             returnedSubtotal += product.getPrice();
         }
 
-        double saleSubtotal = originalSale.calculateSubtotal();
-        double saleDiscount = originalSale.getDiscountAmount();
-
         double productRefund;
 
-        if (saleSubtotal <= 0 || saleDiscount <= 0) {
-
+        if (originalSale.getDiscountRate() <= 0) {
             productRefund = returnedSubtotal;
-
         } else {
-
             double proportionalDiscount =
-                    saleDiscount
-                            * (returnedSubtotal / saleSubtotal);
+                    originalSale.calculateProportionalDiscount(returnedSubtotal);
 
-            productRefund =
-                    Math.max(
-                            0.0,
-                            returnedSubtotal - proportionalDiscount
-                    );
+            productRefund = Math.max(
+                    0.0,
+                    returnedSubtotal - proportionalDiscount
+            );
         }
-
         this.refundAmount =
                 productRefund + warrantyRefundAmount;
 
@@ -263,21 +254,13 @@ public class Return {
 
         receipt.append("Productos devueltos:\n");
 
-        double saleSubtotal = originalSale.calculateSubtotal();
-        double saleDiscount = originalSale.getDiscountAmount();
-
-        double discountRate = 0.0;
-
-        if (saleSubtotal > 0) {
-            discountRate = saleDiscount / saleSubtotal;
-        }
 
         for (Product product : returnedProducts) {
 
             double listPrice = product.getPrice();
 
             double proportionalDiscount =
-                    listPrice * discountRate;
+                    originalSale.calculateProportionalDiscount(listPrice);
 
             double itemRefund =
                     listPrice - proportionalDiscount;

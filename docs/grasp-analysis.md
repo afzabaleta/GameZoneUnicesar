@@ -8,7 +8,8 @@ Authors:
 
 - Questions 1 and 3: Sherly Michell Corrales Maestre (Developer 1).
 - Questions 2 and 5: Andres Felipe Zabaleta Diaz (Technical Lead).
-- Question 4: Diego Armando Mestre Gomez (Developer 2).
+- Question 4: Diego Armando Mestre Gomez (Developer 2); revised by the
+  Technical Lead during the consolidation.
 
 ---
 
@@ -46,6 +47,40 @@ pattern applied, and whether another member's code is involved. A verdict
 of "correct" needs at least one class and method where the pattern is
 applied. A verdict of "not applicable" needs the reason.
 
+## 2. Boundary findings
+
+*Some violations appear at the boundary between the code of two members.
+Which findings of this kind did the team identify? How were they recorded
+in the consolidation and who was assigned their correction?*
+
+A boundary finding is one where the problem, or its fix, involves code of
+more than one member. We found **11** of them; all are listed in section 5
+of the consolidated audit. They appeared in two ways.
+
+1. **Reported from both sides.** `SaleService` and `GameZoneUI` (Technical
+   Lead) and `ReturnService` (Developer 2) all decide with
+   `instanceof Accessory` where an item is stored. The leader registered it
+   as `leader-audit V-06` and Developer 2 as `developer2-audit V-05`. In the
+   consolidation they became a single violation, **V-02**, because the fix
+   is one new class (`InventoryService`) used by all of them. The warranty
+   rule written as `instanceof Console` in three classes (**V-03**) was
+   unified the same way.
+2. **The fix needs another member's class.** Developer 2 found that the sale
+   reference (`sale.getDate().toString()`) is rebuilt in eight places of his
+   classes (**V-04**). The information belongs to `Sale`, which is the
+   leader's class.
+
+**How we recorded them:** one entry in the definitive list, with the origin
+report(s) and every member who has a part, plus the "Boundary findings"
+section that explains the split.
+
+**Who corrects:** each member changes only their own classes. The owner of
+the class that must provide the new method (the *provider*) commits first,
+and the member who uses it (the *consumer*) commits after. In V-04, the
+leader adds `Sale.getReference()` and then Developer 2 replaces the eight
+usages. New classes are created by the owner of the violation that
+originates them (`InventoryService` by the leader for V-02).
+
 ## 3. Fragments that break more than one pattern
 
 *Did the team find fragments that break more than one pattern at the same
@@ -76,17 +111,75 @@ the new design is?"
   whoever has the sales, so Information Expert guides it.
 - For the accessory validation, the fix is a new fabricated validator, so
   Pure Fabrication guides it.
-- ## 4. Violations found in Developer 2's scope
 
-The audit of Developer 2's scope identified violations involving Information Expert, Low Coupling, Polymorphism, Pure Fabrication, Indirection and Protected Variations.
 
-- **Information Expert:** `ReturnService` calculates monthly sales totals, although the calculation should belong to the class that owns the relevant sales information. The finding is registered as V-02.
-- **Low Coupling:** `ReturnRepository` depends on service classes to locate sales and items. Persistence should remain independent of business services. The finding is registered as V-04.
-- **Polymorphism:** `ReturnService` uses `instanceof` checks to distinguish products from accessories and to identify consoles for warranty cancellation. The design should delegate these decisions to polymorphic behavior or a shared abstraction. The findings are registered as V-05 and V-06.
-- **Pure Fabrication:** accessory validation and inventory coordination require supporting responsibilities to be separated from the services that currently perform them. See V-08 and V-09 in the audit report.
-- **Indirection:** return operations should use `InventoryService` as an intermediary for item lookup and stock restoration, rather than depending directly on separate product and accessory services. See V-10.
-- **Protected Variations:** the return flow should depend on stable abstractions and polymorphic operations so that adding new item types does not require changing the same conditional logic in several classes. See V-05, V-07 and V-11.
+## 4. Preserving external behaviour
 
-The audit also reviewed Creator and Controller. Their verdicts and evidence are documented in `docs/grasp-audit/developer2-audit.md`.
+*The correction must preserve the external behaviour of the system. What
+strategy does the team follow to guarantee that every menu operation still
+works the same? What evidence is shown at the end?*
 
-These findings are documented as recommendations for the correction phase. No Java implementation changes are included in this audit.
+The strategy is a **black-box comparison of the console output and of the
+data files, before and after** the corrections.
+
+1. **Fixed data set.** Each run starts from a copy of the `data/` folder of
+   `develop`, so every run begins in the same state.
+2. **Scripted input.** The 31 menu operations (Products 3, Accessories 6,
+   People 3, Sales 4, Promotions 6, Returns 5, Warranties 4) are covered by
+   input scripts stored in `docs/regression/`. They include valid data and,
+   for the operations that validate input, invalid cases (blank identifier,
+   non-numeric price, unknown customer, wrong date format, invalid category,
+   and so on). The program is run with the script as standard input.
+3. **What we compare.** The console output and the content of every file in
+   `data/` after the run, against the baseline taken on `develop` before the
+   first correction.
+4. **Values that change on every run.** The return identifier
+   `RET-<milliseconds>`, the warranty identifiers `WAR-...-<uuid>` and the
+   object reference printed in the return receipt are replaced with fixed
+   placeholders before comparing. The baseline and the final run are made
+   on the same day, so the sale dates match.
+5. **When it runs.** Once on `develop` before the first correction
+   (reference result), in each Phase 2 Pull Request on the operations its
+   violations affect, and at the end over all 31 operations.
+
+**Evidence:** `docs/grasp-refactor-log.md` records the strategy, the list of
+scripts, the result of the initial run, the result of the final run (no
+differences in any operation) and the result of `mvn clean compile`. The
+same scripts are run live in the oral defence.
+
+## 5. Correction order and coordination
+
+*In which order are the violations corrected and why? When the correction
+of a violation involves code of more than one member, how is the work
+coordinated to avoid conflicts on the shared branch?*
+
+**Order:** provider before consumer, and lower layers before upper layers
+(model, validation, persistence, service, ui, `Main`). A consumer cannot
+call a method that does not exist yet, and adding a method to a lower layer
+does not break anything that already compiles, so every turn stays
+compilable and testable. The large UI split (V-15) goes last because it
+touches the file with the most call sites; doing it earlier would create
+conflicts with every other UI change.
+
+- **Turn 0 - Andres:** "before" diagram, non-regression baseline, provider
+  methods in `Sale` and `SaleService`, new `InventoryService`.
+- **Turn 1 - Sherly:** V-09, V-13 and the providers in `Product`,
+  `Console`, `Accessory`, `CategoryDiscount`, `ProductService` and
+  `SaleValidator`, then V-05 in `Return`.
+- **Turn 2 - Diego:** `PersonService` finders, V-12 and the consumer parts
+  in his services and repositories; Andres commits the `Main` wiring right
+  after V-01 and V-02.
+- **Turn 3 - Andres:** consumer parts in `SaleService` and the UI, V-14,
+  V-16, V-15, "after" diagram, final verification and README.
+
+**Coordination on the shared branch:**
+
+- Everyone works on `feature/grasp-refactor` in turns. Only one member
+  pushes at a time, so each Pull Request contains the commits of one turn.
+- Everyone runs `git pull` before starting a turn.
+- Each commit is pushed immediately and mentions the violation ID.
+- When a boundary fix needs an immediate change in another member's class
+  to compile (the `Main` wiring in V-01), that member commits right after,
+  inside the same turn, announced in the team chat before the turn starts.
+- Every Pull Request must pass `mvn clean compile` and the regression
+  scripts of its operations before another member approves it.

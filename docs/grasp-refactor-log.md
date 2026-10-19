@@ -90,3 +90,7 @@ Recorded by the Technical Lead at the end of Phase 2.
 | ProductService | Adds registerProduct(Product); others delegate | V-13 | Protected Variations | bec143f (PR #__) | Sherly |
 | Product | Adds isWarrantyEligible() (false by default) | V-03 | Polymorphism | ce73efe (PR #__) | Sherly |
 | Console | Overrides isWarrantyEligible() (true) | V-03 | Polymorphism | ce73efe (PR #__) | Sherly |
+| Accessory | Adds abstract getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #__) | Sherly |
+| Controller | Returns CONTROLLER from getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #__) | Sherly |
+| Cable | Returns CABLE from getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #__) | Sherly |
+| Memory | Returns MEMORY from getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #__) | Sherly |

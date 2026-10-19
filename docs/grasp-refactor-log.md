@@ -96,3 +96,4 @@ Recorded by the Technical Lead at the end of Phase 2.
 | Memory | Returns MEMORY from getAccessoryType() | V-10 | Polymorphism | b7f1a19 (PR #__) | Sherly |
 | ProductService | Adds listConsoles() to filter registered consoles | V-08 | Information Expert | b7f477b (PR #__) | Sherly |
 | CategoryDiscount | Adds static validateTargetCategory(String); setter reuses validation | V-11 | Information Expert | 6bea9b5 (PR #__) | Sherly |
+| SaleValidator | Adds blank product identifier validation to validateSaleData() | V-17 | Pure Fabrication | b5c8228 (PR #__) | Sherly |

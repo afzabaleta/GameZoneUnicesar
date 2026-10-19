@@ -1,0 +1,40 @@
+1
+1
+VG01
+Zelda TOTK
+250
+4
+Switch
+Adventure
+E
+2
+XSX
+Xbox Series X
+2300
+2
+Microsoft
+Series X
+9
+1
+VG02
+Bad
+abc
+1
+
+Title
+10
+1
+P
+G
+R
+2
+C2
+Cons
+0
+1
+B
+M
+G
+3
+4
+8

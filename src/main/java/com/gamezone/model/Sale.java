@@ -78,6 +78,48 @@ public class Sale {
     }
 
     /**
+     * Returns the reference used to identify this sale in returns
+     * and warranties.
+     *
+     * @return sale reference
+     */
+    public String getReference() {
+        return date.toString();
+    }
+
+    /**
+     * Returns the ratio between the applied discount and the subtotal.
+     *
+     * @return discount rate, or zero when the subtotal is not positive
+     */
+    public double getDiscountRate() {
+        double subtotal = calculateSubtotal();
+
+        if (subtotal > 0) {
+            return discountAmount / subtotal;
+        }
+
+        return 0.0;
+    }
+
+    /**
+     * Calculates the share of the sale discount that corresponds
+     * to the given amount.
+     *
+     * @param amount amount taken from this sale
+     * @return proportional discount, or zero when the sale has no discount
+     */
+    public double calculateProportionalDiscount(double amount) {
+        double subtotal = calculateSubtotal();
+
+        if (subtotal <= 0 || discountAmount <= 0) {
+            return 0.0;
+        }
+
+        return discountAmount * (amount / subtotal);
+    }
+
+    /**
      * Determines whether the sale can be returned.
      *
      * @return true if the sale is within the allowed return period

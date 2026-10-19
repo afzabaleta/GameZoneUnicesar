@@ -9,6 +9,7 @@ import com.gamezone.persistence.ProductRepository;
 import com.gamezone.validation.ProductValidator;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Service class that contains business logic related to products.
@@ -37,12 +38,15 @@ public class ProductService {
     }
 
     /**
-     * Registers a video game product after validating its data.
+     * Registers any product after validating its common data.
      *
-     * @param videoGame video game to register
+     * <p>Registration does not depend on the concrete product type,
+     * so new product types reuse this method.</p>
+     *
+     * @param product product to register
      */
-    public void registerVideoGame(VideoGame videoGame) {
-        if (videoGame == null) {
+    public void registerProduct(Product product) {
+        if (product == null) {
             throw new InvalidDataException(
                     "product",
                     "es obligatorio."
@@ -50,14 +54,24 @@ public class ProductService {
         }
 
         ProductValidator.validateProductData(
-                videoGame.getIdentifier(),
-                videoGame.getTitle(),
-                videoGame.getPrice(),
-                videoGame.getAvailableQuantity()
+                product.getIdentifier(),
+                product.getTitle(),
+                product.getPrice(),
+                product.getAvailableQuantity()
         );
 
-        productRepository.save(videoGame);
+        productRepository.save(product);
     }
+
+    /**
+     * Registers a video game product after validating its data.
+     *
+     * @param videoGame video game to register
+     */
+    public void registerVideoGame(VideoGame videoGame) {
+        registerProduct(videoGame);
+    }
+
 
     /**
      * Registers a console product after validating its data.
@@ -65,21 +79,7 @@ public class ProductService {
      * @param console console to register
      */
     public void registerConsole(Console console) {
-        if (console == null) {
-            throw new InvalidDataException(
-                    "product",
-                    "es obligatorio."
-            );
-        }
-
-        ProductValidator.validateProductData(
-                console.getIdentifier(),
-                console.getTitle(),
-                console.getPrice(),
-                console.getAvailableQuantity()
-        );
-
-        productRepository.save(console);
+        registerProduct(console);
     }
 
     /**
@@ -91,6 +91,22 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    /**
+     * Returns all registered consoles.
+     *
+     * @return list of console products
+     */
+    public List<Console> listConsoles() {
+        List<Console> consoles = new ArrayList<>();
+
+        for (Product product : productRepository.findAll()) {
+            if (product instanceof Console console) {
+                consoles.add(console);
+            }
+        }
+
+        return consoles;
+    }
     /**
      * Updates the stock quantity of a product.
      *

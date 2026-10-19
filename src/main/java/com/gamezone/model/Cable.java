@@ -84,4 +84,14 @@ public class Cable extends Accessory {
                 + ", length: " + length + " m"
                 + ", connector: " + connectorType;
     }
+
+    /**
+     * Returns the specific type of this accessory.
+     *
+     * @return CABLE
+     */
+    @Override
+    public String getAccessoryType() {
+        return "CABLE";
+    }
 }

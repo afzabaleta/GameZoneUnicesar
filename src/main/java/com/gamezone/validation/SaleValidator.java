@@ -38,6 +38,15 @@ public final class SaleValidator {
                 throw new InvalidDataException(
                         "products", "la lista contiene un producto nulo");
             }
+
+            if (product.getIdentifier() == null
+                    || product.getIdentifier().isBlank()) {
+                throw new InvalidDataException(
+                        "product identifier",
+                        "Product identifier cannot be empty"
+                );
+            }
+
         }
     }
 

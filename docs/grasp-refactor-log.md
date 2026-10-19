@@ -88,3 +88,5 @@ Recorded by the Technical Lead at the end of Phase 2.
 | Accessory | Returns ACCESSORY for every accessory | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
 | CategoryDiscount | Uses getCategory() instead of instanceof | V-09 | Polymorphism | 96cdf62 (PR #__) | Sherly |
 | ProductService | Adds registerProduct(Product); others delegate | V-13 | Protected Variations | bec143f (PR #__) | Sherly |
+| Product | Adds isWarrantyEligible() (false by default) | V-03 | Polymorphism | ce73efe (PR #__) | Sherly |
+| Console | Overrides isWarrantyEligible() (true) | V-03 | Polymorphism | ce73efe (PR #__) | Sherly |

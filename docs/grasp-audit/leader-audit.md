@@ -155,3 +155,89 @@ Correct applications: `GameZoneUI` depends only on services and the model;
   `InventoryService.findItem`. Messages and file format stay the same.
 - **Other member's code:** no edit to another member's class; it reuses the
   `PersonService` finders of V-01 and the `InventoryService` of V-06.
+
+## 6. High Cohesion
+
+**Verdict: Violation**
+
+Correct applications: `Sale` keeps only sale data and sale calculations;
+`SaleRepository` only handles the `sales.txt` format.
+
+### V-05
+
+- **Pattern:** High Cohesion.
+- **Module:** UI (Workshop 1) and exception handling (Requirement 6).
+- **Evidence:** `GameZoneUI` has 2,540 lines and 53 methods covering seven
+  menus. The same four `catch` blocks (`ResourceNotFoundException`,
+  `BusinessRuleException`, `InvalidDataException`, `PersistenceException`)
+  with identical messages are repeated in 16 operations, for example the
+  blocks starting at lines 179 (`registerPercentagePromotion`), 818
+  (`registerVideoGame`), 1672 (`registerSale`) and 2480
+  (`showMonthlyBalance`). The four exception imports are duplicated
+  (lines 23-26 and 28-31).
+- **Explanation:** the class mixes menu navigation for every module, input
+  parsing, output formatting and the translation of exceptions into user
+  messages. The error-translation responsibility is copied 16 times.
+- **Consequence:** changing one user message means editing 16 places,
+  adding a new exception type means touching every operation, and every
+  module change produces merge conflicts in the same file.
+- **Proposed solution:** a Pure Fabrication `ConsoleErrorHandler` in package
+  `ui` that runs an operation and translates the exceptions in one place,
+  with exactly the same texts, and one menu class per module
+  (`ProductMenu`, `AccessoryMenu`, `PersonMenu`, `SaleMenu`,
+  `PromotionMenu`, `ReturnMenu`, `WarrantyMenu`), with `GameZoneUI` keeping
+  only the main menu.
+- **Other member's code:** no.
+
+## 7. Polymorphism
+
+**Verdict: Violation**
+
+Correct applications: `SaleService.applyBestPromotion` (lines 219-230)
+calls `promotion.calculateDiscount(sale)` without asking the promotion
+type, and `warranty.getAdditionalCost()` (line 175) is resolved by each
+warranty subclass.
+
+### V-06
+
+- **Pattern:** Polymorphism (also Protected Variations).
+- **Module:** Accessories integration (Requirement 1), unified sale flow
+  (Requirement 5, A3).
+- **Evidence:** `SaleService` splits every step with `instanceof Accessory`:
+  `countProductQuantities` (lines 289-305, check at 295) and
+  `countAccessoryQuantities` (lines 313-329, check at 319);
+  `validateProductStock` (337-366) and `validateAccessoryStock` (374-403);
+  `updateProductStock` (411-436) and `updateAccessoryStock` (444-469);
+  `findProductById` (478-489) and `findAccessoryById` (498-509).
+  `GameZoneUI.findItemById` (lines 1944-1967) repeats "search products,
+  then accessories".
+- **Explanation:** the decision "products and accessories are stored in
+  different places" is repeated as type checks and duplicated method pairs
+  instead of being encapsulated once.
+- **Consequence:** a new kind of sellable item stored elsewhere requires a
+  new trio of methods in `SaleService` and a new branch in the UI.
+- **Proposed solution:** a Pure Fabrication `InventoryService` (package
+  `service`) that hides where each item is stored: `findItem`,
+  `validateStock`, `decreaseStock` and `restoreStock`. `SaleService` and the
+  UI use it; the single type decision lives in one class. Validation order
+  and messages stay the same.
+- **Other member's code:** the same pattern appears in `ReturnService`
+  (Developer 2), reported for the consolidation as a boundary finding.
+
+### V-07
+
+- **Pattern:** Polymorphism (also Protected Variations).
+- **Module:** Warranties (Requirement 4).
+- **Evidence:** `SaleService.assignWarranties`, line 162, and
+  `GameZoneUI.selectExtendedWarrantyProducts`, line 1718:
+  `if (!(product instanceof Console)) { continue; }`.
+- **Explanation:** the business rule "only consoles have a warranty" is
+  written as type checks in two classes instead of being a behaviour of
+  the product.
+- **Consequence:** if the store starts selling warranties for another
+  product type, every type check must be found and changed.
+- **Proposed solution:** polymorphic method `Product.isWarrantyEligible()`
+  (`false` by default) overridden in `Console` (`true`); both call sites use
+  it.
+- **Other member's code:** yes - `Product` and `Console` (Developer 1). The
+  same check exists in `ReturnService` (Developer 2).

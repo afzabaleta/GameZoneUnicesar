@@ -9,6 +9,7 @@ import com.gamezone.persistence.ProductRepository;
 import com.gamezone.validation.ProductValidator;
 
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Service class that contains business logic related to products.
@@ -90,6 +91,22 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    /**
+     * Returns all registered consoles.
+     *
+     * @return list of console products
+     */
+    public List<Console> listConsoles() {
+        List<Console> consoles = new ArrayList<>();
+
+        for (Product product : productRepository.findAll()) {
+            if (product instanceof Console console) {
+                consoles.add(console);
+            }
+        }
+
+        return consoles;
+    }
     /**
      * Updates the stock quantity of a product.
      *

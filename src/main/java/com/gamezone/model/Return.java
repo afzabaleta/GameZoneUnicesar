@@ -254,13 +254,14 @@ public class Return {
 
         receipt.append("Productos devueltos:\n");
 
+        double discountRate = originalSale.getDiscountRate();
 
         for (Product product : returnedProducts) {
 
             double listPrice = product.getPrice();
 
             double proportionalDiscount =
-                    originalSale.calculateProportionalDiscount(listPrice);
+                    listPrice * discountRate;
 
             double itemRefund =
                     listPrice - proportionalDiscount;

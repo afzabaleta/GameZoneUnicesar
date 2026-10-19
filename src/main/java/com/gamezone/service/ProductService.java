@@ -37,12 +37,15 @@ public class ProductService {
     }
 
     /**
-     * Registers a video game product after validating its data.
+     * Registers any product after validating its common data.
      *
-     * @param videoGame video game to register
+     * <p>Registration does not depend on the concrete product type,
+     * so new product types reuse this method.</p>
+     *
+     * @param product product to register
      */
-    public void registerVideoGame(VideoGame videoGame) {
-        if (videoGame == null) {
+    public void registerProduct(Product product) {
+        if (product == null) {
             throw new InvalidDataException(
                     "product",
                     "es obligatorio."
@@ -50,14 +53,24 @@ public class ProductService {
         }
 
         ProductValidator.validateProductData(
-                videoGame.getIdentifier(),
-                videoGame.getTitle(),
-                videoGame.getPrice(),
-                videoGame.getAvailableQuantity()
+                product.getIdentifier(),
+                product.getTitle(),
+                product.getPrice(),
+                product.getAvailableQuantity()
         );
 
-        productRepository.save(videoGame);
+        productRepository.save(product);
     }
+
+    /**
+     * Registers a video game product after validating its data.
+     *
+     * @param videoGame video game to register
+     */
+    public void registerVideoGame(VideoGame videoGame) {
+        registerProduct(videoGame);
+    }
+
 
     /**
      * Registers a console product after validating its data.
@@ -65,21 +78,7 @@ public class ProductService {
      * @param console console to register
      */
     public void registerConsole(Console console) {
-        if (console == null) {
-            throw new InvalidDataException(
-                    "product",
-                    "es obligatorio."
-            );
-        }
-
-        ProductValidator.validateProductData(
-                console.getIdentifier(),
-                console.getTitle(),
-                console.getPrice(),
-                console.getAvailableQuantity()
-        );
-
-        productRepository.save(console);
+        registerProduct(console);
     }
 
     /**

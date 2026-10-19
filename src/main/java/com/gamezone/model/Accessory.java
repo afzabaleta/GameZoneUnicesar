@@ -63,4 +63,11 @@ public abstract class Accessory extends Product {
     public String getCategory() {
         return "ACCESSORY";
     }
+
+    /**
+     * Returns the specific type of accessory.
+     *
+     * @return accessory type: CONTROLLER, CABLE or MEMORY
+     */
+    public abstract String getAccessoryType();
 }

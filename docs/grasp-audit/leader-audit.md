@@ -86,3 +86,72 @@ that `Sale` owns.
 - **Proposed solution:** add `listConsoles()` to `ProductService`; the UI
   uses it.
 - **Other member's code:** yes - `ProductService` (Developer 1).
+
+## 3. Creator
+
+**Verdict: Violation**
+
+Correct applications: `Main` creates every repository, service and the UI,
+because it is the composition root and has all the initializing data.
+
+### V-03
+
+- **Pattern:** Creator.
+- **Module:** Sales and UI (Workshop 1), Requirement 5 (A3).
+- **Evidence:** `GameZoneUI.registerSale`, lines 1653-1658:
+  `new Sale(LocalDate.now(), customer, seller, selectedItems)`, followed by
+  `saleService.registerSale(sale, extendedWarrantyIds)` (lines 1660-1663).
+- **Explanation:** `SaleService` records sales, coordinates their
+  registration and persists them, so by Creator it should create `Sale`.
+  The UI also decides a business rule: the sale date is "today".
+- **Consequence:** any other entry point must remember to build the `Sale`
+  with the right date before calling the service, and the UI is coupled to
+  the `Sale` constructor.
+- **Proposed solution:** `SaleService.registerSale` receives the customer,
+  the seller, the selected items and the extended-warranty ids, creates the
+  `Sale` with `LocalDate.now()` and returns it, so the UI can print the
+  receipt.
+- **Other member's code:** no.
+
+## 4. Controller
+
+**Verdict: Correct**
+
+`GameZoneUI` receives the console events and delegates each system
+operation to one service that acts as use-case controller:
+`saleService.registerSale(...)` (line 1660), `returnService.registerReturn(...)`
+(line 2323) and `promotionService.register...` (lines 167, 254, 338). The UI
+never touches repositories. The places where the UI takes a domain decision
+are registered as V-01, V-02 (Information Expert) and V-03 (Creator),
+because those patterns explain them better.
+
+## 5. Low Coupling
+
+**Verdict: Violation**
+
+Correct applications: `GameZoneUI` depends only on services and the model;
+`Main` is the only class that knows every concrete repository.
+
+### V-04
+
+- **Pattern:** Low Coupling.
+- **Module:** Sales persistence (Workshop 1), Requirement 1.
+- **Evidence:** the `SaleRepository` constructor (lines 49-69) requires
+  `PersonRepository`, `ProductRepository` and `AccessoryRepository`.
+  `findCustomerById` (line 230) calls `personRepository.loadCustomers()`,
+  `findSellerById` (line 246) calls `personRepository.loadSellers()` and
+  `findItemById` (line 262) calls `productRepository.loadProducts()` for
+  every record.
+- **Explanation:** `SaleRepository` depends on the loading protocol of three
+  other repositories, not on a narrow lookup. `loadProducts()` also clears
+  and refills the product cache of `ProductRepository`, so loading sales has
+  a hidden side effect on another repository.
+- **Consequence:** any change to how people or products are loaded breaks
+  sale loading, and each sale line re-reads the customer, seller and
+  product files.
+- **Proposed solution:** Indirection: `SaleRepository` receives three lookup
+  functions (customer, seller and item by id) instead of the repositories.
+  `Main` wires them to the `PersonService` finders and to
+  `InventoryService.findItem`. Messages and file format stay the same.
+- **Other member's code:** no edit to another member's class; it reuses the
+  `PersonService` finders of V-01 and the `InventoryService` of V-06.

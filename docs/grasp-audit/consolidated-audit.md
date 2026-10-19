@@ -297,3 +297,75 @@ New classes (created by the owner of the originating violation):
 `InventoryService` (service, V-02, Andres); `ConsoleErrorHandler` and the
 seven module menus (ui, V-15, Andres); `AccessoryValidator` (validation,
 V-12, Diego); `ReturnRepository.ReturnRecord` (persistence, V-01, Diego).
+
+## 5. Boundary findings
+
+- **V-01 (Diego + Andres):** Developer 2 reported the dependency; changing
+  the constructor affects `Main`. Diego changes `ReturnRepository` and
+  `ReturnService`; Andres updates `Main` in the next commit of the same
+  turn.
+- **V-02 (Andres + Diego):** reported from both sides (leader V-06,
+  developer 2 V-05) and unified. Andres creates `InventoryService` and
+  migrates `SaleService`, the UI and `Main`; Diego migrates
+  `ReturnService`.
+- **V-03 (Sherly + Andres + Diego):** reported by the leader (V-07) and
+  developer 2 (V-06); the fix needs `Product`. Sherly adds
+  `isWarrantyEligible()`; Andres and Diego replace their checks.
+- **V-04 (Andres + Diego):** the information belongs to `Sale`. Andres adds
+  `Sale.getReference()`; Diego replaces the eight usages.
+- **V-05 (Andres + Sherly):** the information belongs to `Sale`. Andres adds
+  the two `Sale` methods; Sherly uses them in `Return`.
+- **V-06 (Andres + Diego):** Andres adds
+  `SaleService.calculateMonthlySales`; Diego delegates.
+- **V-07 (Diego + Andres):** Diego adds the finders; Andres uses them in
+  the UI.
+- **V-08 (Sherly + Andres):** Sherly adds `listConsoles()`; Andres uses it
+  in the UI.
+- **V-10 (Sherly + Diego):** Sherly adds `getAccessoryType()`; Diego uses
+  it.
+- **V-11 (Sherly + Diego):** Sherly adds the static validator; Diego calls
+  it.
+- **V-17 (Sherly + Diego):** Sherly adds the rule to `SaleValidator`; Diego
+  removes the loop.
+
+**Correction order** (provider before consumer, so every turn compiles):
+
+1. **Turn 0 - Andres:** "before" diagram, non-regression baseline, provider
+   methods in `Sale` and `SaleService`, new `InventoryService`.
+2. **Turn 1 - Sherly:** V-09 and V-13, the provider methods
+   (`isWarrantyEligible`, `getAccessoryType`, `listConsoles`,
+   `validateTargetCategory`, the `SaleValidator` rule), then V-05.
+3. **Turn 2 - Diego:** `PersonService` finders, V-12, then the consumer
+   parts of V-01, V-02, V-03, V-04, V-06, V-10, V-11 and V-17. Andres
+   commits the `Main` wiring right after V-01/V-02 in this turn.
+4. **Turn 3 - Andres:** consumer parts of V-02, V-03, V-07 and V-08, then
+   V-14, V-16 and V-15 (UI split last), the "after" diagram, the final
+   verification and the README.
+
+## 6. Out-of-scope findings
+
+Functional defects found during the audit. Fixing them would change what
+the user sees or what the data files contain, so they are recorded for a
+later requirement and are not corrected in Phase 2.
+
+- **OOS-01 - Sales are identified only by their date.**
+  `ReturnService.findSale` (408-424), `WarrantyService.findSale` (404-419)
+  and `ReturnRepository.findSaleByReference` (275-293) return the first
+  sale with that date. With two sales on the same day, a return or a
+  warranty lookup is attached to the first one.
+- **OOS-02 - The return receipt prints the object reference of the sale.**
+  `Return.generateReturnReceipt` appends `originalSale` (260-262) and
+  `Sale` has no `toString()`, so the receipt shows
+  `Venta original: com.gamezone.model.Sale@1b6d3586`.
+- **OOS-03 - The same item can be returned more than once.**
+  `ReturnService.registerReturn` (71-151) never checks earlier returns of
+  the sale, so stock and refunds are counted again on each repeated return.
+- **OOS-04 - An accessory with price 0 can be registered but not sold.**
+  `AccessoryService.validateAccessory` rejects only `price < 0` (247), while
+  the sale flow calls `ProductValidator.validateProductData` on accessories
+  (`SaleService` 391-396), which rejects `price <= 0`.
+- **OOS-05 - Warranties are saved before the sale.**
+  `SaleService.registerSale` calls `assignWarranties` (139), which persists
+  through `WarrantyService`, before updating stock and saving the sale
+  (141-146). If a later step fails, `warranties.csv` keeps warranties for a
+  sale that was never saved.

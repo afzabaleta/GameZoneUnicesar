@@ -99,5 +99,5 @@ Recorded by the Technical Lead at the end of Phase 2.
 | SaleValidator | Adds blank product identifier validation to validateSaleData() | V-17 | Pure Fabrication | b5c8228 (PR #44) | Sherly |
 | Return | calculateRefundAmount() delegates proportional discount calculation to Sale | V-05 | Information Expert | 02658e0 (PR #44) | Sherly |
 | Return | generateReturnReceipt() uses Sale.getDiscountRate() | V-05 | Information Expert | 2d0418c (PR #44) | Sherly |
-| PersonService | Adds findCustomerById(String), findSellerById(String) | V-07 | Information Expert | 32bb636 (PR pendiente) | Diego |
-| AccessoryService | Delegates accessory validation to AccessoryValidator | V-12 | Pure Fabrication | c38c60c (PR pendiente) | Diego |
+| PersonService | Adds findCustomerById(String), findSellerById(String) | V-07 | Information Expert | 32bb636 (PR #45) | Diego |
+| AccessoryValidator | New class: accessory data, uniqueness, type, console and stock checks | V-12 | Pure Fabrication | c38c60c (PR #45) | Diego |

@@ -98,4 +98,5 @@ Recorded by the Technical Lead at the end of Phase 2.
 | CategoryDiscount | Adds static validateTargetCategory(String); setter reuses validation | V-11 | Information Expert | 6bea9b5 (PR #44) | Sherly |
 | SaleValidator | Adds blank product identifier validation to validateSaleData() | V-17 | Pure Fabrication | b5c8228 (PR #44) | Sherly |
 | Return | calculateRefundAmount() delegates proportional discount calculation to Sale | V-05 | Information Expert | 02658e0 (PR #44) | Sherly |
-| Return | generateReturnReceipt() uses Sale.getDiscountRate() | V-05 | Information Expert | 2d0418c (PR #44) | Sherly || PersonService | Adds findCustomerById(String), findSellerById(String) | V-07 | Information Expert | 32bb636 (PR pendiente) | Diego |
+| Return | generateReturnReceipt() uses Sale.getDiscountRate() | V-05 | Information Expert | 2d0418c (PR #44) | Sherly 
+| PersonService | Adds findCustomerById(String), findSellerById(String) | V-07 | Information Expert | 32bb636 (PR pendiente) | Diego |

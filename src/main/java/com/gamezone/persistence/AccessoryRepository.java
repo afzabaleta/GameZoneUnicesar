@@ -28,10 +28,14 @@ public class AccessoryRepository {
 
     /**
      * Creates an accessory repository using the default CSV file.
+     *
+     * @param productRepository repository used to resolve compatible consoles
      */
     public AccessoryRepository(ProductRepository productRepository) {
         if (productRepository == null) {
-            throw new IllegalArgumentException("Product repository cannot be null");
+            throw new IllegalArgumentException(
+                    "Product repository cannot be null"
+            );
         }
 
         this.accessoriesPath = Paths.get(FILE_PATH);
@@ -83,12 +87,8 @@ public class AccessoryRepository {
 
         return accessories.stream()
                 .filter(accessory ->
-                        (normalizedType.equals("controller")
-                                && accessory instanceof Controller)
-                                || (normalizedType.equals("cable")
-                                && accessory instanceof Cable)
-                                || (normalizedType.equals("memory")
-                                && accessory instanceof Memory))
+                        accessory.getAccessoryType()
+                                .equalsIgnoreCase(normalizedType))
                 .collect(Collectors.toList());
     }
 
@@ -314,25 +314,22 @@ public class AccessoryRepository {
      */
     private String toCsv(Accessory accessory) {
 
-        String type;
+        String type = accessory.getAccessoryType();
         String specific1;
         String specific2;
 
         if (accessory instanceof Controller controller) {
 
-            type = "CONTROLLER";
             specific1 = controller.getConnectionType();
             specific2 = "-";
 
         } else if (accessory instanceof Cable cable) {
 
-            type = "CABLE";
             specific1 = String.valueOf(cable.getLength());
             specific2 = cable.getConnectorType();
 
         } else if (accessory instanceof Memory memory) {
 
-            type = "MEMORY";
             specific1 = String.valueOf(memory.getCapacityGB());
             specific2 = memory.getMemoryType();
 

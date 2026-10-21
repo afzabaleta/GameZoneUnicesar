@@ -106,3 +106,4 @@ Recorded by the Technical Lead at the end of Phase 2.
 | SaleService | Removes duplicated product validation after SaleValidator.validateSaleData() | V-17 | Pure Fabrication | 4d0f61b (PR #45) | Diego |
 | ReturnRepository, WarrantyRepository, ReturnService, WarrantyService | Uses Sale.getReference() instead of date strings to identify sales | V-04 | Information Expert | f7b9727 (PR #45) | Diego |
 | ReturnService | Validates month and year, then delegates monthly sales calculation to SaleService.calculateMonthlySales() | V-06 | Information Expert | c565b38 (PR #45) | Diego |
+| ReturnService | Uses Product.isWarrantyEligible() instead of instanceof Console when cancelling warranties | V-03 | Polymorphism | 0ab2775 (PR #45) | Diego |

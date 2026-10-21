@@ -319,22 +319,22 @@ public class ReturnService {
     }
 
     /**
-     * Finds a sale by its identifier.
+     * Finds a sale by its reference through SaleService.
      *
-     * @param saleId sale identifier
+     * @param saleId sale reference
      * @return matching sale
      */
     private Sale findSale(String saleId) {
 
-        for (Sale sale : saleService.listSales()) {
-            if (sale.getReference().equals(saleId)) {
-                return sale;
-            }
+        Sale sale = saleService.findSaleByReference(saleId);
+
+        if (sale == null) {
+            throw new IllegalArgumentException(
+                    "Venta no encontrada: " + saleId
+            );
         }
 
-        throw new IllegalArgumentException(
-                "Venta no encontrada: " + saleId
-        );
+        return sale;
     }
 
     /**

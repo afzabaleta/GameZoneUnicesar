@@ -1,7 +1,6 @@
 package com.gamezone.service;
 
 import com.gamezone.model.Accessory;
-import com.gamezone.model.Console;
 import com.gamezone.model.Product;
 import com.gamezone.model.Return;
 import com.gamezone.model.Sale;
@@ -150,8 +149,9 @@ public class ReturnService {
         return returnItem;
     }
 
+
     /**
-     * Cancels warranties for every returned console.
+     * Cancels warranties for every returned product eligible for warranty.
      *
      * @param saleId identifier of the original sale
      * @param returnedProducts returned products
@@ -163,10 +163,9 @@ public class ReturnService {
 
         double warrantyRefundAmount = 0.0;
 
-        for (Product product :
-                returnedProducts) {
+        for (Product product : returnedProducts) {
 
-            if (product instanceof Console) {
+            if (product.isWarrantyEligible()) {
 
                 warrantyRefundAmount +=
                         warrantyService.cancelWarranties(
@@ -178,6 +177,7 @@ public class ReturnService {
 
         return warrantyRefundAmount;
     }
+
 
     /**
      * Restores stock for each returned item according to its type.

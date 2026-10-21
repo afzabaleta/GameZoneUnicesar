@@ -108,4 +108,4 @@ Recorded by the Technical Lead at the end of Phase 2.
 | ReturnService | Validates month and year, then delegates monthly sales calculation to SaleService.calculateMonthlySales() | V-06 | Information Expert | c565b38 (PR #45) | Diego |
 | ReturnService | Uses Product.isWarrantyEligible() instead of instanceof Console when cancelling warranties | V-03 | Polymorphism | 0ab2775 (PR #45) | Diego |
 | ReturnService | Delegates item lookup and returned-stock restoration to InventoryService | V-02 | Pure Fabrication | 8f0e8b7 (PR pendiente) | Diego |
-| ReturnService | Delegates sale lookup to SaleService.findSaleByReference() | V-01 | Low Coupling | PENDIENTE | Diego |
+| ReturnService | Delegates sale lookup to SaleService.findSaleByReference() | V-01 | Low Coupling | 0ed0783 (PR pendiente) | Diego |

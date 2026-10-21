@@ -223,14 +223,11 @@ public class ReturnService {
      * @param customerId customer identification
      * @return list of returns associated with the customer
      */
-    public List<Return> viewReturnsByCustomer(
-            String customerId) {
+    public List<Return> viewReturnsByCustomer(String customerId) {
 
-        List<Return> result =
-                new ArrayList<>();
+        List<Return> result = new ArrayList<>();
 
-        for (Return returnItem :
-                returnRepository.loadAll()) {
+        for (Return returnItem : returnRepository.loadAll()) {
 
             if (returnItem.getOriginalSale()
                     .getCustomer()
@@ -250,18 +247,14 @@ public class ReturnService {
      * @param saleId identifier of the sale
      * @return list of returns associated with the sale
      */
-    public List<Return> viewReturnsBySale(
-            String saleId) {
+    public List<Return> viewReturnsBySale(String saleId) {
 
-        List<Return> result =
-                new ArrayList<>();
+        List<Return> result = new ArrayList<>();
 
-        for (Return returnItem :
-                returnRepository.loadAll()) {
+        for (Return returnItem : returnRepository.loadAll()) {
 
             if (returnItem.getOriginalSale()
-                    .getDate()
-                    .toString()
+                    .getReference()
                     .equals(saleId)) {
 
                 result.add(returnItem);
@@ -410,9 +403,7 @@ public class ReturnService {
         for (Sale sale :
                 saleService.listSales()) {
 
-            if (sale.getDate()
-                    .toString()
-                    .equals(saleId)) {
+            if (sale.getReference().equals(saleId)) {
 
                 return sale;
             }

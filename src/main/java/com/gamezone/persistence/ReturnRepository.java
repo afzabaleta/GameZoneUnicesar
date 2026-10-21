@@ -278,9 +278,7 @@ public class ReturnRepository {
         for (Sale sale :
                 saleService.listSales()) {
 
-            if (sale.getDate()
-                    .toString()
-                    .equals(saleReference)) {
+            if (sale.getReference().equals(saleReference)) {
 
                 return sale;
             }
@@ -333,7 +331,6 @@ public class ReturnRepository {
      * @return sale reference
      */
     private String buildSaleReference(Sale sale) {
-
-        return sale.getDate().toString();
+        return sale.getReference();
     }
 }

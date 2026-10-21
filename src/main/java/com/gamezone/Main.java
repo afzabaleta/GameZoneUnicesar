@@ -9,6 +9,7 @@ import com.gamezone.persistence.WarrantyRepository;
 import com.gamezone.persistence.ReturnRepository;
 
 import com.gamezone.service.AccessoryService;
+import com.gamezone.service.InventoryService;
 import com.gamezone.service.PersonService;
 import com.gamezone.service.ProductService;
 import com.gamezone.service.PromotionService;
@@ -69,6 +70,12 @@ public class Main {
                         accessoryRepository
                 );
 
+        InventoryService inventoryService =
+                new InventoryService(
+                        productService,
+                        accessoryService
+                );
+
         PromotionService promotionService =
                 new PromotionService(
                         promotionRepository
@@ -104,8 +111,7 @@ public class Main {
                 new ReturnService(
                         returnRepository,
                         saleService,
-                        productService,
-                        accessoryService,
+                        inventoryService,
                         warrantyService
                 );
 

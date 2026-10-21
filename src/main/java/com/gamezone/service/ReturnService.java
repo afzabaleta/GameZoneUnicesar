@@ -1,6 +1,6 @@
+
 package com.gamezone.service;
 
-import com.gamezone.model.Accessory;
 import com.gamezone.model.Product;
 import com.gamezone.model.Return;
 import com.gamezone.model.Sale;
@@ -17,8 +17,7 @@ public class ReturnService {
 
     private final ReturnRepository returnRepository;
     private final SaleService saleService;
-    private final ProductService productService;
-    private final AccessoryService accessoryService;
+    private final InventoryService inventoryService;
     private final WarrantyService warrantyService;
 
     /**
@@ -26,22 +25,19 @@ public class ReturnService {
      *
      * @param returnRepository repository used to persist returns
      * @param saleService service used to access sales
-     * @param productService service used to access products and restore stock
-     * @param accessoryService service used to access accessories and restore stock
+     * @param inventoryService service used to find items and restore stock
      * @param warrantyService service used to cancel warranties
      * @throws IllegalArgumentException if any dependency is null
      */
     public ReturnService(
             ReturnRepository returnRepository,
             SaleService saleService,
-            ProductService productService,
-            AccessoryService accessoryService,
+            InventoryService inventoryService,
             WarrantyService warrantyService) {
 
         if (returnRepository == null
                 || saleService == null
-                || productService == null
-                || accessoryService == null
+                || inventoryService == null
                 || warrantyService == null) {
 
             throw new IllegalArgumentException(
@@ -51,8 +47,7 @@ public class ReturnService {
 
         this.returnRepository = returnRepository;
         this.saleService = saleService;
-        this.productService = productService;
-        this.accessoryService = accessoryService;
+        this.inventoryService = inventoryService;
         this.warrantyService = warrantyService;
     }
 
@@ -100,13 +95,10 @@ public class ReturnService {
             );
         }
 
-        List<Product> returnedProducts =
-                new ArrayList<>();
+        List<Product> returnedProducts = new ArrayList<>();
 
         for (String productId : productIds) {
-
-            Product product =
-                    findProduct(productId);
+            Product product = findProduct(productId);
 
             if (!containsProduct(sale, productId)) {
                 throw new IllegalArgumentException(
@@ -124,31 +116,25 @@ public class ReturnService {
                         returnedProducts
                 );
 
-        String identifier =
-                "RET-" + System.currentTimeMillis();
+        String identifier = "RET-" + System.currentTimeMillis();
 
-        Return returnItem =
-                new Return(
-                        identifier,
-                        LocalDate.now(),
-                        sale,
-                        returnedProducts,
-                        reason,
-                        warrantyRefundAmount
-                );
+        Return returnItem = new Return(
+                identifier,
+                LocalDate.now(),
+                sale,
+                returnedProducts,
+                reason,
+                warrantyRefundAmount
+        );
 
         restoreReturnedStock(returnedProducts);
 
-        List<Return> returns =
-                returnRepository.loadAll();
-
+        List<Return> returns = returnRepository.loadAll();
         returns.add(returnItem);
-
         returnRepository.saveAll(returns);
 
         return returnItem;
     }
-
 
     /**
      * Cancels warranties for every returned product eligible for warranty.
@@ -164,9 +150,7 @@ public class ReturnService {
         double warrantyRefundAmount = 0.0;
 
         for (Product product : returnedProducts) {
-
             if (product.isWarrantyEligible()) {
-
                 warrantyRefundAmount +=
                         warrantyService.cancelWarranties(
                                 product.getIdentifier(),
@@ -178,32 +162,16 @@ public class ReturnService {
         return warrantyRefundAmount;
     }
 
-
     /**
-     * Restores stock for each returned item according to its type.
+     * Restores stock for every returned item through InventoryService.
      *
      * @param returnedProducts products and accessories being returned
      */
     private void restoreReturnedStock(
             List<Product> returnedProducts) {
 
-        for (Product product :
-                returnedProducts) {
-
-            if (product instanceof Accessory) {
-
-                accessoryService.restoreStock(
-                        product.getIdentifier(),
-                        1
-                );
-
-            } else {
-
-                productService.restoreStock(
-                        product.getIdentifier(),
-                        1
-                );
-            }
+        for (Product product : returnedProducts) {
+            inventoryService.restoreStock(product, 1);
         }
     }
 
@@ -213,7 +181,6 @@ public class ReturnService {
      * @return list containing all registered returns
      */
     public List<Return> viewAllReturns() {
-
         return returnRepository.loadAll();
     }
 
@@ -228,7 +195,6 @@ public class ReturnService {
         List<Return> result = new ArrayList<>();
 
         for (Return returnItem : returnRepository.loadAll()) {
-
             if (returnItem.getOriginalSale()
                     .getCustomer()
                     .getIdentification()
@@ -252,7 +218,6 @@ public class ReturnService {
         List<Return> result = new ArrayList<>();
 
         for (Return returnItem : returnRepository.loadAll()) {
-
             if (returnItem.getOriginalSale()
                     .getReference()
                     .equals(saleId)) {
@@ -264,7 +229,6 @@ public class ReturnService {
         return result;
     }
 
-
     /**
      * Calculates the total sales for a specific month and year.
      *
@@ -273,12 +237,9 @@ public class ReturnService {
      * @return total final sales for the month
      */
     public double calculateMonthlySales(int month, int year) {
-
         validateMonthAndYear(month, year);
-
         return saleService.calculateMonthlySales(month, year);
     }
-
 
     /**
      * Calculates the total refunded amount for a specific month and year.
@@ -287,21 +248,15 @@ public class ReturnService {
      * @param year year to calculate
      * @return total returned amount for the month
      */
-    public double calculateMonthlyReturns(
-            int month,
-            int year) {
+    public double calculateMonthlyReturns(int month, int year) {
 
         validateMonthAndYear(month, year);
 
         double returnsTotal = 0.0;
 
-        for (Return returnItem :
-                returnRepository.loadAll()) {
-
-            if (returnItem.getReturnDate()
-                    .getMonthValue() == month
-                    && returnItem.getReturnDate()
-                    .getYear() == year) {
+        for (Return returnItem : returnRepository.loadAll()) {
+            if (returnItem.getReturnDate().getMonthValue() == month
+                    && returnItem.getReturnDate().getYear() == year) {
 
                 returnsTotal += returnItem.getRefundAmount();
             }
@@ -317,21 +272,10 @@ public class ReturnService {
      * @param year year to calculate
      * @return total sales minus total refunds
      */
-    public double generateMonthlyBalance(
-            int month,
-            int year) {
+    public double generateMonthlyBalance(int month, int year) {
 
-        double salesTotal =
-                calculateMonthlySales(
-                        month,
-                        year
-                );
-
-        double returnsTotal =
-                calculateMonthlyReturns(
-                        month,
-                        year
-                );
+        double salesTotal = calculateMonthlySales(month, year);
+        double returnsTotal = calculateMonthlyReturns(month, year);
 
         return salesTotal - returnsTotal;
     }
@@ -342,9 +286,7 @@ public class ReturnService {
      * @param month month to validate
      * @param year year to validate
      */
-    private void validateMonthAndYear(
-            int month,
-            int year) {
+    private void validateMonthAndYear(int month, int year) {
 
         if (month < 1 || month > 12) {
             throw new IllegalArgumentException(
@@ -365,14 +307,10 @@ public class ReturnService {
      * @param productIds product identifiers to validate
      * @throws IllegalArgumentException if any identifier is null or blank
      */
-    private void validateProductIds(
-            List<String> productIds) {
+    private void validateProductIds(List<String> productIds) {
 
         for (String productId : productIds) {
-
-            if (productId == null
-                    || productId.isBlank()) {
-
+            if (productId == null || productId.isBlank()) {
                 throw new IllegalArgumentException(
                         "Product identifier cannot be blank."
                 );
@@ -388,11 +326,8 @@ public class ReturnService {
      */
     private Sale findSale(String saleId) {
 
-        for (Sale sale :
-                saleService.listSales()) {
-
+        for (Sale sale : saleService.listSales()) {
             if (sale.getReference().equals(saleId)) {
-
                 return sale;
             }
         }
@@ -403,37 +338,22 @@ public class ReturnService {
     }
 
     /**
-     * Finds a product or accessory by identifier.
+     * Finds a product or accessory through InventoryService.
      *
      * @param productId product or accessory identifier
      * @return matching product or accessory
      */
     private Product findProduct(String productId) {
 
-        for (Product product :
-                productService.listProducts()) {
+        Product product = inventoryService.findItem(productId);
 
-            if (product.getIdentifier()
-                    .equals(productId)) {
-
-                return product;
-            }
+        if (product == null) {
+            throw new IllegalArgumentException(
+                    "Producto o accesorio no encontrado: " + productId
+            );
         }
 
-        for (Accessory accessory :
-                accessoryService.listAccessories()) {
-
-            if (accessory.getIdentifier()
-                    .equals(productId)) {
-
-                return accessory;
-            }
-        }
-
-        throw new IllegalArgumentException(
-                "Producto o accesorio no encontrado: "
-                        + productId
-        );
+        return product;
     }
 
     /**
@@ -450,8 +370,7 @@ public class ReturnService {
         return sale.getProducts()
                 .stream()
                 .anyMatch(product ->
-                        product.getIdentifier()
-                                .equals(productId)
+                        product.getIdentifier().equals(productId)
                 );
     }
 }

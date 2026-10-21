@@ -104,3 +104,4 @@ Recorded by the Technical Lead at the end of Phase 2.
 | AccessoryRepository | findByType and CSV type use getAccessoryType() | V-10 | Polymorphism | 5dabfcd (PR #45) | Diego |
 | PromotionService | Delegates target category validation to CategoryDiscount.validateTargetCategory() | V-11 | Information Expert | 7b280a4 (PR #45) | Diego |
 | SaleService | Removes duplicated product validation after SaleValidator.validateSaleData() | V-17 | Pure Fabrication | 4d0f61b (PR #45) | Diego |
+| ReturnRepository, WarrantyRepository, ReturnService, WarrantyService | Uses Sale.getReference() instead of date strings to identify sales | V-04 | Information Expert | f7b9727 (PR #45) | Diego |

@@ -101,3 +101,4 @@ Recorded by the Technical Lead at the end of Phase 2.
 | Return | generateReturnReceipt() uses Sale.getDiscountRate() | V-05 | Information Expert | 2d0418c (PR #44) | Sherly |
 | PersonService | Adds findCustomerById(String), findSellerById(String) | V-07 | Information Expert | 32bb636 (PR #45) | Diego |
 | AccessoryValidator | New class: accessory data, uniqueness, type, console and stock checks | V-12 | Pure Fabrication | c38c60c (PR #45) | Diego |
+| AccessoryRepository | findByType and CSV type use getAccessoryType() | V-10 | Polymorphism | 5dabfcd (PR #45) | Diego |

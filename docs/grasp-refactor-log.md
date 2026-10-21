@@ -103,3 +103,4 @@ Recorded by the Technical Lead at the end of Phase 2.
 | AccessoryValidator | New class: accessory data, uniqueness, type, console and stock checks | V-12 | Pure Fabrication | c38c60c (PR #45) | Diego |
 | AccessoryRepository | findByType and CSV type use getAccessoryType() | V-10 | Polymorphism | 5dabfcd (PR #45) | Diego |
 | PromotionService | Delegates target category validation to CategoryDiscount.validateTargetCategory() | V-11 | Information Expert | 7b280a4 (PR #45) | Diego |
+| SaleService | Removes duplicated product validation after SaleValidator.validateSaleData() | V-17 | Pure Fabrication | 4d0f61b (PR #45) | Diego |

@@ -9,6 +9,7 @@ import com.gamezone.model.Seller;
 import com.gamezone.persistence.SaleRepository;
 import com.gamezone.validation.SaleValidator;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,13 +71,45 @@ public class SaleService {
     }
 
     /**
+     * Creates a sale dated today and registers it with the unified
+     * integration flow.
+     *
+     * <p>This service records the sales, so it is the creator of each
+     * {@link Sale} (Creator); the user interface only collects the data.</p>
+     *
+     * @param customer customer who buys
+     * @param seller seller who attends the sale
+     * @param items products and accessories sold, one entry per unit
+     * @param productIdsWithExtendedWarranty identifiers of consoles requesting
+     *        extended warranty
+     * @return the registered sale
+     */
+    public Sale registerSale(
+            Customer customer,
+            Seller seller,
+            List<Product> items,
+            List<String> productIdsWithExtendedWarranty) {
+
+        Sale sale = new Sale(
+                LocalDate.now(),
+                customer,
+                seller,
+                items
+        );
+
+        registerSale(sale, productIdsWithExtendedWarranty);
+
+        return sale;
+    }
+
+    /**
      * Registers a sale using the unified integration flow.
      *
      * @param sale sale to register
      * @param productIdsWithExtendedWarranty identifiers of consoles requesting
      *        extended warranty
      */
-    public void registerSale(
+    private void registerSale(
             Sale sale,
             List<String> productIdsWithExtendedWarranty) {
 

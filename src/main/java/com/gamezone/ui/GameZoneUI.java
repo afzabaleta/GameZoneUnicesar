@@ -1650,15 +1650,10 @@ public class GameZoneUI {
             List<String> extendedWarrantyIds =
                     selectExtendedWarrantyProducts(selectedItems);
 
-            Sale sale = new Sale(
-                    LocalDate.now(),
+            Sale sale = saleService.registerSale(
                     customer,
                     seller,
-                    selectedItems
-            );
-
-            saleService.registerSale(
-                    sale,
+                    selectedItems,
                     extendedWarrantyIds
             );
 
@@ -2371,7 +2366,7 @@ public class GameZoneUI {
         System.out.println();
         System.out.println("===== TODAS LAS DEVOLUCIONES =====");
 
-        java.util.List<Return> returns =
+        List<Return> returns =
                 returnService.viewAllReturns();
 
         printReturns(returns);
@@ -2393,7 +2388,7 @@ public class GameZoneUI {
             return;
         }
 
-        java.util.List<Return> returns =
+        List<Return> returns =
                 returnService.viewReturnsByCustomer(customerId);
 
         printReturns(returns);
@@ -2418,7 +2413,7 @@ public class GameZoneUI {
             return;
         }
 
-        java.util.List<Return> returns =
+        List<Return> returns =
                 returnService.viewReturnsBySale(saleId);
 
         printReturns(returns);
@@ -2515,7 +2510,7 @@ public class GameZoneUI {
         }
     }
 
-    private void printReturns(java.util.List<Return> returns) {
+    private void printReturns(List<Return> returns) {
 
         if (returns == null || returns.isEmpty()) {
 

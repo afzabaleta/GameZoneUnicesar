@@ -1,0 +1,378 @@
+
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Productos -----
+1. Registrar videojuego
+2. Registrar consola
+3. Listar productos
+4. Volver
+Selecciona una opción: 
+-- Registrar consola --
+Identificador: Título: Precio: Cantidad disponible: Marca: Modelo: Generación: Consola registrada correctamente.
+
+----- Productos -----
+1. Registrar videojuego
+2. Registrar consola
+3. Listar productos
+4. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+-- Registrar venta --
+Identificación del cliente: Identificación del vendedor: 
+===== Productos disponibles =====
+
+-- Productos --
+101 | GTA 6  | $390.0 | stock: 5 | Video Game: GTA 6  Platform: PS 5 Genre: Masculino Rating: 13
+PS5 | PlayStation 5 | $2500.0 | stock: 3 | Console: PlayStation 5 Brand: Sony Model: Slim Generation: 9
+
+===== Accesorios disponibles =====
+
+-- Accesorios --
+ACC001 | Control Pro | $59.99 | stock: 10 | Controller: Control Pro, connection: wireless
+ACC002 | Cable HDMI 2.1 | $14.99 | stock: 25 | Cable: Cable HDMI 2.1, length: 2.0 m, connector: HDMI
+ACC003 | Memory Card 128GB | $29.99 | stock: 15 | Memory: Memory Card 128GB, capacity: 128.0 GB, type: Memory Card
+Identificador del producto o accesorio (vacío para terminar): Agregado: GTA 6  | $390.0
+Identificador del producto o accesorio (vacío para terminar): Agregado: PlayStation 5 | $2500.0
+Identificador del producto o accesorio (vacío para terminar): Agregado: Control Pro | $59.99
+Identificador del producto o accesorio (vacío para terminar): 
+Consola: PlayStation 5 | ID: PS5
+¿Desea agregar garantía extendida? (S/N): Venta registrada correctamente.
+
+===== RECIBO DE VENTA =====
+Fecha: <TODAY>
+Cliente: Andres
+Vendedor: Carlos Rodriguez
+Subtotal: $2949.99
+Promoción aplicada: 15 Percent Discount
+Descuento: $442.4985
+Costo garantías: $250.0
+Total final: $2757.4914999999996
+==========================
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+-- Registrar venta --
+Identificación del cliente: No se encontró el recurso solicitado: cliente con identificador 999.
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+-- Registrar venta --
+Identificación del cliente: Identificación del vendedor: No se encontró el recurso solicitado: vendedor con identificador 9999.
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+-- Registrar venta --
+Identificación del cliente: Identificación del vendedor: 
+===== Productos disponibles =====
+
+-- Productos --
+101 | GTA 6  | $390.0 | stock: 4 | Video Game: GTA 6  Platform: PS 5 Genre: Masculino Rating: 13
+PS5 | PlayStation 5 | $2500.0 | stock: 2 | Console: PlayStation 5 Brand: Sony Model: Slim Generation: 9
+
+===== Accesorios disponibles =====
+
+-- Accesorios --
+ACC001 | Control Pro | $59.99 | stock: 9 | Controller: Control Pro, connection: wireless
+ACC002 | Cable HDMI 2.1 | $14.99 | stock: 25 | Cable: Cable HDMI 2.1, length: 2.0 m, connector: HDMI
+ACC003 | Memory Card 128GB | $29.99 | stock: 15 | Memory: Memory Card 128GB, capacity: 128.0 GB, type: Memory Card
+Identificador del producto o accesorio (vacío para terminar): No se puede completar la operación: La venta debe contener al menos un producto o accesorio.
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+-- Registrar venta --
+Identificación del cliente: Identificación del vendedor: 
+===== Productos disponibles =====
+
+-- Productos --
+101 | GTA 6  | $390.0 | stock: 4 | Video Game: GTA 6  Platform: PS 5 Genre: Masculino Rating: 13
+PS5 | PlayStation 5 | $2500.0 | stock: 2 | Console: PlayStation 5 Brand: Sony Model: Slim Generation: 9
+
+===== Accesorios disponibles =====
+
+-- Accesorios --
+ACC001 | Control Pro | $59.99 | stock: 9 | Controller: Control Pro, connection: wireless
+ACC002 | Cable HDMI 2.1 | $14.99 | stock: 25 | Cable: Cable HDMI 2.1, length: 2.0 m, connector: HDMI
+ACC003 | Memory Card 128GB | $29.99 | stock: 15 | Memory: Memory Card 128GB, capacity: 128.0 GB, type: Memory Card
+Identificador del producto o accesorio (vacío para terminar): Agregado: GTA 6  | $390.0
+Identificador del producto o accesorio (vacío para terminar): Agregado: GTA 6  | $390.0
+Identificador del producto o accesorio (vacío para terminar): Agregado: GTA 6  | $390.0
+Identificador del producto o accesorio (vacío para terminar): Agregado: GTA 6  | $390.0
+Identificador del producto o accesorio (vacío para terminar): Agregado: GTA 6  | $390.0
+Identificador del producto o accesorio (vacío para terminar): Agregado: GTA 6  | $390.0
+Identificador del producto o accesorio (vacío para terminar): No se puede completar la operación: Stock insuficiente para el producto 101. Disponible: 4; solicitado: 6.
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+-- Registrar venta --
+Identificación del cliente: Identificación del vendedor: 
+===== Productos disponibles =====
+
+-- Productos --
+101 | GTA 6  | $390.0 | stock: 4 | Video Game: GTA 6  Platform: PS 5 Genre: Masculino Rating: 13
+PS5 | PlayStation 5 | $2500.0 | stock: 2 | Console: PlayStation 5 Brand: Sony Model: Slim Generation: 9
+
+===== Accesorios disponibles =====
+
+-- Accesorios --
+ACC001 | Control Pro | $59.99 | stock: 9 | Controller: Control Pro, connection: wireless
+ACC002 | Cable HDMI 2.1 | $14.99 | stock: 25 | Cable: Cable HDMI 2.1, length: 2.0 m, connector: HDMI
+ACC003 | Memory Card 128GB | $29.99 | stock: 15 | Memory: Memory Card 128GB, capacity: 128.0 GB, type: Memory Card
+Identificador del producto o accesorio (vacío para terminar): Producto o accesorio no encontrado. Intenta de nuevo.
+Identificador del producto o accesorio (vacío para terminar): Agregado: Cable HDMI 2.1 | $14.99
+Identificador del producto o accesorio (vacío para terminar): Venta registrada correctamente.
+
+===== RECIBO DE VENTA =====
+Fecha: <TODAY>
+Cliente: Andres
+Vendedor: Carlos Rodriguez
+Subtotal: $14.99
+Promoción aplicada: 15 Percent Discount
+Descuento: $2.2485
+Costo garantías: $0.0
+Total final: $12.7415
+==========================
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+-- Todas las ventas --
+2026-09-07 | Cliente: Andres | Vendedor: Carlos Rodriguez | Productos: 1 | Total: $390.0
+<TODAY> | Cliente: Andres | Vendedor: Carlos Rodriguez | Productos: 3 | Total: $2757.4914999999996
+<TODAY> | Cliente: Andres | Vendedor: Carlos Rodriguez | Productos: 1 | Total: $12.7415
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+Identificación del cliente: -- Historial de compras de 1080574183 --
+2026-09-07 | Cliente: Andres | Vendedor: Carlos Rodriguez | Productos: 1 | Total: $390.0
+<TODAY> | Cliente: Andres | Vendedor: Carlos Rodriguez | Productos: 3 | Total: $2757.4914999999996
+<TODAY> | Cliente: Andres | Vendedor: Carlos Rodriguez | Productos: 1 | Total: $12.7415
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+Identificación del vendedor: -- Historial de ventas de 1001 --
+2026-09-07 | Cliente: Andres | Vendedor: Carlos Rodriguez | Productos: 1 | Total: $390.0
+<TODAY> | Cliente: Andres | Vendedor: Carlos Rodriguez | Productos: 3 | Total: $2757.4914999999996
+<TODAY> | Cliente: Andres | Vendedor: Carlos Rodriguez | Productos: 1 | Total: $12.7415
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+Identificación del vendedor: -- Historial de ventas de nobody --
+No se encontraron ventas.
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Productos -----
+1. Registrar videojuego
+2. Registrar consola
+3. Listar productos
+4. Volver
+Selecciona una opción: 
+-- Productos --
+101 | GTA 6  | $390.0 | stock: 4 | Video Game: GTA 6  Platform: PS 5 Genre: Masculino Rating: 13
+PS5 | PlayStation 5 | $2500.0 | stock: 2 | Console: PlayStation 5 Brand: Sony Model: Slim Generation: 9
+
+----- Productos -----
+1. Registrar videojuego
+2. Registrar consola
+3. Listar productos
+4. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Accesorios -----
+1. Registrar controller
+2. Registrar cable
+3. Registrar memoria
+4. Listar accesorios
+5. Listar accesorios por tipo
+6. Buscar accesorios compatibles con consola
+7. Volver
+Selecciona una opción: 
+-- Accesorios --
+ACC001 | Control Pro | $59.99 | stock: 9 | Controller: Control Pro, connection: wireless
+ACC002 | Cable HDMI 2.1 | $14.99 | stock: 24 | Cable: Cable HDMI 2.1, length: 2.0 m, connector: HDMI
+ACC003 | Memory Card 128GB | $29.99 | stock: 15 | Memory: Memory Card 128GB, capacity: 128.0 GB, type: Memory Card
+
+----- Accesorios -----
+1. Registrar controller
+2. Registrar cable
+3. Registrar memoria
+4. Listar accesorios
+5. Listar accesorios por tipo
+6. Buscar accesorios compatibles con consola
+7. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+===== GESTIÓN DE GARANTÍAS =====
+1. Consultar garantía por producto y venta
+2. Listar todas las garantías
+3. Listar garantías vigentes
+4. Listar garantías próximas a vencer
+5. Volver
+Seleccione una opción: 
+===== TODAS LAS GARANTÍAS =====
+
+Certificado de Garantía Extendida | ID: WAR-EXT-<ID> | Producto: Console: PlayStation 5 Brand: Sony Model: Slim Generation: 9 | Fecha inicio: <TODAY> | Fecha vencimiento: <TODAY+12M> | Costo adicional: $250,00
+----------------------------------------
+
+===== GESTIÓN DE GARANTÍAS =====
+1. Consultar garantía por producto y venta
+2. Listar todas las garantías
+3. Listar garantías vigentes
+4. Listar garantías próximas a vencer
+5. Volver
+Seleccione una opción: 
+===== GARANTÍAS VIGENTES =====
+
+Certificado de Garantía Extendida | ID: WAR-EXT-<ID> | Producto: Console: PlayStation 5 Brand: Sony Model: Slim Generation: 9 | Fecha inicio: <TODAY> | Fecha vencimiento: <TODAY+12M> | Costo adicional: $250,00
+----------------------------------------
+
+===== GESTIÓN DE GARANTÍAS =====
+1. Consultar garantía por producto y venta
+2. Listar todas las garantías
+3. Listar garantías vigentes
+4. Listar garantías próximas a vencer
+5. Volver
+Seleccione una opción: 
+===== GARANTÍAS PRÓXIMAS A VENCER =====
+¿Cuántos días de anticipación?: No se encontraron garantías.
+
+===== GESTIÓN DE GARANTÍAS =====
+1. Consultar garantía por producto y venta
+2. Listar todas las garantías
+3. Listar garantías vigentes
+4. Listar garantías próximas a vencer
+5. Volver
+Seleccione una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: Cerrando GameZoneUnicesar. ¡Hasta pronto!
+=== data/accessories.csv
+CONTROLLER|ACC001|Control Pro|59.99|9|wireless|-|
+CABLE|ACC002|Cable HDMI 2.1|14.99|24|2.0|HDMI|
+MEMORY|ACC003|Memory Card 128GB|29.99|15|128.0|Memory Card|
+=== data/customers.txt
+Andres|1080574183|3015838495|zabaletadiaz2907@gmail.com
+=== data/products.dat
+d9378c70150e601658ab6d6e38b9a293ce7cbe0844039af0d1e431b9f3efe8c9
+=== data/promotions.csv
+PERCENTAGE|PROMO001|15 Percent Discount|2026-09-01|2026-12-31|15|-|-
+CATEGORY|PROMO002|Video Game Discount|2026-09-01|2026-12-31|20|VIDEOGAME|-
+BULK|PROMO003|Bulk Purchase Discount|2026-09-01|2026-12-31|10|-|3
+CATEGORY|PROMO004|Accessory Discount|2026-09-21|2026-09-26|10|ACCESSORY|-=== data/sales.txt
+2026-09-07;1080574183;1001;101;;0.0;0.0
+<TODAY>;1080574183;1001;101,PS5,ACC001;15 Percent Discount;442.4985;250.0
+<TODAY>;1080574183;1001;ACC002;15 Percent Discount;2.2485;0.0
+=== data/sellers.txt
+Carlos Rodriguez|1001|3001111111|EMP001|Morning
+Laura Martinez|1002|3002222222|EMP002|Afternoon
+Andres Gomez|1003|3003333333|EMP003|Evening
+=== data/warranties.csv
+EXTENDED;WAR-EXT-<ID>;PS5;<TODAY>;<TODAY>

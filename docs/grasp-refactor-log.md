@@ -68,10 +68,25 @@ month.
 - **Result:** BUILD SUCCESS. The 10 scripts ran to the end of the menu
   ("Cerrando GameZoneUnicesar") with no exceptions. The results are stored
   in `docs/regression/results/baseline/`.
-  
+
 ### 2.2 Final verification
 
-Recorded by the Technical Lead at the end of Phase 2.
+- **Branch / commit:** `feature/grasp-refactor` @ f3b0727 (after the last
+  correction of Phase 2, V-15)
+- **Command:** `mvn clean compile`, then
+  `bash docs/regression/run-regression.sh final` and
+  `git diff --no-index --stat docs/regression/results/baseline docs/regression/results/final`
+- **Result:** BUILD SUCCESS. The 10 scripts (31 menu operations) ran to
+  the end of the menu. The comparison with the baseline shows **no
+  differences**: same console output, same messages and same content in
+  every data file (`products.dat` keeps the same SHA-256 hash). The results
+  are stored in `docs/regression/results/final/`.
+- **Locale:** the runner starts Java with
+  `-Duser.language=es -Duser.country=CO`, so the decimal format of the
+  warranty certificate is the same on every computer.
+- **Coverage of the change log:** the 17 violations of the consolidated
+  audit (V-01 to V-17) appear in section 3. No violation was moved to the
+  out-of-scope findings.
 
 ## 3. Change log
 

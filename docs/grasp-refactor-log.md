@@ -116,3 +116,4 @@ Recorded by the Technical Lead at the end of Phase 2.
 | ReturnService | Builds each Return through SaleService and InventoryService | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | Main | Creates ReturnRepository without services | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert | | 200538f (PR #45) | Andres |
+| SaleService | assignWarranties uses Product.isWarrantyEligible() | V-03 | Polymorphism | bd4dbc9 (PR #__) | Andres |

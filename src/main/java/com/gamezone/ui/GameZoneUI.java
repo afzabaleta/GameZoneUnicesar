@@ -1617,7 +1617,8 @@ public class GameZoneUI {
             System.out.print("Identificación del cliente: ");
             String customerId = scanner.nextLine().trim();
 
-            Customer customer = findCustomerById(customerId);
+            Customer customer =
+                    personService.findCustomerById(customerId);
 
             if (customer == null) {
                 throw new ResourceNotFoundException(
@@ -1629,7 +1630,8 @@ public class GameZoneUI {
             System.out.print("Identificación del vendedor: ");
             String sellerId = scanner.nextLine().trim();
 
-            Seller seller = findSellerById(sellerId);
+            Seller seller =
+                    personService.findSellerById(sellerId);
 
             if (seller == null) {
                 throw new ResourceNotFoundException(
@@ -1888,46 +1890,6 @@ public class GameZoneUI {
                             + sale.calculateTotal()
             );
         }
-    }
-
-    /**
-     * Finds a customer by identification.
-     *
-     * @param id customer identification
-     * @return matching customer or null
-     */
-    private Customer findCustomerById(String id) {
-        for (Customer customer :
-                personService.listCustomers()) {
-
-            if (customer.getIdentification()
-                    .equals(id)) {
-
-                return customer;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Finds a seller by identification.
-     *
-     * @param id seller identification
-     * @return matching seller or null
-     */
-    private Seller findSellerById(String id) {
-        for (Seller seller :
-                personService.listSellers()) {
-
-            if (seller.getIdentification()
-                    .equals(id)) {
-
-                return seller;
-            }
-        }
-
-        return null;
     }
 
     /**

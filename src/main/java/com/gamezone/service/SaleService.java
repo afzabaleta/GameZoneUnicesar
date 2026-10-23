@@ -2,7 +2,6 @@ package com.gamezone.service;
 
 import com.gamezone.exceptions.InvalidDataException;
 import com.gamezone.model.Accessory;
-import com.gamezone.model.Console;
 import com.gamezone.model.Customer;
 import com.gamezone.model.Product;
 import com.gamezone.model.Promotion;
@@ -132,7 +131,8 @@ public class SaleService {
     }
 
     /**
-     * Assigns the appropriate warranty to each console in the sale.
+     * Assigns the appropriate warranty to each product of the sale that
+     * has a warranty.
      *
      * @param sale sale associated with the warranties
      * @param extendedWarrantyIds identifiers requesting extended warranty
@@ -144,7 +144,7 @@ public class SaleService {
         double warrantyAdditionalCost = 0.0;
 
         for (Product product : sale.getProducts()) {
-            if (!(product instanceof Console)) {
+            if (!product.isWarrantyEligible()) {
                 continue;
             }
 

@@ -157,3 +157,19 @@ AI was used as a support tool to review the people model, persistence, validatio
 **AI response summary:** The assistant reviewed the code and drafted the report in English with a verdict for each pattern, the violations with their evidence and proposed fixes, and the accepted trade-offs.
 
 **Student decision:** I opened every class cited, confirmed the evidence lines, and agreed with the Technical Lead the split of the boundary findings that involve my classes (V-01, V-02, V-03, V-04, V-06, V-07, V-10, V-11, V-17).
+
+### Phase 2 - GRASP Corrections
+
+**Date:** 2026-10-20  
+**Tool:** ChatGPT (OpenAI)  
+**Branch:** `feature/grasp-refactor`
+
+**Purpose:** Implement the assigned GRASP corrections for V-01, V-02, V-03, V-04, V-06, V-07, V-10, V-11, V-12 and V-17.
+
+**AI query:** Requested a review of the assigned classes and guidance to apply the GRASP corrections while preserving existing behavior, validation rules, exception messages and data persistence.
+
+**AI response summary:** The assistance covered moving customer and seller lookups into `PersonService`, extracting accessory validation into `AccessoryValidator`, using polymorphism for accessory types and warranty eligibility, centralizing category validation, using `Sale.getReference()`, delegating monthly sales calculations to `SaleService`, removing duplicated sale validation, delegating inventory operations to `InventoryService`, and separating return persistence through `ReturnRecord`.
+
+**Student decision:** I reviewed and applied the proposed changes, documented the corrections in `docs/grasp-refactor-log.md`, and ran `mvn clean test` successfully using Java 23. I also ran the ten regression scenarios and compared their output with the baseline, finding no content differences after normalizing line endings. I committed and pushed the code changes to `feature/grasp-refactor`.
+
+**Verification:** `mvn clean test` — `BUILD SUCCESS`. All ten regression outputs matched the baseline after line-ending normalization.

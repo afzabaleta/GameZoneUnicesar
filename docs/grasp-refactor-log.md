@@ -81,7 +81,7 @@ Recorded by the Technical Lead at the end of Phase 2.
 | Sale | Adds getDiscountRate(), calculateProportionalDiscount() | V-05 | Information Expert | cf6826c (PR #43) | Andres |
 | SaleService | Adds calculateMonthlySales(int, int) | V-06 | Information Expert | b610aef (PR #43) | Andres |
 | SaleService | Adds findSaleByReference(String) | V-01 | Low Coupling | b610aef (PR #43) | Andres |
-| InventoryService | New class: finds items, validates and moves stock | V-02 | Pure Fabrication | 896d079 (PR #_43 | Andres |
+| InventoryService | New class: finds items, validates and moves stock | V-02 | Pure Fabrication | 896d079 (PR #43) | Andres |
 | Product | Adds abstract getCategory() | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
 | VideoGame | Returns VIDEOGAME; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
 | Console | Returns CONSOLE; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
@@ -99,3 +99,20 @@ Recorded by the Technical Lead at the end of Phase 2.
 | SaleValidator | Adds blank product identifier validation to validateSaleData() | V-17 | Pure Fabrication | b5c8228 (PR #44) | Sherly |
 | Return | calculateRefundAmount() delegates proportional discount calculation to Sale | V-05 | Information Expert | 02658e0 (PR #44) | Sherly |
 | Return | generateReturnReceipt() uses Sale.getDiscountRate() | V-05 | Information Expert | 2d0418c (PR #44) | Sherly |
+| PersonService | Adds findCustomerById(String), findSellerById(String) | V-07 | Information Expert | 32bb636 (PR #45) | Diego |
+| AccessoryValidator | New class: accessory data, uniqueness, type, console and stock checks | V-12 | Pure Fabrication | c38c60c (PR #45) | Diego |
+| AccessoryRepository | findByType and CSV type use getAccessoryType() | V-10 | Polymorphism | 5dabfcd (PR #45) | Diego |
+| PromotionService | Delegates target category validation to CategoryDiscount.validateTargetCategory() | V-11 | Information Expert | 7b280a4 (PR #45) | Diego |
+| SaleService | Removes duplicated product validation after SaleValidator.validateSaleData() | V-17 | Pure Fabrication | 4d0f61b (PR #45) | Diego |
+| ReturnRepository, WarrantyRepository, ReturnService, WarrantyService | Uses Sale.getReference() instead of date strings to identify sales | V-04 | Information Expert | f7b9727 (PR #45) | Diego |
+| ReturnService | Validates month and year, then delegates monthly sales calculation to SaleService.calculateMonthlySales() | V-06 | Information Expert | c565b38 (PR #45) | Diego |
+| ReturnService | Uses Product.isWarrantyEligible() instead of instanceof Console when cancelling warranties | V-03 | Polymorphism | 0ab2775 (PR #45) | Diego |
+| ReturnService | Delegates item lookup and returned-stock restoration to InventoryService | V-02 | Polymorphism | 8f0e8b7 (PR #45) | Diego |
+| ReturnService | Delegates sale lookup to SaleService.findSaleByReference() | V-01 | Low Coupling | 0ed0783 (PR #45) | Diego |
+| AccessoryService | Delegates every accessory check to AccessoryValidator | V-12 | Pure Fabrication | c38c60c (PR #45) | Diego |
+| Main | Creates InventoryService and passes it to ReturnService | V-02 | Polymorphism | 549a55c (PR #45) | Diego |
+| ReturnRecord | New record: stored return data and ids only | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
+| ReturnRepository | Reads and writes ReturnRecord; no service dependencies | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
+| ReturnService | Builds each Return through SaleService and InventoryService | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
+| Main | Creates ReturnRepository without services | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
+| WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert | | 200538f (PR #45) | Andres |

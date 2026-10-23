@@ -1,4 +1,3 @@
-
 package com.gamezone.service;
 
 import com.gamezone.exceptions.InvalidDataException;
@@ -104,20 +103,6 @@ public class SaleService {
                 sale.getSeller(),
                 sale.getProducts()
         );
-
-        for (Product product : sale.getProducts()) {
-            if (product == null) {
-                ProductValidator.validateProductExists(null, "unknown");
-            }
-
-            if (product.getIdentifier() == null
-                    || product.getIdentifier().isBlank()) {
-                throw new InvalidDataException(
-                        "product identifier",
-                        "Product identifier cannot be empty"
-                );
-            }
-        }
 
         Set<String> extendedWarrantyIds =
                 normalizeWarrantyProductIds(productIdsWithExtendedWarranty);

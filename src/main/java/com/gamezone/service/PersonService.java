@@ -101,4 +101,35 @@ public class PersonService {
     public List<Seller> listSellers() {
         return new ArrayList<>(sellers);
     }
+    /**
+     * Finds a registered customer by identification.
+     *
+     * @param identification customer identification
+     * @return matching customer, or null when it does not exist
+     */
+    public Customer findCustomerById(String identification) {
+        for (Customer customer : customers) {
+            if (customer.getIdentification().equals(identification)) {
+                return customer;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Finds a registered seller by identification.
+     *
+     * @param identification seller identification
+     * @return matching seller, or null when it does not exist
+     */
+    public Seller findSellerById(String identification) {
+        for (Seller seller : sellers) {
+            if (seller.getIdentification().equals(identification)) {
+                return seller;
+            }
+        }
+
+        return null;
+    }
 }

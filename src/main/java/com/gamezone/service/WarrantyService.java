@@ -167,8 +167,7 @@ public class WarrantyService {
 
             boolean sameSale =
                     warranty.getSale()
-                            .getDate()
-                            .toString()
+                            .getReference()
                             .equals(saleId);
 
             if (sameProduct && sameSale) {
@@ -224,8 +223,7 @@ public class WarrantyService {
 
             boolean sameSale =
                     warranty.getSale()
-                            .getDate()
-                            .toString()
+                            .getReference()
                             .equals(saleId);
 
             if (sameProduct && sameSale) {
@@ -407,9 +405,7 @@ public class WarrantyService {
 
         for (Sale sale : sales) {
 
-            if (sale.getDate()
-                    .toString()
-                    .equals(saleId)) {
+            if (sale.getReference().equals(saleId)) {
 
                 return sale;
             }

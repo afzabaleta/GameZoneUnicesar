@@ -1,20 +1,22 @@
+
 package com.gamezone;
 
 import com.gamezone.persistence.AccessoryRepository;
 import com.gamezone.persistence.PersonRepository;
 import com.gamezone.persistence.ProductRepository;
 import com.gamezone.persistence.PromotionRepository;
+import com.gamezone.persistence.ReturnRepository;
 import com.gamezone.persistence.SaleRepository;
 import com.gamezone.persistence.WarrantyRepository;
-import com.gamezone.persistence.ReturnRepository;
 
 import com.gamezone.service.AccessoryService;
+import com.gamezone.service.InventoryService;
 import com.gamezone.service.PersonService;
 import com.gamezone.service.ProductService;
 import com.gamezone.service.PromotionService;
+import com.gamezone.service.ReturnService;
 import com.gamezone.service.SaleService;
 import com.gamezone.service.WarrantyService;
-import com.gamezone.service.ReturnService;
 
 import com.gamezone.ui.GameZoneUI;
 
@@ -69,6 +71,12 @@ public class Main {
                         accessoryRepository
                 );
 
+        InventoryService inventoryService =
+                new InventoryService(
+                        productService,
+                        accessoryService
+                );
+
         PromotionService promotionService =
                 new PromotionService(
                         promotionRepository
@@ -94,18 +102,13 @@ public class Main {
                 );
 
         ReturnRepository returnRepository =
-                new ReturnRepository(
-                        saleService,
-                        productService,
-                        accessoryService
-                );
+                new ReturnRepository();
 
         ReturnService returnService =
                 new ReturnService(
                         returnRepository,
                         saleService,
-                        productService,
-                        accessoryService,
+                        inventoryService,
                         warrantyService
                 );
 

@@ -115,4 +115,4 @@ Recorded by the Technical Lead at the end of Phase 2.
 | ReturnRepository | Reads and writes ReturnRecord; no service dependencies | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | ReturnService | Builds each Return through SaleService and InventoryService | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | Main | Creates ReturnRepository without services | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
-| WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert | 200538f (PR #45) | Diego |
+| WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert | | 200538f (PR #45) | Andres |

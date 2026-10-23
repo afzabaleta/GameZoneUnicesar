@@ -125,4 +125,5 @@ Recorded by the Technical Lead at the end of Phase 2.
 | Main | Creates SaleRepository with the PersonService and InventoryService lookups | V-16 | Low Coupling (Indirection) | aeede52 (PR #__) | Andres |
 | GameZoneUI | Uses PersonService.findCustomerById / findSellerById | V-07 | Information Expert | 423d473 (PR #__) | Andres |
 | GameZoneUI | Uses ProductService.listConsoles() | V-08 | Information Expert | 74947e2 (PR #__) | Andres |
+| GameZoneUI | selectExtendedWarrantyProducts uses isWarrantyEligible() | V-03 | Polymorphism | 075feb0 (PR #__) | Andres |
 

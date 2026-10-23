@@ -223,8 +223,7 @@ public class WarrantyService {
 
             boolean sameSale =
                     warranty.getSale()
-                            .getDate()
-                            .toString()
+                            .getReference()
                             .equals(saleId);
 
             if (sameProduct && sameSale) {

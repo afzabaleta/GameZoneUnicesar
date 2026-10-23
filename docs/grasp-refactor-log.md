@@ -130,20 +130,20 @@ month.
 | ReturnRepository | Reads and writes ReturnRecord; no service dependencies | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | ReturnService | Builds each Return through SaleService and InventoryService | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | Main | Creates ReturnRepository without services | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
-| WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert | | 200538f (PR #45) | Andres |
-| SaleService | assignWarranties uses Product.isWarrantyEligible() | V-03 | Polymorphism | bd4dbc9 (PR #__) | Andres |
-| SaleService | Validates and decreases stock through InventoryService; product/accessory pairs removed | V-02 | Polymorphism | 38cac87 (PR #__) | Andres |
-| Main | Passes InventoryService to SaleService | V-02 | Polymorphism | 38cac87 (PR #__) | Andres |
-| SaleService | registerSale(Customer, Seller, List, List) creates and returns the Sale | V-14 | Creator | 1bb7875 (PR #__) | Andres |
-| GameZoneUI | registerSale no longer creates the Sale | V-14 | Creator | 1bb7875 (PR #__) | Andres |
-| SaleRepository | Resolves customers, sellers and items through injected lookup functions | V-16 | Low Coupling (Indirection) | aeede52 (PR #__) | Andres |
-| Main | Creates SaleRepository with the PersonService and InventoryService lookups | V-16 | Low Coupling (Indirection) | aeede52 (PR #__) | Andres |
-| GameZoneUI | Uses PersonService.findCustomerById / findSellerById | V-07 | Information Expert | 423d473 (PR #__) | Andres |
-| GameZoneUI | Uses ProductService.listConsoles() | V-08 | Information Expert | 74947e2 (PR #__) | Andres |
-| GameZoneUI | selectExtendedWarrantyProducts uses isWarrantyEligible() | V-03 | Polymorphism | 075feb0 (PR #__) | Andres |
-| GameZoneUI | Finds sale items with InventoryService.findItem() | V-02 | Polymorphism | c72eef9 (PR #__) | Andres |
-| Main | Passes InventoryService to GameZoneUI | V-02 | Polymorphism | c72eef9 (PR #__) | Andres |
-| ConsoleErrorHandler | New class: one place for the domain error messages | V-15 | Pure Fabrication | 9c63369 (PR #__) | Andres |
-| ProductMenu, AccessoryMenu, PersonMenu, SaleMenu | New classes: one menu per module | V-15 | High Cohesion | 9c63369 (PR #__) | Andres |
-| PromotionMenu, ReturnMenu, WarrantyMenu | New classes: one menu per module | V-15 | High Cohesion | 9c63369 (PR #__) | Andres |
-| GameZoneUI | Keeps only the main menu and creates the module menus | V-15 | High Cohesion, Creator | 9c63369 (PR #__) | Andres |
+| WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert |                  | 200538f (PR #45) | Andres |
+| SaleService | assignWarranties uses Product.isWarrantyEligible() | V-03 | Polymorphism | bd4dbc9 (PR #46) | Andres |
+| SaleService | Validates and decreases stock through InventoryService; product/accessory pairs removed | V-02 | Polymorphism | 38cac87 (PR #46) | Andres |
+| Main | Passes InventoryService to SaleService | V-02 | Polymorphism | 38cac87 (PR #46) | Andres |
+| SaleService | registerSale(Customer, Seller, List, List) creates and returns the Sale | V-14 | Creator | 1bb7875 (PR #46) | Andres |
+| GameZoneUI | registerSale no longer creates the Sale | V-14 | Creator | 1bb7875 (PR #46) | Andres |
+| SaleRepository | Resolves customers, sellers and items through injected lookup functions | V-16 | Low Coupling (Indirection) | aeede52 (PR #46) | Andres |
+| Main | Creates SaleRepository with the PersonService and InventoryService lookups | V-16 | Low Coupling (Indirection) | aeede52 (PR #46) | Andres |
+| GameZoneUI | Uses PersonService.findCustomerById / findSellerById | V-07 | Information Expert | 423d473 (PR #46) | Andres |
+| GameZoneUI | Uses ProductService.listConsoles() | V-08 | Information Expert | 74947e2 (PR #46) | Andres |
+| GameZoneUI | selectExtendedWarrantyProducts uses isWarrantyEligible() | V-03 | Polymorphism | 075feb0 (PR #46) | Andres |
+| GameZoneUI | Finds sale items with InventoryService.findItem() | V-02 | Polymorphism | c72eef9 (PR #46) | Andres |
+| Main | Passes InventoryService to GameZoneUI | V-02 | Polymorphism | c72eef9 (PR #46) | Andres |
+| ConsoleErrorHandler | New class: one place for the domain error messages | V-15 | Pure Fabrication | 9c63369 (PR #46) | Andres |
+| ProductMenu, AccessoryMenu, PersonMenu, SaleMenu | New classes: one menu per module | V-15 | High Cohesion | 9c63369 (PR #46) | Andres |
+| PromotionMenu, ReturnMenu, WarrantyMenu | New classes: one menu per module | V-15 | High Cohesion | 9c63369 (PR #46) | Andres |
+| GameZoneUI | Keeps only the main menu and creates the module menus | V-15 | High Cohesion, Creator | 9c63369 (PR #46) | Andres |

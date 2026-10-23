@@ -11,6 +11,7 @@ import com.gamezone.model.Sale;
 import com.gamezone.model.Seller;
 import com.gamezone.model.VideoGame;
 import com.gamezone.service.AccessoryService;
+import com.gamezone.service.InventoryService;
 import com.gamezone.service.PersonService;
 import com.gamezone.service.ProductService;
 import com.gamezone.service.SaleService;
@@ -47,6 +48,7 @@ public class GameZoneUI {
     private final PersonService personService;
     private final ProductService productService;
     private final AccessoryService accessoryService;
+    private final InventoryService inventoryService;
     private final SaleService saleService;
     private final PromotionService promotionService;
     private final ReturnService returnService;
@@ -65,6 +67,7 @@ public class GameZoneUI {
             PersonService personService,
             ProductService productService,
             AccessoryService accessoryService,
+            InventoryService inventoryService,
             SaleService saleService,
             PromotionService promotionService,
             ReturnService returnService,
@@ -73,6 +76,7 @@ public class GameZoneUI {
         this.personService = personService;
         this.productService = productService;
         this.accessoryService = accessoryService;
+        this.inventoryService = inventoryService;
         this.saleService = saleService;
         this.promotionService = promotionService;
         this.returnService = returnService;
@@ -1760,7 +1764,7 @@ public class GameZoneUI {
             }
 
             Product item =
-                    findItemById(itemId);
+                    inventoryService.findItem(itemId);
 
             if (item == null) {
                 System.out.println(
@@ -1869,36 +1873,6 @@ public class GameZoneUI {
                             + sale.calculateTotal()
             );
         }
-    }
-
-    /**
-     * Finds a product or accessory by identifier.
-     *
-     * @param id item identifier
-     * @return matching product or accessory, or null
-     */
-    private Product findItemById(String id) {
-        for (Product product :
-                productService.listProducts()) {
-
-            if (product.getIdentifier()
-                    .equals(id)) {
-
-                return product;
-            }
-        }
-
-        for (Accessory accessory :
-                accessoryService.listAccessories()) {
-
-            if (accessory.getIdentifier()
-                    .equals(id)) {
-
-                return accessory;
-            }
-        }
-
-        return null;
     }
 
     /**

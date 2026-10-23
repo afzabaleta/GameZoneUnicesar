@@ -116,6 +116,7 @@ public class Main {
                         personService,
                         productService,
                         accessoryService,
+                        inventoryService,
                         saleService,
                         promotionService,
                         returnService,

@@ -43,8 +43,7 @@ for script in "$ROOT"/scripts/*.txt; do
   sed -e "s/{TODAY}/$TODAY/g" -e "s/{MONTH}/$MONTH/g" -e "s/{YEAR}/$YEAR/g" \
       "$script" | tr -d '\r' > "$work/input.txt"
 
-  (cd "$work" && "$JAVA_BIN" -Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 \
-      -cp "$CLASSES" com.gamezone.Main < input.txt > output.txt 2>&1)
+  (cd "$work" && (cd "$work" && "$JAVA_BIN" -Duser.language=es -Duser.country=CO -Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 \)
 
   {
     cat "$work/output.txt"

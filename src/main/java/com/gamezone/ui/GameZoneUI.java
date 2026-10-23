@@ -1677,8 +1677,8 @@ public class GameZoneUI {
     }
 
     /**
-     * Asks whether each console in the sale should receive
-     * an extended warranty.
+     * Asks whether each product of the sale that has a warranty should
+     * receive an extended warranty.
      *
      * @param products products included in the sale
      * @return identifiers of consoles requesting extended warranty
@@ -1691,7 +1691,7 @@ public class GameZoneUI {
 
         for (Product product : products) {
 
-            if (!(product instanceof Console)) {
+            if (!product.isWarrantyEligible()) {
                 continue;
             }
 

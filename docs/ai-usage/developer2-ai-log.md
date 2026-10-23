@@ -1,9 +1,9 @@
-﻿# Developer 2 AI Log
+# Developer 2 AI Log
 
 ## Member
 
-**Name:** Diego Armando Mestre Gomez
-**Role:** Developer 2 â€” People
+**Name:** Diego Armando Mestre Gomez  
+**Role:** Developer 2 — People
 
 ## AI Usage
 
@@ -54,8 +54,8 @@
 
 ### 6. R5 - Warranty repository dependency decoupling
 
-**Date:** 2026-09-27
-**Tool:** ChatGPT
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
 **Phase/Branch:** R5 - `feature/warranty-repository-decoupling`
 
 **Purpose:** Implement A2 to remove the circular dependency involving `WarrantyRepository`, `WarrantyService`, and `SaleService`.
@@ -72,8 +72,8 @@
 
 ### 7. R5 - Return accessory integration
 
-**Date:** 2026-09-27
-**Tool:** ChatGPT
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
 **Phase/Branch:** R5 - `feature/return-accessory-integration`
 
 **Purpose:** Implement A4 so returns support accessories, restore accessory inventory, and resolve accessories when persisted returns are loaded.
@@ -96,8 +96,8 @@
 
 ### 8. R5 - Monthly balance report
 
-**Date:** 2026-09-27
-**Tool:** ChatGPT
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
 **Phase/Branch:** R5 - `fix/monthly-balance-report`
 
 **Purpose:** Implement A6 so the monthly balance report displays total sales, total refunds, and the net balance.
@@ -117,8 +117,8 @@
 
 ### 9. R5 - Warranty cancellation on returns
 
-**Date:** 2026-09-27
-**Tool:** ChatGPT
+**Date:** 2026-09-27  
+**Tool:** ChatGPT  
 **Phase/Branch:** R5 - `feature/return-warranty-cancellation`
 
 **Purpose:** Implement A7 so warranties associated with returned consoles are cancelled and the refundable extended warranty cost is included in the return amount.
@@ -146,8 +146,8 @@ AI was used as a support tool to review the people model, persistence, validatio
 
 ### Phase 1 - Audit
 
-**Date:** 2026-10-17
-**Tool:** Claude (Anthropic)
+**Date:** 2026-10-17  
+**Tool:** Claude (Anthropic)  
 **Branch:** `feature/grasp-audit`
 
 **Purpose:** Audit the people module, the accessory, promotion, return and warranty repositories and services, and the Requirement 6 use of exceptions and validators against the nine GRASP patterns, and draft `developer2-audit.md` and the answer to question 4 of `grasp-analysis.md`.
@@ -157,10 +157,11 @@ AI was used as a support tool to review the people model, persistence, validatio
 **AI response summary:** The assistant reviewed the code and drafted the report in English with a verdict for each pattern, the violations with their evidence and proposed fixes, and the accepted trade-offs.
 
 **Student decision:** I opened every class cited, confirmed the evidence lines, and agreed with the Technical Lead the split of the boundary findings that involve my classes (V-01, V-02, V-03, V-04, V-06, V-07, V-10, V-11, V-17).
+
 ### Phase 2 - GRASP Corrections
 
-**Date:** 2026-10-20
-**Tool:** ChatGPT (OpenAI)
+**Date:** 2026-10-20  
+**Tool:** ChatGPT (OpenAI)  
 **Branch:** `feature/grasp-refactor`
 
 **Purpose:** Implement the assigned GRASP corrections for V-01, V-02, V-03, V-04, V-06, V-07, V-10, V-11, V-12 and V-17.
@@ -171,4 +172,4 @@ AI was used as a support tool to review the people model, persistence, validatio
 
 **Student decision:** I reviewed and applied the proposed changes, documented the corrections in `docs/grasp-refactor-log.md`, and ran `mvn clean test` successfully using Java 23. I also ran the ten regression scenarios and compared their output with the baseline, finding no content differences after normalizing line endings. I committed and pushed the code changes to `feature/grasp-refactor`.
 
-**Verification:** `mvn clean test` â€” `BUILD SUCCESS`. All ten regression outputs matched the baseline after line-ending normalization.
+**Verification:** `mvn clean test` — `BUILD SUCCESS`. All ten regression outputs matched the baseline after line-ending normalization.

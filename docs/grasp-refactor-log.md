@@ -1,4 +1,4 @@
-﻿# GRASP Refactor Log - Requirement 7
+# GRASP Refactor Log - Requirement 7
 
 This log records the Phase 2 corrections of the consolidated GRASP audit
 (`docs/grasp-audit/consolidated-audit.md`): the non-regression strategy, the
@@ -107,5 +107,12 @@ Recorded by the Technical Lead at the end of Phase 2.
 | ReturnRepository, WarrantyRepository, ReturnService, WarrantyService | Uses Sale.getReference() instead of date strings to identify sales | V-04 | Information Expert | f7b9727 (PR #45) | Diego |
 | ReturnService | Validates month and year, then delegates monthly sales calculation to SaleService.calculateMonthlySales() | V-06 | Information Expert | c565b38 (PR #45) | Diego |
 | ReturnService | Uses Product.isWarrantyEligible() instead of instanceof Console when cancelling warranties | V-03 | Polymorphism | 0ab2775 (PR #45) | Diego |
-| ReturnService | Delegates item lookup and returned-stock restoration to InventoryService | V-02 | Pure Fabrication | 8f0e8b7 (PR #45) | Diego |
+| ReturnService | Delegates item lookup and returned-stock restoration to InventoryService | V-02 | Polymorphism | 8f0e8b7 (PR #45) | Diego |
 | ReturnService | Delegates sale lookup to SaleService.findSaleByReference() | V-01 | Low Coupling | 0ed0783 (PR #45) | Diego |
+| AccessoryService | Delegates every accessory check to AccessoryValidator | V-12 | Pure Fabrication | c38c60c (PR #45) | Diego |
+| Main | Creates InventoryService and passes it to ReturnService | V-02 | Polymorphism | 549a55c (PR #45) | Diego |
+| ReturnRecord | New record: stored return data and ids only | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
+| ReturnRepository | Reads and writes ReturnRecord; no service dependencies | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
+| ReturnService | Builds each Return through SaleService and InventoryService | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
+| Main | Creates ReturnRepository without services | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
+| WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert | 200538f (PR #45) | Diego |

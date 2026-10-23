@@ -117,3 +117,5 @@ Recorded by the Technical Lead at the end of Phase 2.
 | Main | Creates ReturnRepository without services | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert | | 200538f (PR #45) | Andres |
 | SaleService | assignWarranties uses Product.isWarrantyEligible() | V-03 | Polymorphism | bd4dbc9 (PR #__) | Andres |
+| SaleService | Validates and decreases stock through InventoryService; product/accessory pairs removed | V-02 | Polymorphism | 38cac87 (PR #__) | Andres |
+| Main | Passes InventoryService to SaleService | V-02 | Polymorphism | 38cac87 (PR #__) | Andres |

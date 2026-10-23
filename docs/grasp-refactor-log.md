@@ -126,4 +126,6 @@ Recorded by the Technical Lead at the end of Phase 2.
 | GameZoneUI | Uses PersonService.findCustomerById / findSellerById | V-07 | Information Expert | 423d473 (PR #__) | Andres |
 | GameZoneUI | Uses ProductService.listConsoles() | V-08 | Information Expert | 74947e2 (PR #__) | Andres |
 | GameZoneUI | selectExtendedWarrantyProducts uses isWarrantyEligible() | V-03 | Polymorphism | 075feb0 (PR #__) | Andres |
+| GameZoneUI | Finds sale items with InventoryService.findItem() | V-02 | Polymorphism | c72eef9 (PR #__) | Andres |
+| Main | Passes InventoryService to GameZoneUI | V-02 | Polymorphism | c72eef9 (PR #__) | Andres |
 

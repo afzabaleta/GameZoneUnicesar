@@ -1272,7 +1272,7 @@ public class GameZoneUI {
                 "-- Accesorios compatibles con consola --"
         );
 
-        List<Console> consoles = getAvailableConsoles();
+        List<Console> consoles = productService.listConsoles();
 
         if (consoles.isEmpty()) {
             System.out.println(
@@ -1328,7 +1328,7 @@ public class GameZoneUI {
         List<Console> compatibleConsoles =
                 new ArrayList<>();
 
-        List<Console> consoles = getAvailableConsoles();
+        List<Console> consoles = productService.listConsoles();
 
         System.out.println();
         System.out.println(
@@ -1378,27 +1378,6 @@ public class GameZoneUI {
         }
 
         return compatibleConsoles;
-    }
-
-    /**
-     * Returns all available consoles.
-     *
-     * @return list of consoles
-     */
-    private List<Console> getAvailableConsoles() {
-        List<Console> consoles =
-                new ArrayList<>();
-
-        List<Product> products =
-                productService.listProducts();
-
-        for (Product product : products) {
-            if (product instanceof Console) {
-                consoles.add((Console) product);
-            }
-        }
-
-        return consoles;
     }
 
     /**

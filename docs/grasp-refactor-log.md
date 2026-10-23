@@ -119,3 +119,5 @@ Recorded by the Technical Lead at the end of Phase 2.
 | SaleService | assignWarranties uses Product.isWarrantyEligible() | V-03 | Polymorphism | bd4dbc9 (PR #__) | Andres |
 | SaleService | Validates and decreases stock through InventoryService; product/accessory pairs removed | V-02 | Polymorphism | 38cac87 (PR #__) | Andres |
 | Main | Passes InventoryService to SaleService | V-02 | Polymorphism | 38cac87 (PR #__) | Andres |
+| SaleService | registerSale(Customer, Seller, List, List) creates and returns the Sale | V-14 | Creator | 1bb7875 (PR #__) | Andres |
+| GameZoneUI | registerSale no longer creates the Sale | V-14 | Creator | 1bb7875 (PR #__) | Andres |

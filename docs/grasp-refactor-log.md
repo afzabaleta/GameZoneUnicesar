@@ -123,3 +123,5 @@ Recorded by the Technical Lead at the end of Phase 2.
 | GameZoneUI | registerSale no longer creates the Sale | V-14 | Creator | 1bb7875 (PR #__) | Andres |
 | SaleRepository | Resolves customers, sellers and items through injected lookup functions | V-16 | Low Coupling (Indirection) | aeede52 (PR #__) | Andres |
 | Main | Creates SaleRepository with the PersonService and InventoryService lookups | V-16 | Low Coupling (Indirection) | aeede52 (PR #__) | Andres |
+| GameZoneUI | Uses PersonService.findCustomerById / findSellerById | V-07 | Information Expert | 423d473 (PR #__) | Andres |
+

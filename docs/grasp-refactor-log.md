@@ -1,4 +1,4 @@
-# GRASP Refactor Log - Requirement 7
+﻿# GRASP Refactor Log - Requirement 7
 
 This log records the Phase 2 corrections of the consolidated GRASP audit
 (`docs/grasp-audit/consolidated-audit.md`): the non-regression strategy, the
@@ -81,7 +81,7 @@ Recorded by the Technical Lead at the end of Phase 2.
 | Sale | Adds getDiscountRate(), calculateProportionalDiscount() | V-05 | Information Expert | cf6826c (PR #43) | Andres |
 | SaleService | Adds calculateMonthlySales(int, int) | V-06 | Information Expert | b610aef (PR #43) | Andres |
 | SaleService | Adds findSaleByReference(String) | V-01 | Low Coupling | b610aef (PR #43) | Andres |
-| InventoryService | New class: finds items, validates and moves stock | V-02 | Pure Fabrication | 896d079 (PR #_43 | Andres |
+| InventoryService | New class: finds items, validates and moves stock | V-02 | Pure Fabrication | 896d079 (PR #43) | Andres |
 | Product | Adds abstract getCategory() | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
 | VideoGame | Returns VIDEOGAME; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
 | Console | Returns CONSOLE; keeps serialVersionUID | V-09 | Polymorphism | 96cdf62 (PR #44) | Sherly |
@@ -107,5 +107,5 @@ Recorded by the Technical Lead at the end of Phase 2.
 | ReturnRepository, WarrantyRepository, ReturnService, WarrantyService | Uses Sale.getReference() instead of date strings to identify sales | V-04 | Information Expert | f7b9727 (PR #45) | Diego |
 | ReturnService | Validates month and year, then delegates monthly sales calculation to SaleService.calculateMonthlySales() | V-06 | Information Expert | c565b38 (PR #45) | Diego |
 | ReturnService | Uses Product.isWarrantyEligible() instead of instanceof Console when cancelling warranties | V-03 | Polymorphism | 0ab2775 (PR #45) | Diego |
-| ReturnService | Delegates item lookup and returned-stock restoration to InventoryService | V-02 | Pure Fabrication | 8f0e8b7 (PR pendiente) | Diego |
-| ReturnService | Delegates sale lookup to SaleService.findSaleByReference() | V-01 | Low Coupling | 0ed0783 (PR pendiente) | Diego |
+| ReturnService | Delegates item lookup and returned-stock restoration to InventoryService | V-02 | Pure Fabrication | 8f0e8b7 (PR #45) | Diego |
+| ReturnService | Delegates sale lookup to SaleService.findSaleByReference() | V-01 | Low Coupling | 0ed0783 (PR #45) | Diego |

@@ -3,7 +3,6 @@ package com.gamezone.persistence;
 import com.gamezone.exceptions.InvalidDataException;
 import com.gamezone.exceptions.PersistenceException;
 import com.gamezone.exceptions.ResourceNotFoundException;
-import com.gamezone.model.Accessory;
 import com.gamezone.model.Customer;
 import com.gamezone.model.Product;
 import com.gamezone.model.Sale;
@@ -20,6 +19,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Handles saving and loading sales to and from a text file.
@@ -27,6 +27,10 @@ import java.util.List;
  * <p>I/O failures are converted into PersistenceException with the file and
  * operation in the message. Invalid or inconsistent persisted records are also
  * reported as persistence failures.</p>
+ *
+ * <p>The repository does not know where customers, sellers and items are
+ * stored: it receives three lookup functions (Indirection), so it no longer
+ * depends on the person, product and accessory repositories.</p>
  */
 public class SaleRepository {
 
@@ -35,37 +39,41 @@ public class SaleRepository {
     private static final String FIELD_SEPARATOR = ";";
     private static final String PRODUCT_SEPARATOR = ",";
 
-    private final PersonRepository personRepository;
-    private final ProductRepository productRepository;
-    private final AccessoryRepository accessoryRepository;
+    private final Function<String, Customer> customerLookup;
+    private final Function<String, Seller> sellerLookup;
+    private final Function<String, Product> itemLookup;
 
     /**
-     * Creates a SaleRepository able to resolve people, products and accessories.
+     * Creates a SaleRepository that resolves people and items through the
+     * given lookup functions.
      *
-     * @param personRepository repository used to look up customers and sellers
-     * @param productRepository repository used to look up products
-     * @param accessoryRepository repository used to look up accessories
+     * <p>Each function receives an identifier and returns the matching
+     * object, or null when it does not exist.</p>
+     *
+     * @param customerLookup finds a customer by identification
+     * @param sellerLookup finds a seller by identification
+     * @param itemLookup finds a product or an accessory by identifier
      */
     public SaleRepository(
-            PersonRepository personRepository,
-            ProductRepository productRepository,
-            AccessoryRepository accessoryRepository) {
+            Function<String, Customer> customerLookup,
+            Function<String, Seller> sellerLookup,
+            Function<String, Product> itemLookup) {
 
-        if (personRepository == null) {
-            throw new InvalidDataException("personRepository", "must not be null");
+        if (customerLookup == null) {
+            throw new InvalidDataException("customerLookup", "must not be null");
         }
 
-        if (productRepository == null) {
-            throw new InvalidDataException("productRepository", "must not be null");
+        if (sellerLookup == null) {
+            throw new InvalidDataException("sellerLookup", "must not be null");
         }
 
-        if (accessoryRepository == null) {
-            throw new InvalidDataException("accessoryRepository", "must not be null");
+        if (itemLookup == null) {
+            throw new InvalidDataException("itemLookup", "must not be null");
         }
 
-        this.personRepository = personRepository;
-        this.productRepository = productRepository;
-        this.accessoryRepository = accessoryRepository;
+        this.customerLookup = customerLookup;
+        this.sellerLookup = sellerLookup;
+        this.itemLookup = itemLookup;
     }
 
     /**
@@ -227,10 +235,10 @@ public class SaleRepository {
      * @return matching customer
      */
     private Customer findCustomerById(String id) {
-        for (Customer customer : personRepository.loadCustomers()) {
-            if (customer.getIdentification().equals(id)) {
-                return customer;
-            }
+        Customer customer = customerLookup.apply(id);
+
+        if (customer != null) {
+            return customer;
         }
 
         throw new ResourceNotFoundException("customer", id);
@@ -243,10 +251,10 @@ public class SaleRepository {
      * @return matching seller
      */
     private Seller findSellerById(String id) {
-        for (Seller seller : personRepository.loadSellers()) {
-            if (seller.getIdentification().equals(id)) {
-                return seller;
-            }
+        Seller seller = sellerLookup.apply(id);
+
+        if (seller != null) {
+            return seller;
         }
 
         throw new ResourceNotFoundException("seller", id);
@@ -259,19 +267,12 @@ public class SaleRepository {
      * @return matching item
      */
     private Product findItemById(String id) {
-        for (Product product : productRepository.loadProducts()) {
-            if (product.getIdentifier().equals(id)) {
-                return product;
-            }
-        }
+        Product item = itemLookup.apply(id);
 
-        Accessory accessory = accessoryRepository.findByIdentifier(id);
-
-        if (accessory != null) {
-            return accessory;
+        if (item != null) {
+            return item;
         }
 
         throw new ResourceNotFoundException("product or accessory", id);
     }
 }
-

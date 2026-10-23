@@ -49,13 +49,6 @@ public class Main {
         PromotionRepository promotionRepository =
                 new PromotionRepository();
 
-        SaleRepository saleRepository =
-                new SaleRepository(
-                        personRepository,
-                        productRepository,
-                        accessoryRepository
-                );
-
         PersonService personService =
                 new PersonService(
                         personRepository
@@ -75,6 +68,13 @@ public class Main {
                 new InventoryService(
                         productService,
                         accessoryService
+                );
+
+        SaleRepository saleRepository =
+                new SaleRepository(
+                        personService::findCustomerById,
+                        personService::findSellerById,
+                        inventoryService::findItem
                 );
 
         PromotionService promotionService =

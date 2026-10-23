@@ -128,4 +128,7 @@ Recorded by the Technical Lead at the end of Phase 2.
 | GameZoneUI | selectExtendedWarrantyProducts uses isWarrantyEligible() | V-03 | Polymorphism | 075feb0 (PR #__) | Andres |
 | GameZoneUI | Finds sale items with InventoryService.findItem() | V-02 | Polymorphism | c72eef9 (PR #__) | Andres |
 | Main | Passes InventoryService to GameZoneUI | V-02 | Polymorphism | c72eef9 (PR #__) | Andres |
-
+| ConsoleErrorHandler | New class: one place for the domain error messages | V-15 | Pure Fabrication | 9c63369 (PR #__) | Andres |
+| ProductMenu, AccessoryMenu, PersonMenu, SaleMenu | New classes: one menu per module | V-15 | High Cohesion | 9c63369 (PR #__) | Andres |
+| PromotionMenu, ReturnMenu, WarrantyMenu | New classes: one menu per module | V-15 | High Cohesion | 9c63369 (PR #__) | Andres |
+| GameZoneUI | Keeps only the main menu and creates the module menus | V-15 | High Cohesion, Creator | 9c63369 (PR #__) | Andres |

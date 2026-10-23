@@ -1,35 +1,30 @@
 package com.gamezone.service;
 
 import com.gamezone.exceptions.InvalidDataException;
-import com.gamezone.model.Accessory;
 import com.gamezone.model.Customer;
 import com.gamezone.model.Product;
 import com.gamezone.model.Promotion;
 import com.gamezone.model.Sale;
 import com.gamezone.model.Seller;
 import com.gamezone.persistence.SaleRepository;
-import com.gamezone.validation.ProductValidator;
 import com.gamezone.validation.SaleValidator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Provides business operations for registering and querying sales.
  *
- * <p>Sale data is delegated to SaleValidator and product stock checks are
- * delegated to ProductValidator. The service coordinates inventory, promotions,
- * warranties and sale persistence.</p>
+ * <p>Sale data is delegated to SaleValidator and stock checks and updates
+ * are delegated to InventoryService. The service coordinates inventory,
+ * promotions, warranties and sale persistence.</p>
  */
 public class SaleService {
 
     private final SaleRepository saleRepository;
-    private final ProductService productService;
-    private final AccessoryService accessoryService;
+    private final InventoryService inventoryService;
     private final PromotionService promotionService;
     private final WarrantyService warrantyService;
 
@@ -37,15 +32,14 @@ public class SaleService {
      * Creates a SaleService using the required collaborators.
      *
      * @param saleRepository repository used to persist and load sales
-     * @param productService service used to check and update product stock
-     * @param accessoryService service used to check and update accessory stock
+     * @param inventoryService service used to check and update the stock of
+     *        products and accessories
      * @param promotionService service used to find applicable promotions
      * @param warrantyService service used to manage product warranties
      */
     public SaleService(
             SaleRepository saleRepository,
-            ProductService productService,
-            AccessoryService accessoryService,
+            InventoryService inventoryService,
             PromotionService promotionService,
             WarrantyService warrantyService) {
 
@@ -54,14 +48,9 @@ public class SaleService {
                     "saleRepository", "Sale repository cannot be null");
         }
 
-        if (productService == null) {
+        if (inventoryService == null) {
             throw new InvalidDataException(
-                    "productService", "Product service cannot be null");
-        }
-
-        if (accessoryService == null) {
-            throw new InvalidDataException(
-                    "accessoryService", "Accessory service cannot be null");
+                    "inventoryService", "Inventory service cannot be null");
         }
 
         if (promotionService == null) {
@@ -75,8 +64,7 @@ public class SaleService {
         }
 
         this.saleRepository = saleRepository;
-        this.productService = productService;
-        this.accessoryService = accessoryService;
+        this.inventoryService = inventoryService;
         this.promotionService = promotionService;
         this.warrantyService = warrantyService;
     }
@@ -106,24 +94,12 @@ public class SaleService {
         Set<String> extendedWarrantyIds =
                 normalizeWarrantyProductIds(productIdsWithExtendedWarranty);
 
-        Map<String, Integer> productQuantities =
-                countProductQuantities(sale.getProducts());
-
-        Map<String, Integer> accessoryQuantities =
-                countAccessoryQuantities(sale.getProducts());
-
-        List<Product> availableProducts = productService.listProducts();
-        List<Accessory> availableAccessories =
-                accessoryService.listAccessories();
-
-        validateProductStock(productQuantities, availableProducts);
-        validateAccessoryStock(accessoryQuantities, availableAccessories);
+        inventoryService.validateStock(sale.getProducts());
 
         applyBestPromotion(sale);
         assignWarranties(sale, extendedWarrantyIds);
 
-        updateProductStock(productQuantities, availableProducts);
-        updateAccessoryStock(accessoryQuantities, availableAccessories);
+        inventoryService.decreaseStock(sale.getProducts());
 
         List<Sale> sales = saleRepository.loadSales();
         sales.add(sale);
@@ -301,233 +277,5 @@ public class SaleService {
         }
 
         return salesTotal;
-    }
-
-    /**
-     * Counts only regular products included in the sale.
-     *
-     * @param products sale items
-     * @return requested quantities grouped by identifier
-     */
-    private Map<String, Integer> countProductQuantities(
-            List<Product> products) {
-
-        Map<String, Integer> counts = new HashMap<>();
-
-        for (Product product : products) {
-            if (!(product instanceof Accessory)) {
-                counts.merge(
-                        product.getIdentifier(),
-                        1,
-                        Integer::sum
-                );
-            }
-        }
-
-        return counts;
-    }
-
-    /**
-     * Counts only accessories included in the sale.
-     *
-     * @param products sale items
-     * @return requested accessory quantities grouped by identifier
-     */
-    private Map<String, Integer> countAccessoryQuantities(
-            List<Product> products) {
-
-        Map<String, Integer> counts = new HashMap<>();
-
-        for (Product product : products) {
-            if (product instanceof Accessory) {
-                counts.merge(
-                        product.getIdentifier(),
-                        1,
-                        Integer::sum
-                );
-            }
-        }
-
-        return counts;
-    }
-
-    /**
-     * Validates stock for regular products.
-     *
-     * @param requestedQuantities requested product quantities
-     * @param availableProducts available products
-     */
-    private void validateProductStock(
-            Map<String, Integer> requestedQuantities,
-            List<Product> availableProducts) {
-
-        for (Map.Entry<String, Integer> entry
-                : requestedQuantities.entrySet()) {
-
-            Product product = findProductById(
-                    availableProducts,
-                    entry.getKey()
-            );
-
-            ProductValidator.validateProductExists(
-                    product,
-                    entry.getKey()
-            );
-
-            ProductValidator.validateProductData(
-                    product.getIdentifier(),
-                    product.getTitle(),
-                    product.getPrice(),
-                    product.getAvailableQuantity()
-            );
-
-            ProductValidator.validateStockAvailability(
-                    product,
-                    entry.getValue()
-            );
-        }
-    }
-
-    /**
-     * Validates stock for accessories.
-     *
-     * @param requestedQuantities requested accessory quantities
-     * @param availableAccessories available accessories
-     */
-    private void validateAccessoryStock(
-            Map<String, Integer> requestedQuantities,
-            List<Accessory> availableAccessories) {
-
-        for (Map.Entry<String, Integer> entry
-                : requestedQuantities.entrySet()) {
-
-            Accessory accessory = findAccessoryById(
-                    availableAccessories,
-                    entry.getKey()
-            );
-
-            ProductValidator.validateProductExists(
-                    accessory,
-                    entry.getKey()
-            );
-
-            ProductValidator.validateProductData(
-                    accessory.getIdentifier(),
-                    accessory.getTitle(),
-                    accessory.getPrice(),
-                    accessory.getAvailableQuantity()
-            );
-
-            ProductValidator.validateStockAvailability(
-                    accessory,
-                    entry.getValue()
-            );
-        }
-    }
-
-    /**
-     * Updates stock for regular products.
-     *
-     * @param requestedQuantities requested product quantities
-     * @param availableProducts available products
-     */
-    private void updateProductStock(
-            Map<String, Integer> requestedQuantities,
-            List<Product> availableProducts) {
-
-        for (Map.Entry<String, Integer> entry
-                : requestedQuantities.entrySet()) {
-
-            Product product = findProductById(
-                    availableProducts,
-                    entry.getKey()
-            );
-
-            ProductValidator.validateProductExists(
-                    product,
-                    entry.getKey()
-            );
-
-            int remainingStock =
-                    product.getAvailableQuantity() - entry.getValue();
-
-            productService.updateStock(
-                    entry.getKey(),
-                    remainingStock
-            );
-        }
-    }
-
-    /**
-     * Updates stock for accessories.
-     *
-     * @param requestedQuantities requested accessory quantities
-     * @param availableAccessories available accessories
-     */
-    private void updateAccessoryStock(
-            Map<String, Integer> requestedQuantities,
-            List<Accessory> availableAccessories) {
-
-        for (Map.Entry<String, Integer> entry
-                : requestedQuantities.entrySet()) {
-
-            Accessory accessory = findAccessoryById(
-                    availableAccessories,
-                    entry.getKey()
-            );
-
-            ProductValidator.validateProductExists(
-                    accessory,
-                    entry.getKey()
-            );
-
-            int remainingStock =
-                    accessory.getAvailableQuantity() - entry.getValue();
-
-            accessoryService.updateStock(
-                    entry.getKey(),
-                    remainingStock
-            );
-        }
-    }
-
-    /**
-     * Finds a regular product by identifier.
-     *
-     * @param products products to search
-     * @param identifier product identifier
-     * @return matching product, or null when it does not exist
-     */
-    private Product findProductById(
-            List<Product> products,
-            String identifier) {
-
-        for (Product product : products) {
-            if (product.getIdentifier().equals(identifier)) {
-                return product;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Finds an accessory by identifier.
-     *
-     * @param accessories accessories to search
-     * @param identifier accessory identifier
-     * @return matching accessory, or null when it does not exist
-     */
-    private Accessory findAccessoryById(
-            List<Accessory> accessories,
-            String identifier) {
-
-        for (Accessory accessory : accessories) {
-            if (accessory.getIdentifier().equals(identifier)) {
-                return accessory;
-            }
-        }
-
-        return null;
     }
 }

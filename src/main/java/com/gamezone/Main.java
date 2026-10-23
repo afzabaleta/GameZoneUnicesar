@@ -95,8 +95,7 @@ public class Main {
         SaleService saleService =
                 new SaleService(
                         saleRepository,
-                        productService,
-                        accessoryService,
+                        inventoryService,
                         promotionService,
                         warrantyService
                 );

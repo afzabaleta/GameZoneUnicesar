@@ -130,7 +130,7 @@ month.
 | ReturnRepository | Reads and writes ReturnRecord; no service dependencies | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | ReturnService | Builds each Return through SaleService and InventoryService | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | Main | Creates ReturnRepository without services | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
-| WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert |                  | 200538f (PR #45) | Andres |
+| WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert | 200538f (PR #45) | Andres |
 | SaleService | assignWarranties uses Product.isWarrantyEligible() | V-03 | Polymorphism | bd4dbc9 (PR #46) | Andres |
 | SaleService | Validates and decreases stock through InventoryService; product/accessory pairs removed | V-02 | Polymorphism | 38cac87 (PR #46) | Andres |
 | Main | Passes InventoryService to SaleService | V-02 | Polymorphism | 38cac87 (PR #46) | Andres |

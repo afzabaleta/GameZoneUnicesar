@@ -150,7 +150,7 @@ public class WarrantyRepository {
                 type,
                 warranty.getId(),
                 warranty.getProduct().getIdentifier(),
-                warranty.getSale().getDate().toString(),
+                warranty.getSale().getReference(),
                 warranty.getStartDate().toString()
         );
     }

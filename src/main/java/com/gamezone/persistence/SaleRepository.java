@@ -1,5 +1,8 @@
 package com.gamezone.persistence;
 
+import com.gamezone.exceptions.InvalidDataException;
+import com.gamezone.exceptions.PersistenceException;
+import com.gamezone.exceptions.ResourceNotFoundException;
 import com.gamezone.model.Customer;
 import com.gamezone.model.Product;
 import com.gamezone.model.Sale;
@@ -16,12 +19,18 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Handles saving and loading sales to and from a text file.
  *
- * <p>A sale stores references to a customer, seller, products,
- * promotion information and warranty additional cost.</p>
+ * <p>I/O failures are converted into PersistenceException with the file and
+ * operation in the message. Invalid or inconsistent persisted records are also
+ * reported as persistence failures.</p>
+ *
+ * <p>The repository does not know where customers, sellers and items are
+ * stored: it receives three lookup functions (Indirection), so it no longer
+ * depends on the person, product and accessory repositories.</p>
  */
 public class SaleRepository {
 
@@ -30,44 +39,41 @@ public class SaleRepository {
     private static final String FIELD_SEPARATOR = ";";
     private static final String PRODUCT_SEPARATOR = ",";
 
-    private final PersonRepository personRepository;
-    private final ProductRepository productRepository;
-    private final AccessoryRepository accessoryRepository;
+    private final Function<String, Customer> customerLookup;
+    private final Function<String, Seller> sellerLookup;
+    private final Function<String, Product> itemLookup;
 
     /**
-     * Creates a SaleRepository able to resolve customers, sellers,
-     * products and accessories by their identifiers.
+     * Creates a SaleRepository that resolves people and items through the
+     * given lookup functions.
      *
-     * @param personRepository repository used to look up customers and sellers
-     * @param productRepository repository used to look up products
-     * @param accessoryRepository repository used to look up accessories
+     * <p>Each function receives an identifier and returns the matching
+     * object, or null when it does not exist.</p>
+     *
+     * @param customerLookup finds a customer by identification
+     * @param sellerLookup finds a seller by identification
+     * @param itemLookup finds a product or an accessory by identifier
      */
     public SaleRepository(
-            PersonRepository personRepository,
-            ProductRepository productRepository,
-            AccessoryRepository accessoryRepository) {
+            Function<String, Customer> customerLookup,
+            Function<String, Seller> sellerLookup,
+            Function<String, Product> itemLookup) {
 
-        if (personRepository == null) {
-            throw new IllegalArgumentException(
-                    "Person repository cannot be null."
-            );
+        if (customerLookup == null) {
+            throw new InvalidDataException("customerLookup", "must not be null");
         }
 
-        if (productRepository == null) {
-            throw new IllegalArgumentException(
-                    "Product repository cannot be null."
-            );
+        if (sellerLookup == null) {
+            throw new InvalidDataException("sellerLookup", "must not be null");
         }
 
-        if (accessoryRepository == null) {
-            throw new IllegalArgumentException(
-                    "Accessory repository cannot be null."
-            );
+        if (itemLookup == null) {
+            throw new InvalidDataException("itemLookup", "must not be null");
         }
 
-        this.personRepository = personRepository;
-        this.productRepository = productRepository;
-        this.accessoryRepository = accessoryRepository;
+        this.customerLookup = customerLookup;
+        this.sellerLookup = sellerLookup;
+        this.itemLookup = itemLookup;
     }
 
     /**
@@ -76,15 +82,11 @@ public class SaleRepository {
      * @param sales sales to persist
      */
     public void saveSales(List<Sale> sales) {
-
         try {
-            Files.createDirectories(
-                    Paths.get(DATA_DIRECTORY)
-            );
+            Files.createDirectories(Paths.get(DATA_DIRECTORY));
 
-            try (BufferedWriter writer =
-                         new BufferedWriter(
-                                 new FileWriter(FILE_PATH))) {
+            try (BufferedWriter writer = new BufferedWriter(
+                    new FileWriter(FILE_PATH))) {
 
                 for (Sale sale : sales) {
                     writer.write(buildLine(sale));
@@ -93,9 +95,8 @@ public class SaleRepository {
             }
 
         } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Error saving sales to file: "
-                            + e.getMessage(),
+            throw new PersistenceException(
+                    "Unable to write sales file '" + FILE_PATH + "'.",
                     e
             );
         }
@@ -107,7 +108,6 @@ public class SaleRepository {
      * @return list of persisted sales
      */
     public List<Sale> loadSales() {
-
         List<Sale> sales = new ArrayList<>();
         File file = new File(FILE_PATH);
 
@@ -115,25 +115,29 @@ public class SaleRepository {
             return sales;
         }
 
-        try (BufferedReader reader =
-                     new BufferedReader(
-                             new FileReader(file))) {
-
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
-
-                if (line.isBlank()) {
-                    continue;
+                if (!line.isBlank()) {
+                    sales.add(parseLine(line));
                 }
-
-                sales.add(parseLine(line));
             }
 
         } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Error loading sales from file: "
-                            + e.getMessage(),
+            throw new PersistenceException(
+                    "Unable to read sales file '" + FILE_PATH + "'.",
+                    e
+            );
+
+        } catch (RuntimeException e) {
+            if (e instanceof PersistenceException persistenceException) {
+                throw persistenceException;
+            }
+
+            throw new PersistenceException(
+                    "Unable to parse sales file '" + FILE_PATH
+                            + "'. The file may contain corrupted or inconsistent records.",
                     e
             );
         }
@@ -142,143 +146,82 @@ public class SaleRepository {
     }
 
     /**
-     * Builds the CSV-like representation of a sale.
-     *
-     * <p>Current format:</p>
-     *
-     * <pre>
-     * date;customerId;sellerId;productIds;promotionName;discountAmount;warrantyAdditionalCost
-     * </pre>
+     * Builds the persisted representation of a sale.
      *
      * @param sale sale to serialize
      * @return serialized sale
      */
     private String buildLine(Sale sale) {
-
-        StringBuilder productIds =
-                new StringBuilder();
-
-        List<Product> products =
-                sale.getProducts();
+        StringBuilder productIds = new StringBuilder();
+        List<Product> products = sale.getProducts();
 
         for (int i = 0; i < products.size(); i++) {
-
-            productIds.append(
-                    products.get(i).getIdentifier()
-            );
+            productIds.append(products.get(i).getIdentifier());
 
             if (i < products.size() - 1) {
-                productIds.append(
-                        PRODUCT_SEPARATOR
-                );
+                productIds.append(PRODUCT_SEPARATOR);
             }
         }
 
-        String promotionName =
-                sale.getAppliedPromotionName();
+        String promotionName = sale.getAppliedPromotionName();
 
         if (promotionName == null) {
             promotionName = "";
         }
 
         return sale.getDate()
-                + FIELD_SEPARATOR
-                + sale.getCustomer().getIdentification()
-                + FIELD_SEPARATOR
-                + sale.getSeller().getIdentification()
-                + FIELD_SEPARATOR
-                + productIds
-                + FIELD_SEPARATOR
-                + promotionName
-                + FIELD_SEPARATOR
-                + sale.getDiscountAmount()
-                + FIELD_SEPARATOR
-                + sale.getWarrantyAdditionalCost();
+                + FIELD_SEPARATOR + sale.getCustomer().getIdentification()
+                + FIELD_SEPARATOR + sale.getSeller().getIdentification()
+                + FIELD_SEPARATOR + productIds
+                + FIELD_SEPARATOR + promotionName
+                + FIELD_SEPARATOR + sale.getDiscountAmount()
+                + FIELD_SEPARATOR + sale.getWarrantyAdditionalCost();
     }
 
     /**
-     * Parses a persisted sale.
-     *
-     * <p>Legacy four-field records and previous six-field records
-     * are also supported.</p>
+     * Parses a persisted sale. Legacy four-field and previous six-field records
+     * remain supported.
      *
      * @param line persisted sale line
      * @return reconstructed sale
      */
     private Sale parseLine(String line) {
-
-        String[] fields =
-                line.split(FIELD_SEPARATOR, -1);
+        String[] fields = line.split(FIELD_SEPARATOR, -1);
 
         if (fields.length != 4
                 && fields.length != 6
                 && fields.length != 7) {
 
-            throw new IllegalStateException(
-                    "Expected 4, 6 or 7 fields, found "
-                            + fields.length
+            throw new IllegalArgumentException(
+                    "Expected 4, 6 or 7 fields, found " + fields.length
             );
         }
 
-        LocalDate date =
-                LocalDate.parse(fields[0]);
+        LocalDate date = LocalDate.parse(fields[0]);
+        Customer customer = findCustomerById(fields[1]);
+        Seller seller = findSellerById(fields[2]);
 
-        Customer customer =
-                findCustomerById(fields[1]);
+        List<Product> products = new ArrayList<>();
 
-        Seller seller =
-                findSellerById(fields[2]);
-
-        List<Product> products =
-                new ArrayList<>();
-
-        for (String productId :
-                fields[3].split(PRODUCT_SEPARATOR)) {
-
-            products.add(
-                    findItemById(productId)
-            );
+        for (String productId : fields[3].split(PRODUCT_SEPARATOR)) {
+            products.add(findItemById(productId));
         }
 
-        Sale sale =
-                new Sale(
-                        date,
-                        customer,
-                        seller,
-                        products
-                );
+        Sale sale = new Sale(date, customer, seller, products);
 
-        if (fields.length == 6
-                || fields.length == 7) {
-
-            String promotionName =
-                    fields[4].trim();
+        if (fields.length == 6 || fields.length == 7) {
+            String promotionName = fields[4].trim();
 
             if (!promotionName.isBlank()) {
-                sale.setAppliedPromotionName(
-                        promotionName
-                );
+                sale.setAppliedPromotionName(promotionName);
             }
 
-            double discountAmount =
-                    Double.parseDouble(
-                            fields[5].trim()
-                    );
-
-            sale.setDiscountAmount(
-                    discountAmount
-            );
+            sale.setDiscountAmount(Double.parseDouble(fields[5].trim()));
         }
 
         if (fields.length == 7) {
-
-            double warrantyAdditionalCost =
-                    Double.parseDouble(
-                            fields[6].trim()
-                    );
-
             sale.setWarrantyAdditionalCost(
-                    warrantyAdditionalCost
+                    Double.parseDouble(fields[6].trim())
             );
         }
 
@@ -292,20 +235,13 @@ public class SaleRepository {
      * @return matching customer
      */
     private Customer findCustomerById(String id) {
+        Customer customer = customerLookup.apply(id);
 
-        for (Customer customer :
-                personRepository.loadCustomers()) {
-
-            if (customer.getIdentification()
-                    .equals(id)) {
-
-                return customer;
-            }
+        if (customer != null) {
+            return customer;
         }
 
-        throw new IllegalStateException(
-                "Customer not found for id: " + id
-        );
+        throw new ResourceNotFoundException("customer", id);
     }
 
     /**
@@ -315,60 +251,28 @@ public class SaleRepository {
      * @return matching seller
      */
     private Seller findSellerById(String id) {
+        Seller seller = sellerLookup.apply(id);
 
-        for (Seller seller :
-                personRepository.loadSellers()) {
-
-            if (seller.getIdentification()
-                    .equals(id)) {
-
-                return seller;
-            }
+        if (seller != null) {
+            return seller;
         }
 
-        throw new IllegalStateException(
-                "Seller not found for id: " + id
-        );
+        throw new ResourceNotFoundException("seller", id);
     }
 
     /**
      * Finds a product or accessory by identifier.
      *
      * @param id product or accessory identifier
-     * @return matching product or accessory
+     * @return matching item
      */
     private Product findItemById(String id) {
+        Product item = itemLookup.apply(id);
 
-        try {
-
-            for (Product product :
-                    productRepository.loadProducts()) {
-
-                if (product.getIdentifier()
-                        .equals(id)) {
-
-                    return product;
-                }
-            }
-
-        } catch (IOException | ClassNotFoundException e) {
-
-            throw new IllegalStateException(
-                    "Unable to load products from file",
-                    e
-            );
+        if (item != null) {
+            return item;
         }
 
-        Product accessory =
-                accessoryRepository.findByIdentifier(id);
-
-        if (accessory != null) {
-            return accessory;
-        }
-
-        throw new IllegalStateException(
-                "Product or accessory not found for id: "
-                        + id
-        );
+        throw new ResourceNotFoundException("product or accessory", id);
     }
 }

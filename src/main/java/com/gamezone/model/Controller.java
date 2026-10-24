@@ -61,4 +61,14 @@ public class Controller extends Accessory {
         return "Controller: " + getTitle()
                 + ", connection: " + connectionType;
     }
+
+    /**
+     * Returns the specific type of this accessory.
+     *
+     * @return CONTROLLER
+     */
+    @Override
+    public String getAccessoryType() {
+        return "CONTROLLER";
+    }
 }

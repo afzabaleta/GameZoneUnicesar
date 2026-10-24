@@ -5,6 +5,11 @@ package com.gamezone.model;
  */
 
 public class VideoGame extends Product {
+    /**
+     * Keeps compatibility with the products already stored in
+     * data/products.dat.
+     */
+    private static final long serialVersionUID = -8106202674100902441L;
 
     /**
      * Platform where the video game can be played.
@@ -59,6 +64,15 @@ public class VideoGame extends Product {
                 + " Platform: " + platform
                 + " Genre: " + genre
                 + " Rating: " + ageRating;
+    }
+    /**
+     * Returns the category of video games.
+     *
+     * @return VIDEOGAME
+     */
+    @Override
+    public String getCategory() {
+        return "VIDEOGAME";
     }
 
 }

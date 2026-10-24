@@ -140,3 +140,36 @@
 ## Final Reflection
 
 AI was used as a support tool to review the people model, persistence, validation, service logic, repository dependencies, and return integration. The final implementation decisions were made by the student and verified through project testing.
+---
+
+## Requirement 7 - GRASP Audit and Correction
+
+### Phase 1 - Audit
+
+**Date:** 2026-10-17  
+**Tool:** Claude (Anthropic)  
+**Branch:** `feature/grasp-audit`
+
+**Purpose:** Audit the people module, the accessory, promotion, return and warranty repositories and services, and the Requirement 6 use of exceptions and validators against the nine GRASP patterns, and draft `developer2-audit.md` and the answer to question 4 of `grasp-analysis.md`.
+
+**AI query:** Shared the repository at `develop` (commit `81ea350`) and the Requirement 7 statement, and asked for a review of the code under my responsibility against the nine GRASP patterns, with evidence (class, method, lines), consequence and proposed solution for each violation.
+
+**AI response summary:** The assistant reviewed the code and drafted the report in English with a verdict for each pattern, the violations with their evidence and proposed fixes, and the accepted trade-offs.
+
+**Student decision:** I opened every class cited, confirmed the evidence lines, and agreed with the Technical Lead the split of the boundary findings that involve my classes (V-01, V-02, V-03, V-04, V-06, V-07, V-10, V-11, V-17).
+
+### Phase 2 - GRASP Corrections
+
+**Date:** 2026-10-20  
+**Tool:** ChatGPT (OpenAI)  
+**Branch:** `feature/grasp-refactor`
+
+**Purpose:** Implement the assigned GRASP corrections for V-01, V-02, V-03, V-04, V-06, V-07, V-10, V-11, V-12 and V-17.
+
+**AI query:** Requested a review of the assigned classes and guidance to apply the GRASP corrections while preserving existing behavior, validation rules, exception messages and data persistence.
+
+**AI response summary:** The assistance covered moving customer and seller lookups into `PersonService`, extracting accessory validation into `AccessoryValidator`, using polymorphism for accessory types and warranty eligibility, centralizing category validation, using `Sale.getReference()`, delegating monthly sales calculations to `SaleService`, removing duplicated sale validation, delegating inventory operations to `InventoryService`, and separating return persistence through `ReturnRecord`.
+
+**Student decision:** I reviewed and applied the proposed changes, documented the corrections in `docs/grasp-refactor-log.md`, and ran `mvn clean test` successfully using Java 23. I also ran the ten regression scenarios and compared their output with the baseline, finding no content differences after normalizing line endings. I committed and pushed the code changes to `feature/grasp-refactor`.
+
+**Verification:** `mvn clean test` — `BUILD SUCCESS`. All ten regression outputs matched the baseline after line-ending normalization.

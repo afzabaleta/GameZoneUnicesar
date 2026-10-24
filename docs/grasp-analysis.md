@@ -1,0 +1,185 @@
+# GRASP Analysis - Requirement 7
+
+Answers to the five guiding questions of the GRASP audit and correction.
+The audit is in `docs/grasp-audit/`. The correction log and the
+non-regression evidence are in `docs/grasp-refactor-log.md`.
+
+Authors:
+
+- Questions 1 and 3: Sherly Michell Corrales Maestre (Developer 1).
+- Questions 2 and 5: Andres Felipe Zabaleta Diaz (Technical Lead).
+- Question 4: Diego Armando Mestre Gomez (Developer 2); revised by the
+  Technical Lead during the consolidation.
+
+---
+
+## 1. Verdict criterion and minimum evidence
+
+*What criterion did the team use to decide between violation, correct and
+not applicable? What minimum evidence must support a verdict?*
+
+For each pattern we asked the question that defines it (who has the
+information, who should create, who receives the event, and so on) about
+the concrete classes in our scope.
+
+- **Violation:** the code gives a responsibility to a class that the
+  pattern says should not have it, **and** we can name a concrete problem
+  it causes today or under a foreseeable change (new product type, new sale
+  identifier, new message). If we could not describe a consequence, it was
+  not registered as a violation.
+- **Correct:** the pattern has an application point in our code and the
+  code follows it. We had to point to the class and method where it is
+  applied well.
+- **Not applicable:** the pattern has no application point in the audited
+  classes. For example, a class that receives no system events cannot
+  violate Controller. We had to explain why there is no application point.
+
+We also agreed on **accepted trade-offs**. When following one pattern would
+break a more important rule of the project, the code is not a violation,
+but the report explains the decision. Example: `instanceof` inside the
+`toCsv` methods of the repositories, because moving file-column mapping
+into the model would break the layer rules.
+
+**Minimum evidence for a violation:** class, method and line numbers at the
+audited commit (`81ea350`), the fragment or a precise description of it,
+why it breaks the pattern, the consequence, the proposed fix with the
+pattern applied, and whether another member's code is involved. A verdict
+of "correct" needs at least one class and method where the pattern is
+applied. A verdict of "not applicable" needs the reason.
+
+## 2. Boundary findings
+
+*Some violations appear at the boundary between the code of two members.
+Which findings of this kind did the team identify? How were they recorded
+in the consolidation and who was assigned their correction?*
+
+A boundary finding is one where the problem, or its fix, involves code of
+more than one member. We found **11** of them; all are listed in section 5
+of the consolidated audit. They appeared in two ways.
+
+1. **Reported from both sides.** `SaleService` and `GameZoneUI` (Technical
+   Lead) and `ReturnService` (Developer 2) all decide with
+   `instanceof Accessory` where an item is stored. The leader registered it
+   as `leader-audit V-06` and Developer 2 as `developer2-audit V-05`. In the
+   consolidation they became a single violation, **V-02**, because the fix
+   is one new class (`InventoryService`) used by all of them. The warranty
+   rule written as `instanceof Console` in three classes (**V-03**) was
+   unified the same way.
+2. **The fix needs another member's class.** Developer 2 found that the sale
+   reference (`sale.getDate().toString()`) is rebuilt in eight places of his
+   classes (**V-04**). The information belongs to `Sale`, which is the
+   leader's class.
+
+**How we recorded them:** one entry in the definitive list, with the origin
+report(s) and every member who has a part, plus the "Boundary findings"
+section that explains the split.
+
+**Who corrects:** each member changes only their own classes. The owner of
+the class that must provide the new method (the *provider*) commits first,
+and the member who uses it (the *consumer*) commits after. In V-04, the
+leader adds `Sale.getReference()` and then Developer 2 replaces the eight
+usages. New classes are created by the owner of the violation that
+originates them (`InventoryService` by the leader for V-02).
+
+## 3. Fragments that break more than one pattern
+
+*Did the team find fragments that break more than one pattern at the same
+time? How were they registered without duplicating findings, and how was
+the guiding pattern chosen?*
+
+Yes. The clearest case is `CategoryDiscount.calculateDiscount`. Its
+`instanceof VideoGame/Console/Accessory` chain is a conditional on type
+(Polymorphism), and it also leaves the "kinds of product" variation point
+unprotected (Protected Variations). Other examples:
+
+- `ReturnService.calculateMonthlySales`: Information Expert and High
+  Cohesion.
+- `AccessoryService.validateAccessory`: Pure Fabrication and High Cohesion.
+
+**Rule to avoid duplicates:** each fragment is registered **once**, under
+the pattern that guides its fix. The section of the other pattern gives a
+verdict and references the ID ("Violation - see V-02"). The consolidated
+table shows those as *referenced*.
+
+**How we chose the guiding pattern:** we asked "which pattern tells us what
+the new design is?"
+
+- For `CategoryDiscount`, the fix is to ask the product polymorphically
+  (`Product.getCategory()`), so Polymorphism guides it. Protected
+  Variations is the benefit, not the mechanism.
+- For the monthly sales total, the fix is to move the calculation to
+  whoever has the sales, so Information Expert guides it.
+- For the accessory validation, the fix is a new fabricated validator, so
+  Pure Fabrication guides it.
+
+
+## 4. Preserving external behaviour
+
+*The correction must preserve the external behaviour of the system. What
+strategy does the team follow to guarantee that every menu operation still
+works the same? What evidence is shown at the end?*
+
+The strategy is a **black-box comparison of the console output and of the
+data files, before and after** the corrections.
+
+1. **Fixed data set.** Each run starts from a copy of the `data/` folder of
+   `develop`, so every run begins in the same state.
+2. **Scripted input.** The 31 menu operations (Products 3, Accessories 6,
+   People 3, Sales 4, Promotions 6, Returns 5, Warranties 4) are covered by
+   input scripts stored in `docs/regression/`. They include valid data and,
+   for the operations that validate input, invalid cases (blank identifier,
+   non-numeric price, unknown customer, wrong date format, invalid category,
+   and so on). The program is run with the script as standard input.
+3. **What we compare.** The console output and the content of every file in
+   `data/` after the run, against the baseline taken on `develop` before the
+   first correction.
+4. **Values that change on every run.** The return identifier
+   `RET-<milliseconds>`, the warranty identifiers `WAR-...-<uuid>` and the
+   object reference printed in the return receipt are replaced with fixed
+   placeholders before comparing. The baseline and the final run are made
+   on the same day, so the sale dates match.
+5. **When it runs.** Once on `develop` before the first correction
+   (reference result), in each Phase 2 Pull Request on the operations its
+   violations affect, and at the end over all 31 operations.
+
+**Evidence:** `docs/grasp-refactor-log.md` records the strategy, the list of
+scripts, the result of the initial run, the result of the final run (no
+differences in any operation) and the result of `mvn clean compile`. The
+same scripts are run live in the oral defence.
+
+## 5. Correction order and coordination
+
+*In which order are the violations corrected and why? When the correction
+of a violation involves code of more than one member, how is the work
+coordinated to avoid conflicts on the shared branch?*
+
+**Order:** provider before consumer, and lower layers before upper layers
+(model, validation, persistence, service, ui, `Main`). A consumer cannot
+call a method that does not exist yet, and adding a method to a lower layer
+does not break anything that already compiles, so every turn stays
+compilable and testable. The large UI split (V-15) goes last because it
+touches the file with the most call sites; doing it earlier would create
+conflicts with every other UI change.
+
+- **Turn 0 - Andres:** "before" diagram, non-regression baseline, provider
+  methods in `Sale` and `SaleService`, new `InventoryService`.
+- **Turn 1 - Sherly:** V-09, V-13 and the providers in `Product`,
+  `Console`, `Accessory`, `CategoryDiscount`, `ProductService` and
+  `SaleValidator`, then V-05 in `Return`.
+- **Turn 2 - Diego:** `PersonService` finders, V-12 and the consumer parts
+  in his services and repositories; Andres commits the `Main` wiring right
+  after V-01 and V-02.
+- **Turn 3 - Andres:** consumer parts in `SaleService` and the UI, V-14,
+  V-16, V-15, "after" diagram, final verification and README.
+
+**Coordination on the shared branch:**
+
+- Everyone works on `feature/grasp-refactor` in turns. Only one member
+  pushes at a time, so each Pull Request contains the commits of one turn.
+- Everyone runs `git pull` before starting a turn.
+- Each commit is pushed immediately and mentions the violation ID.
+- When a boundary fix needs an immediate change in another member's class
+  to compile (the `Main` wiring in V-01), that member commits right after,
+  inside the same turn, announced in the team chat before the turn starts.
+- Every Pull Request must pass `mvn clean compile` and the regression
+  scripts of its operations before another member approves it.

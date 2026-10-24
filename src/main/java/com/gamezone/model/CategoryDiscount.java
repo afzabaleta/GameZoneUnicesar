@@ -1,3 +1,4 @@
+
 package com.gamezone.model;
 
 import java.time.LocalDate;
@@ -67,12 +68,12 @@ public class CategoryDiscount extends Promotion {
     }
 
     /**
-     * Updates the target category.
+     * Validates that a target category is supported.
      *
-     * @param targetCategory new target category
+     * @param targetCategory category to validate
+     * @throws IllegalArgumentException if the category is invalid
      */
-    public void setTargetCategory(String targetCategory) {
-
+    public static void validateTargetCategory(String targetCategory) {
         if (targetCategory == null
                 || (!targetCategory.equalsIgnoreCase("VIDEOGAME")
                 && !targetCategory.equalsIgnoreCase("CONSOLE")
@@ -82,9 +83,18 @@ public class CategoryDiscount extends Promotion {
                     "Target category must be VIDEOGAME, CONSOLE or ACCESSORY."
             );
         }
+    }
 
-        this.targetCategory =
-                targetCategory.toUpperCase();
+    /**
+     * Updates the target category.
+     *
+     * @param targetCategory new target category
+     */
+
+
+    public void setTargetCategory(String targetCategory) {
+        validateTargetCategory(targetCategory);
+        this.targetCategory = targetCategory.toUpperCase();
     }
 
     /**
@@ -106,27 +116,7 @@ public class CategoryDiscount extends Promotion {
 
         for (Product product : sale.getProducts()) {
 
-            boolean matches = false;
-
-            if ("VIDEOGAME".equals(targetCategory)
-                    && product instanceof VideoGame) {
-
-                matches = true;
-            }
-
-            if ("CONSOLE".equals(targetCategory)
-                    && product instanceof Console) {
-
-                matches = true;
-            }
-
-            if ("ACCESSORY".equals(targetCategory)
-                    && product instanceof Accessory) {
-
-                matches = true;
-            }
-
-            if (matches) {
+            if (targetCategory.equals(product.getCategory())) {
                 categoryTotal += product.getPrice();
             }
         }

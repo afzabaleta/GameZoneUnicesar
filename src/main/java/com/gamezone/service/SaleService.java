@@ -1,176 +1,147 @@
 package com.gamezone.service;
 
-import com.gamezone.model.Accessory;
-import com.gamezone.model.Console;
+import com.gamezone.exceptions.InvalidDataException;
 import com.gamezone.model.Customer;
 import com.gamezone.model.Product;
 import com.gamezone.model.Promotion;
 import com.gamezone.model.Sale;
 import com.gamezone.model.Seller;
 import com.gamezone.persistence.SaleRepository;
+import com.gamezone.validation.SaleValidator;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Provides business operations for registering and querying sales.
  *
- * <p>This service coordinates sale persistence with product and accessory
- * stock validation, inventory updates, promotion application and warranty
- * assignment.</p>
+ * <p>Sale data is delegated to SaleValidator and stock checks and updates
+ * are delegated to InventoryService. The service coordinates inventory,
+ * promotions, warranties and sale persistence.</p>
  */
 public class SaleService {
 
     private final SaleRepository saleRepository;
-    private final ProductService productService;
-    private final AccessoryService accessoryService;
+    private final InventoryService inventoryService;
     private final PromotionService promotionService;
     private final WarrantyService warrantyService;
 
     /**
-     * Creates a SaleService that validates stock, applies promotions,
-     * manages warranties and persists sales through the corresponding
-     * services and repository.
+     * Creates a SaleService using the required collaborators.
      *
      * @param saleRepository repository used to persist and load sales
-     * @param productService service used to check and update product stock
-     * @param accessoryService service used to check and update accessory stock
+     * @param inventoryService service used to check and update the stock of
+     *        products and accessories
      * @param promotionService service used to find applicable promotions
      * @param warrantyService service used to manage product warranties
      */
     public SaleService(
             SaleRepository saleRepository,
-            ProductService productService,
-            AccessoryService accessoryService,
+            InventoryService inventoryService,
             PromotionService promotionService,
             WarrantyService warrantyService) {
 
         if (saleRepository == null) {
-            throw new IllegalArgumentException(
-                    "Sale repository cannot be null."
-            );
+            throw new InvalidDataException(
+                    "saleRepository", "Sale repository cannot be null");
         }
 
-        if (productService == null) {
-            throw new IllegalArgumentException(
-                    "Product service cannot be null."
-            );
-        }
-
-        if (accessoryService == null) {
-            throw new IllegalArgumentException(
-                    "Accessory service cannot be null."
-            );
+        if (inventoryService == null) {
+            throw new InvalidDataException(
+                    "inventoryService", "Inventory service cannot be null");
         }
 
         if (promotionService == null) {
-            throw new IllegalArgumentException(
-                    "Promotion service cannot be null."
-            );
+            throw new InvalidDataException(
+                    "promotionService", "Promotion service cannot be null");
         }
 
         if (warrantyService == null) {
-            throw new IllegalArgumentException(
-                    "Warranty service cannot be null."
-            );
+            throw new InvalidDataException(
+                    "warrantyService", "Warranty service cannot be null");
         }
 
         this.saleRepository = saleRepository;
-        this.productService = productService;
-        this.accessoryService = accessoryService;
+        this.inventoryService = inventoryService;
         this.promotionService = promotionService;
         this.warrantyService = warrantyService;
     }
 
     /**
+     * Creates a sale dated today and registers it with the unified
+     * integration flow.
+     *
+     * <p>This service records the sales, so it is the creator of each
+     * {@link Sale} (Creator); the user interface only collects the data.</p>
+     *
+     * @param customer customer who buys
+     * @param seller seller who attends the sale
+     * @param items products and accessories sold, one entry per unit
+     * @param productIdsWithExtendedWarranty identifiers of consoles requesting
+     *        extended warranty
+     * @return the registered sale
+     */
+    public Sale registerSale(
+            Customer customer,
+            Seller seller,
+            List<Product> items,
+            List<String> productIdsWithExtendedWarranty) {
+
+        Sale sale = new Sale(
+                LocalDate.now(),
+                customer,
+                seller,
+                items
+        );
+
+        registerSale(sale, productIdsWithExtendedWarranty);
+
+        return sale;
+    }
+
+    /**
      * Registers a sale using the unified integration flow.
      *
-     * <p>The flow validates the sale, validates product and accessory stock,
-     * calculates the subtotal, applies the best promotion, assigns basic
-     * and requested extended warranties, updates inventory and persists
-     * the sale.</p>
-     *
      * @param sale sale to register
-     * @param productIdsWithExtendedWarranty identifiers of consoles
-     *        requesting extended warranty
+     * @param productIdsWithExtendedWarranty identifiers of consoles requesting
+     *        extended warranty
      */
-    public void registerSale(
+    private void registerSale(
             Sale sale,
             List<String> productIdsWithExtendedWarranty) {
 
-        validateSale(sale);
+        if (sale == null) {
+            throw new InvalidDataException(
+                    "sale", "Sale cannot be null");
+        }
+
+        SaleValidator.validateSaleData(
+                sale.getCustomer(),
+                sale.getSeller(),
+                sale.getProducts()
+        );
 
         Set<String> extendedWarrantyIds =
-                normalizeWarrantyProductIds(
-                        productIdsWithExtendedWarranty
-                );
+                normalizeWarrantyProductIds(productIdsWithExtendedWarranty);
 
-        Map<String, Integer> productQuantities =
-                countProductQuantities(
-                        sale.getProducts()
-                );
+        inventoryService.validateStock(sale.getProducts());
 
-        Map<String, Integer> accessoryQuantities =
-                countAccessoryQuantities(
-                        sale.getProducts()
-                );
-
-        List<Product> availableProducts =
-                productService.listProducts();
-
-        List<Accessory> availableAccessories =
-                accessoryService.listAccessories();
-
-        validateProductStock(
-                productQuantities,
-                availableProducts
-        );
-
-        validateAccessoryStock(
-                accessoryQuantities,
-                availableAccessories
-        );
-
-        // Select the best applicable promotion using the subtotal.
         applyBestPromotion(sale);
+        assignWarranties(sale, extendedWarrantyIds);
 
-        // Assign basic warranties and requested extended warranties.
-        assignWarranties(
-                sale,
-                extendedWarrantyIds
-        );
+        inventoryService.decreaseStock(sale.getProducts());
 
-        // Update inventory only after all validations and calculations succeed.
-        updateProductStock(
-                productQuantities,
-                availableProducts
-        );
-
-        updateAccessoryStock(
-                accessoryQuantities,
-                availableAccessories
-        );
-
-        // Persist the completed sale.
-        List<Sale> sales =
-                saleRepository.loadSales();
-
+        List<Sale> sales = saleRepository.loadSales();
         sales.add(sale);
-
         saleRepository.saveSales(sales);
     }
 
     /**
-     * Assigns the appropriate warranty to each console in the sale.
-     *
-     * <p>Every console receives a basic warranty automatically.
-     * A console whose identifier appears in the extended warranty list
-     * receives an extended warranty instead, and the additional cost
-     * is added to the sale.</p>
+     * Assigns the appropriate warranty to each product of the sale that
+     * has a warranty.
      *
      * @param sale sale associated with the warranties
      * @param extendedWarrantyIds identifiers requesting extended warranty
@@ -182,27 +153,23 @@ public class SaleService {
         double warrantyAdditionalCost = 0.0;
 
         for (Product product : sale.getProducts()) {
-
-            if (!(product instanceof Console)) {
+            if (!product.isWarrantyEligible()) {
                 continue;
             }
 
             if (extendedWarrantyIds.contains(
                     product.getIdentifier().toLowerCase())) {
 
-                double additionalCost =
-                        warrantyService
-                                .assignExtendedWarranty(
-                                        product,
-                                        sale,
-                                        sale.getDate()
-                                )
-                                .getAdditionalCost();
+                double additionalCost = warrantyService
+                        .assignExtendedWarranty(
+                                product,
+                                sale,
+                                sale.getDate()
+                        )
+                        .getAdditionalCost();
 
                 warrantyAdditionalCost += additionalCost;
-
             } else {
-
                 warrantyService.assignBasicWarranty(
                         product,
                         sale,
@@ -211,9 +178,7 @@ public class SaleService {
             }
         }
 
-        sale.setWarrantyAdditionalCost(
-                warrantyAdditionalCost
-        );
+        sale.setWarrantyAdditionalCost(warrantyAdditionalCost);
     }
 
     /**
@@ -232,13 +197,8 @@ public class SaleService {
         }
 
         for (String productId : productIds) {
-
-            if (productId != null
-                    && !productId.isBlank()) {
-
-                normalizedIds.add(
-                        productId.trim().toLowerCase()
-                );
+            if (productId != null && !productId.isBlank()) {
+                normalizedIds.add(productId.trim().toLowerCase());
             }
         }
 
@@ -246,15 +206,12 @@ public class SaleService {
     }
 
     /**
-     * Applies the active promotion that provides the highest
-     * monetary discount to the sale.
+     * Applies the active promotion that provides the highest monetary discount.
      *
      * @param sale sale to evaluate
      */
     private void applyBestPromotion(Sale sale) {
-
-        Promotion promotion =
-                promotionService.findBestPromotionFor(sale);
+        Promotion promotion = promotionService.findBestPromotionFor(sale);
 
         if (promotion == null) {
             sale.setAppliedPromotionName(null);
@@ -262,14 +219,8 @@ public class SaleService {
             return;
         }
 
-        double discount =
-                promotion.calculateDiscount(sale);
-
-        sale.setAppliedPromotionName(
-                promotion.getName()
-        );
-
-        sale.setDiscountAmount(discount);
+        sale.setAppliedPromotionName(promotion.getName());
+        sale.setDiscountAmount(promotion.calculateDiscount(sale));
     }
 
     /**
@@ -294,9 +245,7 @@ public class SaleService {
             Customer customer = sale.getCustomer();
 
             if (customer != null
-                    && customer.getIdentification()
-                    .equals(customerId)) {
-
+                    && customer.getIdentification().equals(customerId)) {
                 result.add(sale);
             }
         }
@@ -317,9 +266,7 @@ public class SaleService {
             Seller seller = sale.getSeller();
 
             if (seller != null
-                    && seller.getIdentification()
-                    .equals(sellerId)) {
-
+                    && seller.getIdentification().equals(sellerId)) {
                 result.add(sale);
             }
         }
@@ -328,282 +275,40 @@ public class SaleService {
     }
 
     /**
-     * Validates the basic sale rules.
+     * Finds a sale by its reference.
      *
-     * @param sale sale to validate
+     * @param reference sale reference, as returned by {@link Sale#getReference()}
+     * @return the first sale with that reference, or null if none exists
      */
-    private void validateSale(Sale sale) {
-
-        if (sale == null) {
-            throw new IllegalArgumentException(
-                    "Sale cannot be null."
-            );
-        }
-
-        if (sale.getProducts() == null
-                || sale.getProducts().isEmpty()) {
-
-            throw new IllegalArgumentException(
-                    "A sale must contain at least one product."
-            );
-        }
-
-        for (Product product : sale.getProducts()) {
-
-            if (product == null
-                    || product.getIdentifier() == null
-                    || product.getIdentifier().isBlank()) {
-
-                throw new IllegalArgumentException(
-                        "Every sale item must have a valid identifier."
-                );
+    public Sale findSaleByReference(String reference) {
+        for (Sale sale : saleRepository.loadSales()) {
+            if (sale.getReference().equals(reference)) {
+                return sale;
             }
         }
+
+        return null;
     }
 
     /**
-     * Counts only regular products included in the sale.
+     * Calculates the total of the sales registered in a month.
      *
-     * @param products sale items
-     * @return requested quantities grouped by identifier
+     * <p>The caller validates the month and the year.</p>
+     *
+     * @param month month to calculate, from 1 to 12
+     * @param year year to calculate
+     * @return sum of the final totals of the sales of that month
      */
-    private Map<String, Integer> countProductQuantities(
-            List<Product> products) {
+    public double calculateMonthlySales(int month, int year) {
+        double salesTotal = 0.0;
 
-        Map<String, Integer> counts = new HashMap<>();
-
-        for (Product product : products) {
-
-            if (!(product instanceof Accessory)) {
-
-                counts.merge(
-                        product.getIdentifier(),
-                        1,
-                        Integer::sum
-                );
+        for (Sale sale : saleRepository.loadSales()) {
+            if (sale.getDate().getMonthValue() == month
+                    && sale.getDate().getYear() == year) {
+                salesTotal += sale.calculateTotal();
             }
         }
 
-        return counts;
-    }
-
-    /**
-     * Counts only accessories included in the sale.
-     *
-     * @param products sale items
-     * @return requested accessory quantities grouped by identifier
-     */
-    private Map<String, Integer> countAccessoryQuantities(
-            List<Product> products) {
-
-        Map<String, Integer> counts = new HashMap<>();
-
-        for (Product product : products) {
-
-            if (product instanceof Accessory) {
-
-                counts.merge(
-                        product.getIdentifier(),
-                        1,
-                        Integer::sum
-                );
-            }
-        }
-
-        return counts;
-    }
-
-    /**
-     * Validates stock for regular products.
-     *
-     * @param requestedQuantities requested product quantities
-     * @param availableProducts available products
-     */
-    private void validateProductStock(
-            Map<String, Integer> requestedQuantities,
-            List<Product> availableProducts) {
-
-        for (Map.Entry<String, Integer> entry
-                : requestedQuantities.entrySet()) {
-
-            Product product =
-                    findProductById(
-                            availableProducts,
-                            entry.getKey()
-                    );
-
-            if (product.getAvailableQuantity() < 0) {
-
-                throw new IllegalStateException(
-                        "Invalid stock for product "
-                                + product.getIdentifier()
-                );
-            }
-
-            if (entry.getValue()
-                    > product.getAvailableQuantity()) {
-
-                throw new IllegalStateException(
-                        "Insufficient stock for product "
-                                + product.getIdentifier()
-                                + ": requested "
-                                + entry.getValue()
-                                + ", available "
-                                + product.getAvailableQuantity()
-                );
-            }
-        }
-    }
-
-    /**
-     * Validates stock for accessories.
-     *
-     * @param requestedQuantities requested accessory quantities
-     * @param availableAccessories available accessories
-     */
-    private void validateAccessoryStock(
-            Map<String, Integer> requestedQuantities,
-            List<Accessory> availableAccessories) {
-
-        for (Map.Entry<String, Integer> entry
-                : requestedQuantities.entrySet()) {
-
-            Accessory accessory =
-                    findAccessoryById(
-                            availableAccessories,
-                            entry.getKey()
-                    );
-
-            if (accessory.getAvailableQuantity() < 0) {
-
-                throw new IllegalStateException(
-                        "Invalid stock for accessory "
-                                + accessory.getIdentifier()
-                );
-            }
-
-            if (entry.getValue()
-                    > accessory.getAvailableQuantity()) {
-
-                throw new IllegalStateException(
-                        "Insufficient stock for accessory "
-                                + accessory.getIdentifier()
-                                + ": requested "
-                                + entry.getValue()
-                                + ", available "
-                                + accessory.getAvailableQuantity()
-                );
-            }
-        }
-    }
-
-    /**
-     * Updates stock for regular products.
-     *
-     * @param requestedQuantities requested product quantities
-     * @param availableProducts available products
-     */
-    private void updateProductStock(
-            Map<String, Integer> requestedQuantities,
-            List<Product> availableProducts) {
-
-        for (Map.Entry<String, Integer> entry
-                : requestedQuantities.entrySet()) {
-
-            Product product =
-                    findProductById(
-                            availableProducts,
-                            entry.getKey()
-                    );
-
-            int remainingStock =
-                    product.getAvailableQuantity()
-                            - entry.getValue();
-
-            productService.updateStock(
-                    entry.getKey(),
-                    remainingStock
-            );
-        }
-    }
-
-    /**
-     * Updates stock for accessories.
-     *
-     * @param requestedQuantities requested accessory quantities
-     * @param availableAccessories available accessories
-     */
-    private void updateAccessoryStock(
-            Map<String, Integer> requestedQuantities,
-            List<Accessory> availableAccessories) {
-
-        for (Map.Entry<String, Integer> entry
-                : requestedQuantities.entrySet()) {
-
-            Accessory accessory =
-                    findAccessoryById(
-                            availableAccessories,
-                            entry.getKey()
-                    );
-
-            int remainingStock =
-                    accessory.getAvailableQuantity()
-                            - entry.getValue();
-
-            accessoryService.updateStock(
-                    entry.getKey(),
-                    remainingStock
-            );
-        }
-    }
-
-    /**
-     * Finds a regular product by identifier.
-     *
-     * @param products products to search
-     * @param identifier product identifier
-     * @return matching product
-     */
-    private Product findProductById(
-            List<Product> products,
-            String identifier) {
-
-        for (Product product : products) {
-
-            if (product.getIdentifier()
-                    .equals(identifier)) {
-
-                return product;
-            }
-        }
-
-        throw new IllegalStateException(
-                "Product not found for id: " + identifier
-        );
-    }
-
-    /**
-     * Finds an accessory by identifier.
-     *
-     * @param accessories accessories to search
-     * @param identifier accessory identifier
-     * @return matching accessory
-     */
-    private Accessory findAccessoryById(
-            List<Accessory> accessories,
-            String identifier) {
-
-        for (Accessory accessory : accessories) {
-
-            if (accessory.getIdentifier()
-                    .equals(identifier)) {
-
-                return accessory;
-            }
-        }
-
-        throw new IllegalStateException(
-                "Accessory not found for id: " + identifier
-        );
+        return salesTotal;
     }
 }

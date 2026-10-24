@@ -89,3 +89,35 @@
 ## Final Reflection
 
 AI was used as a support tool for reviewing architecture, debugging, validating integration, and understanding persistence behavior. The team made the final implementation decisions and tested the application manually through the console.
+
+---
+
+## Requirement 7 - GRASP Audit and Correction
+
+### Phase 1 - Audit
+
+**Date:** 2026-10-18
+**Tool:** ChatGPT (OpenAI)
+**Branch:** `feature/grasp-audit`
+
+**Purpose:** Review and organize the GRASP audit documentation, consolidate findings from the team reports, and prepare the corresponding analysis and coordination sections.
+
+**AI query:** Requested step-by-step guidance to organize the audit documentation, improve the consistency of the findings, identify shared responsibilities, and document the correction order.
+
+**AI response summary:** The AI assistant provided suggestions for structuring the reports, organizing overlapping findings, and improving the documentation. These suggestions were used as a reference when preparing the consolidated audit and the answers to the guiding questions.
+
+**Student decision:** I reviewed the proposed documentation, checked the findings against the available project evidence, discussed corrections with Diego, and made the final decisions regarding the violation owners and correction order.
+
+### Phase 2 - Correction
+
+**Date:** 2026-10-23
+**Tool:** ChatGPT (OpenAI)
+**Branch:** `feature/grasp-refactor`
+
+**Purpose:** Turn 3: correct V-03, V-02, V-14, V-16, V-07, V-08 and V-15; update the class diagram, perform final non-regression verification, update the README and complete the AI usage log.
+
+**AI query:** Asked for step-by-step guidance to apply the assigned GRASP corrections using the provided ZIP files, compile the project, commit and push the changes, update the change log, and complete the final documentation and verification.
+
+**AI response summary:** The assistant guided me through replacing the specified Java files from the provided kit, compiling the project, creating commits for each correction, recording changes in `docs/grasp-refactor-log.md`, updating the after class diagram and README, and running the final regression scripts and baseline comparison.
+
+**Student decision:** I applied the provided files to their corresponding project paths, compiled the project, committed and pushed the corrections, checked the navigation of the seven menus, ran the final regression scripts and compared the results with the baseline. I used the assistant's step-by-step instructions to organize the work and complete the required documentation.

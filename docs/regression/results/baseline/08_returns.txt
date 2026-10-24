@@ -1,0 +1,545 @@
+
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Productos -----
+1. Registrar videojuego
+2. Registrar consola
+3. Listar productos
+4. Volver
+Selecciona una opción: 
+-- Registrar consola --
+Identificador: Título: Precio: Cantidad disponible: Marca: Modelo: Generación: Consola registrada correctamente.
+
+----- Productos -----
+1. Registrar videojuego
+2. Registrar consola
+3. Listar productos
+4. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+-- Registrar venta --
+Identificación del cliente: Identificación del vendedor: 
+===== Productos disponibles =====
+
+-- Productos --
+101 | GTA 6  | $390.0 | stock: 5 | Video Game: GTA 6  Platform: PS 5 Genre: Masculino Rating: 13
+PS5 | PlayStation 5 | $2500.0 | stock: 3 | Console: PlayStation 5 Brand: Sony Model: Slim Generation: 9
+
+===== Accesorios disponibles =====
+
+-- Accesorios --
+ACC001 | Control Pro | $59.99 | stock: 10 | Controller: Control Pro, connection: wireless
+ACC002 | Cable HDMI 2.1 | $14.99 | stock: 25 | Cable: Cable HDMI 2.1, length: 2.0 m, connector: HDMI
+ACC003 | Memory Card 128GB | $29.99 | stock: 15 | Memory: Memory Card 128GB, capacity: 128.0 GB, type: Memory Card
+Identificador del producto o accesorio (vacío para terminar): Agregado: GTA 6  | $390.0
+Identificador del producto o accesorio (vacío para terminar): Agregado: PlayStation 5 | $2500.0
+Identificador del producto o accesorio (vacío para terminar): Agregado: Control Pro | $59.99
+Identificador del producto o accesorio (vacío para terminar): 
+Consola: PlayStation 5 | ID: PS5
+¿Desea agregar garantía extendida? (S/N): Venta registrada correctamente.
+
+===== RECIBO DE VENTA =====
+Fecha: <TODAY>
+Cliente: Andres
+Vendedor: Carlos Rodriguez
+Subtotal: $2949.99
+Promoción aplicada: 15 Percent Discount
+Descuento: $442.4985
+Costo garantías: $250.0
+Total final: $2757.4914999999996
+==========================
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== REGISTRAR DEVOLUCIÓN =====
+Referencia de la venta (YYYY-MM-DD): IDs de los productos a devolver (separados por coma): Motivo de la devolución: 
+Devolución registrada correctamente.
+
+===== RECIBO DE DEVOLUCIÓN =====
+-------------------------------
+Identificador: RET-<ID>
+Fecha devolución: <TODAY>
+Motivo: Defecto
+Venta original: com.gamezone.model.Sale@<HASH>
+
+Productos devueltos:
+- GTA 6 
+  Precio de lista: $390.0
+  Descuento proporcional: $58.5
+  Monto reembolsado: $331.5
+- Control Pro
+  Precio de lista: $59.99
+  Descuento proporcional: $8.9985
+  Monto reembolsado: $50.9915
+
+Reembolso de garantía: $0.0
+Valor devolución: $382.4915
+==============================
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== REGISTRAR DEVOLUCIÓN =====
+Referencia de la venta (YYYY-MM-DD): IDs de los productos a devolver (separados por coma): Motivo de la devolución: 
+Devolución registrada correctamente.
+
+===== RECIBO DE DEVOLUCIÓN =====
+-------------------------------
+Identificador: RET-<ID>
+Fecha devolución: <TODAY>
+Motivo: No funciona
+Venta original: com.gamezone.model.Sale@<HASH>
+
+Productos devueltos:
+- PlayStation 5
+  Precio de lista: $2500.0
+  Descuento proporcional: $375.0
+  Monto reembolsado: $2125.0
+
+Reembolso de garantía: $250.0
+Valor devolución: $2375.0
+==============================
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== REGISTRAR DEVOLUCIÓN =====
+Referencia de la venta (YYYY-MM-DD): IDs de los productos a devolver (separados por coma): Motivo de la devolución: No fue posible registrar la devolución: La venta supera el plazo de 30 dias.
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== REGISTRAR DEVOLUCIÓN =====
+Referencia de la venta (YYYY-MM-DD): IDs de los productos a devolver (separados por coma): Motivo de la devolución: No fue posible registrar la devolución: El producto no pertenece a la venta indicada: ACC003
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== REGISTRAR DEVOLUCIÓN =====
+Referencia de la venta (YYYY-MM-DD): La referencia de la venta no puede estar vacía.
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== REGISTRAR DEVOLUCIÓN =====
+Referencia de la venta (YYYY-MM-DD): IDs de los productos a devolver (separados por coma): Motivo de la devolución: El motivo no puede estar vacío.
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== REGISTRAR DEVOLUCIÓN =====
+Referencia de la venta (YYYY-MM-DD): IDs de los productos a devolver (separados por coma): Motivo de la devolución: No fue posible registrar la devolución: Venta no encontrada: 2099-01-01
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== TODAS LAS DEVOLUCIONES =====
+
+===== RECIBO DE DEVOLUCIÓN =====
+-------------------------------
+Identificador: RET-<ID>
+Fecha devolución: <TODAY>
+Motivo: Defecto
+Venta original: com.gamezone.model.Sale@<HASH>
+
+Productos devueltos:
+- GTA 6 
+  Precio de lista: $390.0
+  Descuento proporcional: $58.5
+  Monto reembolsado: $331.5
+- Control Pro
+  Precio de lista: $59.99
+  Descuento proporcional: $8.9985
+  Monto reembolsado: $50.9915
+
+Reembolso de garantía: $0.0
+Valor devolución: $382.4915
+==============================
+========================================
+
+===== RECIBO DE DEVOLUCIÓN =====
+-------------------------------
+Identificador: RET-<ID>
+Fecha devolución: <TODAY>
+Motivo: No funciona
+Venta original: com.gamezone.model.Sale@<HASH>
+
+Productos devueltos:
+- PlayStation 5
+  Precio de lista: $2500.0
+  Descuento proporcional: $375.0
+  Monto reembolsado: $2125.0
+
+Reembolso de garantía: $250.0
+Valor devolución: $2375.0
+==============================
+========================================
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== DEVOLUCIONES POR CLIENTE =====
+Identificación del cliente: 
+===== RECIBO DE DEVOLUCIÓN =====
+-------------------------------
+Identificador: RET-<ID>
+Fecha devolución: <TODAY>
+Motivo: Defecto
+Venta original: com.gamezone.model.Sale@<HASH>
+
+Productos devueltos:
+- GTA 6 
+  Precio de lista: $390.0
+  Descuento proporcional: $58.5
+  Monto reembolsado: $331.5
+- Control Pro
+  Precio de lista: $59.99
+  Descuento proporcional: $8.9985
+  Monto reembolsado: $50.9915
+
+Reembolso de garantía: $0.0
+Valor devolución: $382.4915
+==============================
+========================================
+
+===== RECIBO DE DEVOLUCIÓN =====
+-------------------------------
+Identificador: RET-<ID>
+Fecha devolución: <TODAY>
+Motivo: No funciona
+Venta original: com.gamezone.model.Sale@<HASH>
+
+Productos devueltos:
+- PlayStation 5
+  Precio de lista: $2500.0
+  Descuento proporcional: $375.0
+  Monto reembolsado: $2125.0
+
+Reembolso de garantía: $250.0
+Valor devolución: $2375.0
+==============================
+========================================
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== DEVOLUCIONES POR CLIENTE =====
+Identificación del cliente: La identificación del cliente no puede estar vacía.
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== DEVOLUCIONES POR VENTA =====
+Referencia de la venta (YYYY-MM-DD): 
+===== RECIBO DE DEVOLUCIÓN =====
+-------------------------------
+Identificador: RET-<ID>
+Fecha devolución: <TODAY>
+Motivo: Defecto
+Venta original: com.gamezone.model.Sale@<HASH>
+
+Productos devueltos:
+- GTA 6 
+  Precio de lista: $390.0
+  Descuento proporcional: $58.5
+  Monto reembolsado: $331.5
+- Control Pro
+  Precio de lista: $59.99
+  Descuento proporcional: $8.9985
+  Monto reembolsado: $50.9915
+
+Reembolso de garantía: $0.0
+Valor devolución: $382.4915
+==============================
+========================================
+
+===== RECIBO DE DEVOLUCIÓN =====
+-------------------------------
+Identificador: RET-<ID>
+Fecha devolución: <TODAY>
+Motivo: No funciona
+Venta original: com.gamezone.model.Sale@<HASH>
+
+Productos devueltos:
+- PlayStation 5
+  Precio de lista: $2500.0
+  Descuento proporcional: $375.0
+  Monto reembolsado: $2125.0
+
+Reembolso de garantía: $250.0
+Valor devolución: $2375.0
+==============================
+========================================
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== DEVOLUCIONES POR VENTA =====
+Referencia de la venta (YYYY-MM-DD): No se encontraron devoluciones.
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== BALANCE MENSUAL =====
+Mes (1-12): Año: 
+===== RESULTADO DEL BALANCE =====
+Total de ventas: $2757.4914999999996
+Total de devoluciones: $2757.4915
+Balance neto: $-4.547473508864641E-13
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== BALANCE MENSUAL =====
+Mes (1-12): Año: No fue posible calcular el balance: Month must be between 1 and 12.
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== BALANCE MENSUAL =====
+Mes (1-12): Año: Los datos ingresados no son válidos: el mes y el año deben ser números enteros.
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Productos -----
+1. Registrar videojuego
+2. Registrar consola
+3. Listar productos
+4. Volver
+Selecciona una opción: 
+-- Productos --
+101 | GTA 6  | $390.0 | stock: 5 | Video Game: GTA 6  Platform: PS 5 Genre: Masculino Rating: 13
+PS5 | PlayStation 5 | $2500.0 | stock: 3 | Console: PlayStation 5 Brand: Sony Model: Slim Generation: 9
+
+----- Productos -----
+1. Registrar videojuego
+2. Registrar consola
+3. Listar productos
+4. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Accesorios -----
+1. Registrar controller
+2. Registrar cable
+3. Registrar memoria
+4. Listar accesorios
+5. Listar accesorios por tipo
+6. Buscar accesorios compatibles con consola
+7. Volver
+Selecciona una opción: 
+-- Accesorios --
+ACC001 | Control Pro | $59.99 | stock: 10 | Controller: Control Pro, connection: wireless
+ACC002 | Cable HDMI 2.1 | $14.99 | stock: 25 | Cable: Cable HDMI 2.1, length: 2.0 m, connector: HDMI
+ACC003 | Memory Card 128GB | $29.99 | stock: 15 | Memory: Memory Card 128GB, capacity: 128.0 GB, type: Memory Card
+
+----- Accesorios -----
+1. Registrar controller
+2. Registrar cable
+3. Registrar memoria
+4. Listar accesorios
+5. Listar accesorios por tipo
+6. Buscar accesorios compatibles con consola
+7. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+===== GESTIÓN DE GARANTÍAS =====
+1. Consultar garantía por producto y venta
+2. Listar todas las garantías
+3. Listar garantías vigentes
+4. Listar garantías próximas a vencer
+5. Volver
+Seleccione una opción: 
+===== TODAS LAS GARANTÍAS =====
+No se encontraron garantías.
+
+===== GESTIÓN DE GARANTÍAS =====
+1. Consultar garantía por producto y venta
+2. Listar todas las garantías
+3. Listar garantías vigentes
+4. Listar garantías próximas a vencer
+5. Volver
+Seleccione una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: Cerrando GameZoneUnicesar. ¡Hasta pronto!
+=== data/accessories.csv
+CONTROLLER|ACC001|Control Pro|59.99|10|wireless|-|
+CABLE|ACC002|Cable HDMI 2.1|14.99|25|2.0|HDMI|
+MEMORY|ACC003|Memory Card 128GB|29.99|15|128.0|Memory Card|
+=== data/customers.txt
+Andres|1080574183|3015838495|zabaletadiaz2907@gmail.com
+=== data/products.dat
+5eeac841c21fb96e7a23781ecf9595ff70c003b5969a22a7171ab8b86b0127aa
+=== data/promotions.csv
+PERCENTAGE|PROMO001|15 Percent Discount|2026-09-01|2026-12-31|15|-|-
+CATEGORY|PROMO002|Video Game Discount|2026-09-01|2026-12-31|20|VIDEOGAME|-
+BULK|PROMO003|Bulk Purchase Discount|2026-09-01|2026-12-31|10|-|3
+CATEGORY|PROMO004|Accessory Discount|2026-09-21|2026-09-26|10|ACCESSORY|-=== data/returns.csv
+RET-<ID>;<TODAY>;<TODAY>;101,ACC001;Defecto;382.4915;0.0
+RET-<ID>;<TODAY>;<TODAY>;PS5;No funciona;2375.0;250.0
+=== data/sales.txt
+2026-09-07;1080574183;1001;101;;0.0;0.0
+<TODAY>;1080574183;1001;101,PS5,ACC001;15 Percent Discount;442.4985;250.0
+=== data/sellers.txt
+Carlos Rodriguez|1001|3001111111|EMP001|Morning
+Laura Martinez|1002|3002222222|EMP002|Afternoon
+Andres Gomez|1003|3003333333|EMP003|Evening
+=== data/warranties.csv

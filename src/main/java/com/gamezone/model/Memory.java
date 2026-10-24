@@ -88,4 +88,9 @@ public class Memory extends Accessory {
                 + ", capacity: " + capacityGB + " GB"
                 + ", type: " + memoryType;
     }
+
+    @Override
+    public String getAccessoryType() {
+        return "MEMORY";
+    }
 }

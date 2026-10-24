@@ -1,0 +1,232 @@
+
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: Opción inválida. Intenta de nuevo.
+
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: Opción inválida. Intenta de nuevo.
+
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Productos -----
+1. Registrar videojuego
+2. Registrar consola
+3. Listar productos
+4. Volver
+Selecciona una opción: Opción inválida. Intenta de nuevo.
+
+----- Productos -----
+1. Registrar videojuego
+2. Registrar consola
+3. Listar productos
+4. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Accesorios -----
+1. Registrar controller
+2. Registrar cable
+3. Registrar memoria
+4. Listar accesorios
+5. Listar accesorios por tipo
+6. Buscar accesorios compatibles con consola
+7. Volver
+Selecciona una opción: Opción inválida. Intenta de nuevo.
+
+----- Accesorios -----
+1. Registrar controller
+2. Registrar cable
+3. Registrar memoria
+4. Listar accesorios
+5. Listar accesorios por tipo
+6. Buscar accesorios compatibles con consola
+7. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Personas -----
+1. Registrar cliente
+2. Listar clientes
+3. Listar vendedores
+4. Volver
+Selecciona una opción: Opción inválida. Intenta de nuevo.
+
+----- Personas -----
+1. Registrar cliente
+2. Listar clientes
+3. Listar vendedores
+4. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: Opción inválida. Intenta de nuevo.
+
+----- Ventas -----
+1. Registrar venta
+2. Listar todas las ventas
+3. Historial de compras de un cliente
+4. Historial de ventas de un vendedor
+5. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: Opción inválida. Intenta de nuevo.
+
+----- Promociones -----
+1. Registrar descuento porcentual
+2. Registrar descuento por categoría
+3. Registrar descuento por volumen
+4. Listar todas las promociones
+5. Listar promociones vigentes
+6. Buscar promoción por identificador
+7. Volver
+Selecciona una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: Opción inválida.
+
+===== GESTIÓN DE DEVOLUCIONES =====
+1. Registrar nueva devolución
+2. Consultar todas las devoluciones
+3. Consultar devoluciones por cliente
+4. Consultar devoluciones por venta
+5. Consultar balance mensual
+6. Volver
+Seleccione una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: 
+===== GESTIÓN DE GARANTÍAS =====
+1. Consultar garantía por producto y venta
+2. Listar todas las garantías
+3. Listar garantías vigentes
+4. Listar garantías próximas a vencer
+5. Volver
+Seleccione una opción: Opción inválida.
+
+===== GESTIÓN DE GARANTÍAS =====
+1. Consultar garantía por producto y venta
+2. Listar todas las garantías
+3. Listar garantías vigentes
+4. Listar garantías próximas a vencer
+5. Volver
+Seleccione una opción: 
+===== GameZoneUnicesar =====
+1. Productos
+2. Accesorios
+3. Personas
+4. Ventas
+5. Promociones
+6. Devoluciones
+7. Garantías
+8. Salir
+Selecciona una opción: Cerrando GameZoneUnicesar. ¡Hasta pronto!
+=== data/accessories.csv
+CONTROLLER|ACC001|Control Pro|59.99|10|wireless|-|PS5,XBOX_SERIES
+CABLE|ACC002|Cable HDMI 2.1|14.99|25|2.0|HDMI|PS5,XBOX_SERIES,NINTENDO_SWITCH
+MEMORY|ACC003|Memory Card 128GB|29.99|15|128|Memory Card|NINTENDO_SWITCH
+=== data/customers.txt
+Andres|1080574183|3015838495|zabaletadiaz2907@gmail.com
+=== data/products.dat
+aeabae0cde6c234833ebb1f8e50464a6964aa1e92752e3e3140de25aa91ca51a
+=== data/promotions.csv
+PERCENTAGE|PROMO001|15 Percent Discount|2026-09-01|2026-12-31|15|-|-
+CATEGORY|PROMO002|Video Game Discount|2026-09-01|2026-12-31|20|VIDEOGAME|-
+BULK|PROMO003|Bulk Purchase Discount|2026-09-01|2026-12-31|10|-|3
+CATEGORY|PROMO004|Accessory Discount|2026-09-21|2026-09-26|10|ACCESSORY|-=== data/sales.txt
+2026-09-07;1080574183;1001;101
+=== data/sellers.txt
+Carlos Rodriguez|1001|3001111111|EMP001|Morning
+Laura Martinez|1002|3002222222|EMP002|Afternoon
+Andres Gomez|1003|3003333333|EMP003|Evening

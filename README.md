@@ -197,10 +197,13 @@ El sistema está organizado en cuatro capas:
 
 ### UI
 
-Gestiona la interacción con el usuario mediante el menú de consola.
-
 La interfaz delega las operaciones a la capa de servicios y no accede
 directamente a los repositorios.
+
+`GameZoneUI` muestra el menú principal y cada módulo tiene su propio menú:
+`ProductMenu`, `AccessoryMenu`, `PersonMenu`, `SaleMenu`, `PromotionMenu`,
+`ReturnMenu` y `WarrantyMenu`. Los mensajes de error se muestran desde
+`ConsoleErrorHandler`.
 
 ### Service
 
@@ -323,14 +326,134 @@ GameZoneUnicesar/
 │       └── java/
 │           └── com/
 │               └── gamezone/
+│                   ├── exceptions/
 │                   ├── model/
 │                   ├── persistence/
 │                   ├── service/
 │                   ├── ui/
+│                   ├── validation/
 │                   └── Main.java
 ├── pom.xml
 └── README.md
 ```
+## Exception Handling and Validation
+
+The GameZone Unicesar system includes a dedicated exception-handling
+and validation layer to improve error management and maintainability.
+
+### Custom Exceptions
+
+The package `com.gamezone.exceptions` contains the following classes:
+
+- `GameZoneException`: root exception for application errors.
+- `ResourceNotFoundException`: represents resources that cannot be found.
+- `BusinessRuleException`: represents violations of business rules.
+- `InvalidDataException`: represents invalid input data.
+- `PersistenceException`: represents errors when reading or writing files.
+
+The custom exception hierarchy allows the application to distinguish
+between different categories of errors.
+
+### Validation Layer
+
+The package `com.gamezone.validation` contains:
+
+- `ProductValidator`: validates product information and stock availability.
+- `PersonValidator`: validates person information and identifier uniqueness.
+- `SaleValidator`: validates sale information and required references.
+
+The services use these validators to separate validation responsibilities
+from the main business logic.
+
+### Error Handling
+
+The menus of the `ui` package catch the custom exceptions and the
+`ConsoleErrorHandler` class shows a different message to users according
+to the type of error.
+
+The application distinguishes between:
+
+- Missing resources.
+- Business rule violations.
+- Invalid input data.
+- Persistence failures.
+
+User-facing error messages are displayed in Spanish.
+
+### Related Documentation
+
+The following documents describe the design and implementation:
+
+- `docs/exception-analysis.md`
+- `docs/exception-class-diagram.md`
+
+## Requirement 7 - GRASP Audit and Correction
+
+This requirement does not add menu operations. The team audited the code
+against the nine GRASP patterns (Phase 1) and corrected the violations
+found, without changing what the users see (Phase 2).
+
+### Phase 1 - Audit
+
+- Individual reports: `docs/grasp-audit/leader-audit.md`,
+  `docs/grasp-audit/developer1-audit.md` and
+  `docs/grasp-audit/developer2-audit.md`.
+- Consolidated audit: `docs/grasp-audit/consolidated-audit.md`, with the
+  coverage of the 43 classes, the team verdict for each pattern, the 17
+  definitive violations (V-01 to V-17), the boundary findings and five
+  out-of-scope functional defects (OOS-01 to OOS-05).
+- Guiding questions: `docs/grasp-analysis.md`.
+
+### Phase 2 - Design changes
+
+- **Polymorphism:** `Product.getCategory()`, `Product.isWarrantyEligible()`
+  and `Accessory.getAccessoryType()` replace the `instanceof` checks
+  (V-03, V-09, V-10).
+- **Information Expert:** `Sale` gives its reference and its discount share
+  (V-04, V-05); `SaleService.calculateMonthlySales` (V-06);
+  `PersonService.findCustomerById/findSellerById` (V-07);
+  `ProductService.listConsoles` (V-08);
+  `CategoryDiscount.validateTargetCategory` (V-11).
+- **Pure Fabrication:** `InventoryService` keeps the only product/accessory
+  decision (V-02); `AccessoryValidator` (V-12); the blank identifier rule
+  lives in `SaleValidator` (V-17); `ConsoleErrorHandler` shows the domain
+  error messages (V-15).
+- **Creator:** `SaleService` creates each `Sale` (V-14).
+- **Low Coupling and Indirection:** `ReturnRepository` reads and writes a
+  `ReturnRecord` and no longer depends on services (V-01);
+  `SaleRepository` receives lookup functions instead of three repositories
+  (V-16).
+- **High Cohesion:** the console UI is split into one menu per module;
+  `GameZoneUI` keeps only the main menu (V-15).
+- **Protected Variations:** one `ProductService.registerProduct(Product)`
+  for every kind of product (V-13).
+
+New classes: `service.InventoryService`, `validation.AccessoryValidator`,
+`persistence.ReturnRecord`, `ui.ConsoleErrorHandler`, `ui.ProductMenu`,
+`ui.AccessoryMenu`, `ui.PersonMenu`, `ui.SaleMenu`, `ui.PromotionMenu`,
+`ui.ReturnMenu` and `ui.WarrantyMenu`.
+
+### Non-regression
+
+`docs/regression/` contains one input script per menu area, a copy of the
+initial data and a runner. From Git Bash, after `mvn clean compile`:
+
+```bash
+bash docs/regression/run-regression.sh <label>
+git diff --no-index --stat docs/regression/results/baseline docs/regression/results/<label>
+```
+
+The baseline (before Phase 2) and the final run are identical. The
+strategy and the results are in `docs/grasp-refactor-log.md`.
+
+### Related documentation
+
+- `docs/grasp-class-diagram.md`: class diagrams before and after.
+- `docs/grasp-refactor-log.md`: one row per change, with violation,
+  pattern, commit, Pull Request and member.
+- `docs/ai-usage/`: AI usage log of each member, Phase 1 and Phase 2.
+
+
 
 ## Integrantes
 

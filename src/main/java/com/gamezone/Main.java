@@ -1,20 +1,22 @@
+
 package com.gamezone;
 
 import com.gamezone.persistence.AccessoryRepository;
 import com.gamezone.persistence.PersonRepository;
 import com.gamezone.persistence.ProductRepository;
 import com.gamezone.persistence.PromotionRepository;
+import com.gamezone.persistence.ReturnRepository;
 import com.gamezone.persistence.SaleRepository;
 import com.gamezone.persistence.WarrantyRepository;
-import com.gamezone.persistence.ReturnRepository;
 
 import com.gamezone.service.AccessoryService;
+import com.gamezone.service.InventoryService;
 import com.gamezone.service.PersonService;
 import com.gamezone.service.ProductService;
 import com.gamezone.service.PromotionService;
+import com.gamezone.service.ReturnService;
 import com.gamezone.service.SaleService;
 import com.gamezone.service.WarrantyService;
-import com.gamezone.service.ReturnService;
 
 import com.gamezone.ui.GameZoneUI;
 
@@ -47,13 +49,6 @@ public class Main {
         PromotionRepository promotionRepository =
                 new PromotionRepository();
 
-        SaleRepository saleRepository =
-                new SaleRepository(
-                        personRepository,
-                        productRepository,
-                        accessoryRepository
-                );
-
         PersonService personService =
                 new PersonService(
                         personRepository
@@ -67,6 +62,19 @@ public class Main {
         AccessoryService accessoryService =
                 new AccessoryService(
                         accessoryRepository
+                );
+
+        InventoryService inventoryService =
+                new InventoryService(
+                        productService,
+                        accessoryService
+                );
+
+        SaleRepository saleRepository =
+                new SaleRepository(
+                        personService::findCustomerById,
+                        personService::findSellerById,
+                        inventoryService::findItem
                 );
 
         PromotionService promotionService =
@@ -87,25 +95,19 @@ public class Main {
         SaleService saleService =
                 new SaleService(
                         saleRepository,
-                        productService,
-                        accessoryService,
+                        inventoryService,
                         promotionService,
                         warrantyService
                 );
 
         ReturnRepository returnRepository =
-                new ReturnRepository(
-                        saleService,
-                        productService,
-                        accessoryService
-                );
+                new ReturnRepository();
 
         ReturnService returnService =
                 new ReturnService(
                         returnRepository,
                         saleService,
-                        productService,
-                        accessoryService,
+                        inventoryService,
                         warrantyService
                 );
 
@@ -114,6 +116,7 @@ public class Main {
                         personService,
                         productService,
                         accessoryService,
+                        inventoryService,
                         saleService,
                         promotionService,
                         returnService,

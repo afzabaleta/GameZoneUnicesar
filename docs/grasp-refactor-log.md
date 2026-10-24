@@ -68,10 +68,25 @@ month.
 - **Result:** BUILD SUCCESS. The 10 scripts ran to the end of the menu
   ("Cerrando GameZoneUnicesar") with no exceptions. The results are stored
   in `docs/regression/results/baseline/`.
-  
+
 ### 2.2 Final verification
 
-Recorded by the Technical Lead at the end of Phase 2.
+- **Branch / commit:** `feature/grasp-refactor` @ f3b0727 (after the last
+  correction of Phase 2, V-15)
+- **Command:** `mvn clean compile`, then
+  `bash docs/regression/run-regression.sh final` and
+  `git diff --no-index --stat docs/regression/results/baseline docs/regression/results/final`
+- **Result:** BUILD SUCCESS. The 10 scripts (31 menu operations) ran to
+  the end of the menu. The comparison with the baseline shows **no
+  differences**: same console output, same messages and same content in
+  every data file (`products.dat` keeps the same SHA-256 hash). The results
+  are stored in `docs/regression/results/final/`.
+- **Locale:** the runner starts Java with
+  `-Duser.language=es -Duser.country=CO`, so the decimal format of the
+  warranty certificate is the same on every computer.
+- **Coverage of the change log:** the 17 violations of the consolidated
+  audit (V-01 to V-17) appear in section 3. No violation was moved to the
+  out-of-scope findings.
 
 ## 3. Change log
 
@@ -115,4 +130,20 @@ Recorded by the Technical Lead at the end of Phase 2.
 | ReturnRepository | Reads and writes ReturnRecord; no service dependencies | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | ReturnService | Builds each Return through SaleService and InventoryService | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
 | Main | Creates ReturnRepository without services | V-01 | Low Coupling | 6a7768a (PR #45) | Diego |
-| WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert | | 200538f (PR #45) | Andres |
+| WarrantyService | cancelWarranties uses Sale.getReference() | V-04 | Information Expert |                  | 200538f (PR #45) | Andres |
+| SaleService | assignWarranties uses Product.isWarrantyEligible() | V-03 | Polymorphism | bd4dbc9 (PR #46) | Andres |
+| SaleService | Validates and decreases stock through InventoryService; product/accessory pairs removed | V-02 | Polymorphism | 38cac87 (PR #46) | Andres |
+| Main | Passes InventoryService to SaleService | V-02 | Polymorphism | 38cac87 (PR #46) | Andres |
+| SaleService | registerSale(Customer, Seller, List, List) creates and returns the Sale | V-14 | Creator | 1bb7875 (PR #46) | Andres |
+| GameZoneUI | registerSale no longer creates the Sale | V-14 | Creator | 1bb7875 (PR #46) | Andres |
+| SaleRepository | Resolves customers, sellers and items through injected lookup functions | V-16 | Low Coupling (Indirection) | aeede52 (PR #46) | Andres |
+| Main | Creates SaleRepository with the PersonService and InventoryService lookups | V-16 | Low Coupling (Indirection) | aeede52 (PR #46) | Andres |
+| GameZoneUI | Uses PersonService.findCustomerById / findSellerById | V-07 | Information Expert | 423d473 (PR #46) | Andres |
+| GameZoneUI | Uses ProductService.listConsoles() | V-08 | Information Expert | 74947e2 (PR #46) | Andres |
+| GameZoneUI | selectExtendedWarrantyProducts uses isWarrantyEligible() | V-03 | Polymorphism | 075feb0 (PR #46) | Andres |
+| GameZoneUI | Finds sale items with InventoryService.findItem() | V-02 | Polymorphism | c72eef9 (PR #46) | Andres |
+| Main | Passes InventoryService to GameZoneUI | V-02 | Polymorphism | c72eef9 (PR #46) | Andres |
+| ConsoleErrorHandler | New class: one place for the domain error messages | V-15 | Pure Fabrication | 9c63369 (PR #46) | Andres |
+| ProductMenu, AccessoryMenu, PersonMenu, SaleMenu | New classes: one menu per module | V-15 | High Cohesion | 9c63369 (PR #46) | Andres |
+| PromotionMenu, ReturnMenu, WarrantyMenu | New classes: one menu per module | V-15 | High Cohesion | 9c63369 (PR #46) | Andres |
+| GameZoneUI | Keeps only the main menu and creates the module menus | V-15 | High Cohesion, Creator | 9c63369 (PR #46) | Andres |
